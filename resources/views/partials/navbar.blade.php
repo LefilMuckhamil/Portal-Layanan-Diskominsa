@@ -25,8 +25,8 @@
 
         <!-- Tombol Aksi Desktop (Hilang di HP) -->
         <div class="space-x-3 hidden lg:block">
-            <a href="#" class="border border-white/50 hover:border-white text-white px-5 py-2 rounded-xl text-sm font-medium transition">Login</a>
-            <a href="#" class="bg-cyan-400 text-[#071E3D] hover:bg-cyan-300 px-5 py-2 rounded-xl text-sm font-bold shadow-lg transition">Daftar</a>
+            <a href="{{ route('login') }}" class="border border-white/50 hover:border-white text-white px-5 py-2 rounded-xl text-sm font-medium transition">Login</a>
+            <a href="{{ route('register') }}" class="bg-cyan-400 text-[#071E3D] hover:bg-cyan-300 px-5 py-2 rounded-xl text-sm font-bold shadow-lg transition">Daftar</a>
         </div>
 
         <!-- TOMBOL HAMBURGER (MUNCUL HANYA DI HP) -->
@@ -49,8 +49,8 @@
             
             <hr class="border-white/10 my-2">
             
-            <a href="#" class="text-center border border-white/50 hover:border-white text-white px-5 py-2 rounded-full text-sm font-medium transition w-full">Login</a>
-            <a href="#" class="text-center bg-cyan-400 text-[#071E3D] hover:bg-cyan-300 px-5 py-2 rounded-full text-sm font-bold shadow-lg transition w-full">Daftar</a>
+            <a href="{{ route('login') }}" class="text-center border border-white/50 hover:border-white text-white px-5 py-2 rounded-full text-sm font-medium transition w-full">Login</a>
+            <a href="{{ route('register') }}" class="text-center bg-cyan-400 text-[#071E3D] hover:bg-cyan-300 px-5 py-2 rounded-full text-sm font-bold shadow-lg transition w-full">Daftar</a>
         </div>
     </div>
 </nav>
