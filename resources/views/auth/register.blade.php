@@ -35,7 +35,7 @@
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 selection:bg-cyan-300 selection:text-[#071E3D]">
 
     <!-- KONTENER KARTU UTAMA -->
-    <div class="bg-white w-full max-w-287 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 h-auto md:h-187">
+    <div class="bg-white w-full max-w-[1150px] rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 h-auto md:h-[750px]">
 
         <!-- SISI KIRI: Banner dengan Background Foto Instansi -->
         <div class="hidden md:flex w-full md:w-5/12 rounded-4xl p-8 lg:p-12 flex-col relative overflow-hidden group">
@@ -44,7 +44,7 @@
             <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
             
             <!-- Overlay Gradient Biru Gelap -->
-            <div class="absolute inset-0 bg-linear-to-br from-[#071E3D]/95 via-[#071E3D]/85 to-[#1F4287]/90 mix-blend-multiply"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-[#071E3D]/95 via-[#071E3D]/85 to-[#1F4287]/90 mix-blend-multiply"></div>
             <div class="absolute inset-0 bg-[#071E3D]/50"></div>
 
             <!-- Ornamen Cahaya -->
@@ -62,7 +62,7 @@
                     <path d="M2 6.5C48.5 2.5 108.5 1.5 198 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                 </svg>
 
-                <p class="text-white/90 text-sm lg:text-[15px] max-w-75 leading-relaxed font-light mb-8">
+                <p class="text-white/90 text-sm lg:text-[15px] max-w-[300px] leading-relaxed font-light mb-8">
                     Daftarkan akun Anda untuk mendapatkan akses penuh ke seluruh layanan digital G2G Kabupaten Aceh Barat.
                 </p>
 
@@ -82,7 +82,7 @@
         <!-- SISI KANAN: Form Registrasi Dinamis -->
         <div class="w-full md:w-7/12 flex flex-col justify-start px-4 sm:px-8 py-8 lg:py-10 bg-white rounded-4xl overflow-y-auto">
             
-            <div class="w-full max-w-137 mx-auto">
+            <div class="w-full max-w-[550px] mx-auto">
                 
                 <!-- Logo & Header -->
                 <div class="flex flex-col items-center mb-8">
@@ -253,12 +253,17 @@
                 </form>
 
                 <!-- Link Kembali ke Login -->
-                <p class="text-center text-[13px] text-gray-500 font-medium mt-8 pb-4">
-                    Sudah memiliki akun? 
-                    <a href="{{ route('login') }}" class="text-[#278EA5] hover:text-[#071E3D] font-bold underline decoration-2 underline-offset-4 transition-colors ml-1">
-                        Masuk Disini
+                <div class="mt-8 pt-4 border-t border-gray-100 flex flex-col items-center gap-3">
+                    <p class="text-[13px] text-gray-500 font-medium">
+                        Sudah memiliki akun? 
+                        <a href="{{ route('login') }}" class="text-[#278EA5] hover:text-[#071E3D] font-bold underline decoration-2 underline-offset-4 transition-colors ml-1">
+                            Masuk Disini
+                        </a>
+                    </p>
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[13px] font-bold text-gray-400 hover:text-[#278EA5] transition-colors mt-2">
+                        <i class="fa-solid fa-arrow-left-long"></i> Kembali ke Beranda
                     </a>
-                </p>
+                </div>
 
             </div>
         </div>
@@ -289,8 +294,8 @@
             const formAsn = document.getElementById('form-asn');
             const formInstansi = document.getElementById('form-instansi');
 
-            const activeClass = 'flex-1 py-3 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300';
-            const inactiveClass = 'flex-1 py-3 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300';
+            const activeClass = 'flex-1 py-3 text-[13px] font-bold rounded-xl bg-white text-[#071E3D] shadow-sm transition-all duration-300';
+            const inactiveClass = 'flex-1 py-3 text-[13px] font-bold rounded-xl text-gray-400 hover:text-[#071E3D] transition-all duration-300';
 
             if (type === 'asn') {
                 tabAsn.className = activeClass;

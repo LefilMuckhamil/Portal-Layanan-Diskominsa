@@ -49,3 +49,27 @@ Route::post('/forgot-password', function () {
     // Ini hanya dummy agar tidak error, nanti diganti mengarah ke Controller
     return back()->with('status', 'Kami telah mengirimkan tautan reset kata sandi ke email Anda!');
 })->name('password.email');
+
+
+
+// Route untuk halaman utama (Landing Page)
+Route::get('/', function () {
+    return view('welcome'); // Sesuaikan dengan nama file landing page Anda
+});
+
+// Route untuk halaman Login
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+// Route untuk halaman Register
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register');
+
+// ==========================================
+// ROUTE DASHBOARD ADMIN
+// ==========================================
+Route::get('/dashboard', function () {
+    return view('admin.dashboard');
+})->name('admin.dashboard');

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Portal Layanan Diskominsa') }} - Masuk</title>
     
-    <!-- Tailwind CSS (Versi 3) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Font Google & FontAwesome -->
@@ -23,7 +23,7 @@
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active{
+        input:-webkit-autofill:active {
             -webkit-box-shadow: 0 0 0 30px #f9fafb inset !important;
         }
     </style>
@@ -31,16 +31,16 @@
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 selection:bg-cyan-300 selection:text-[#071E3D]">
 
     <!-- KONTENER KARTU UTAMA -->
-    <div class="bg-white w-full max-w-262 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 min-h-162">
+    <div class="bg-white w-full max-w-[1050px] rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 min-h-[650px]">
 
-        <!-- SISI KIRI: Banner dengan Background Foto Instansi (Menggunakan rounded-4xl) -->
-        <div class="w-full md:w-1/2 rounded-4xl p-8 lg:p-12 flex flex-col relative overflow-hidden group">
+        <!-- SISI KIRI: Banner dengan Background Foto Instansi -->
+        <div class="w-full md:w-1/2 rounded-[2rem] p-8 lg:p-12 flex flex-col relative overflow-hidden group">
             
             <!-- Foto Background -->
             <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
             
-            <!-- Overlay Gradient Biru Gelap (Tetap bg-gradient agar tidak rusak di v3) -->
-            <div class="absolute inset-0 bg-linear-to-br from-[#071E3D]/95 via-[#071E3D]/80 to-[#1F4287]/90 mix-blend-multiply"></div>
+            <!-- Overlay Gradient Biru Gelap agar foto terlihat estetik dan teks tetap terbaca -->
+            <div class="absolute inset-0 bg-gradient-to-br from-[#071E3D]/95 via-[#071E3D]/80 to-[#1F4287]/90 mix-blend-multiply"></div>
             <div class="absolute inset-0 bg-[#071E3D]/60"></div>
 
             <!-- Ornamen Cahaya -->
@@ -58,16 +58,16 @@
                     <path d="M2 6.5C48.5 2.5 108.5 1.5 198 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                 </svg>
 
-                <p class="text-white/90 text-sm lg:text-[15px] max-w-75 leading-relaxed font-light">
+                <p class="text-white/90 text-sm lg:text-[15px] max-w-[300px] leading-relaxed font-light">
                     Akses seluruh layanan digital instansi Pemerintah Kabupaten Aceh Barat dengan mudah melalui satu pintu. Transparan, cepat, dan aman.
                 </p>
             </div>
         </div>
 
-        <!-- SISI KANAN: Form Login Dinamis (Menggunakan rounded-4xl) -->
-        <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-8 py-10 lg:py-12 bg-white rounded-4xl">
+        <!-- SISI KANAN: Form Login Dinamis -->
+        <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-8 py-10 lg:py-12 bg-white rounded-[2rem]">
             
-            <div class="w-full max-w-90 mx-auto">
+            <div class="w-full max-w-[360px] mx-auto">
                 
                 <!-- Logo Saja -->
                 <div class="flex flex-col items-center mb-10">
@@ -83,16 +83,17 @@
                         {{ session('status') }}
                     </div>
                 @endif
+                
                 @if ($errors->any())
                     <div class="mb-6 p-3 bg-red-50 text-red-500 text-sm rounded-xl text-center font-medium">
                         Kredensial tidak valid. Silakan coba lagi.
                     </div>
                 @endif
 
-                <!-- Tab Pemilihan Jenis Akun (Menggunakan rounded-2xl dan rounded-xl) -->
-                <div class="flex bg-gray-100 p-1.5 rounded-2xl mb-8">
-                    <button type="button" id="tab-asn" onclick="setLoginType('asn')" class="flex-1 py-3.5 text-[13px] font-bold rounded-xl bg-white text-[#071E3D] shadow-sm transition-all duration-300">Akun ASN</button>
-                    <button type="button" id="tab-instansi" onclick="setLoginType('instansi')" class="flex-1 py-3.5 text-[13px] font-bold rounded-xl text-gray-400 hover:text-[#071E3D] transition-all duration-300">Akun Instansi</button>
+                <!-- Tab Pemilihan Jenis Akun -->
+                <div class="flex bg-gray-100 p-1.5 rounded-[16px] mb-8">
+                    <button type="button" id="tab-asn" onclick="setLoginType('asn')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300">Akun ASN</button>
+                    <button type="button" id="tab-instansi" onclick="setLoginType('instansi')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300">Akun Instansi</button>
                 </div>
 
                 <!-- Form Login -->
@@ -178,8 +179,8 @@
             const label = document.getElementById('label-identifier');
             const formRole = document.getElementById('form-role');
 
-            const activeClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-xl bg-white text-[#071E3D] shadow-sm transition-all duration-300';
-            const inactiveClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-xl text-gray-400 hover:text-[#071E3D] transition-all duration-300';
+            const activeClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300';
+            const inactiveClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300';
 
             if (type === 'asn') {
                 tabAsn.className = activeClass;
@@ -188,15 +189,15 @@
                 label.innerText = 'Email atau NIP';
                 input.placeholder = 'Masukkan Email atau 18 digit NIP';
                 input.type = 'text';
-                formRole.value = 'asn';
+                formRole.value = 'asn'; // Mengubah input tersembunyi
             } else {
                 tabInstansi.className = activeClass;
                 tabAsn.className = inactiveClass;
                 
                 label.innerText = 'Email Instansi';
                 input.placeholder = 'nama@instansi.go.id';
-                input.type = 'email';
-                formRole.value = 'instansi';
+                input.type = 'email'; // Instansi wajib pakai format email
+                formRole.value = 'instansi'; // Mengubah input tersembunyi
             }
         }
     </script>
