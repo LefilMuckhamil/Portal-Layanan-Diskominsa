@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Portal Layanan Diskominsa') }} - Masuk</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (Versi 3) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Font Google & FontAwesome -->
@@ -31,16 +31,16 @@
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 selection:bg-cyan-300 selection:text-[#071E3D]">
 
     <!-- KONTENER KARTU UTAMA -->
-    <div class="bg-white w-full max-w-[1050px] rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 min-h-[650px]">
+    <div class="bg-white w-full max-w-262 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 min-h-162">
 
-        <!-- SISI KIRI: Banner dengan Background Foto Instansi -->
-        <div class="w-full md:w-1/2 rounded-[2rem] p-8 lg:p-12 flex flex-col relative overflow-hidden group">
+        <!-- SISI KIRI: Banner dengan Background Foto Instansi (Menggunakan rounded-4xl) -->
+        <div class="w-full md:w-1/2 rounded-4xl p-8 lg:p-12 flex flex-col relative overflow-hidden group">
             
             <!-- Foto Background -->
             <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
             
-            <!-- Overlay Gradient Biru Gelap agar foto terlihat estetik dan teks tetap terbaca -->
-            <div class="absolute inset-0 bg-gradient-to-br from-[#071E3D]/95 via-[#071E3D]/80 to-[#1F4287]/90 mix-blend-multiply"></div>
+            <!-- Overlay Gradient Biru Gelap (Tetap bg-gradient agar tidak rusak di v3) -->
+            <div class="absolute inset-0 bg-linear-to-br from-[#071E3D]/95 via-[#071E3D]/80 to-[#1F4287]/90 mix-blend-multiply"></div>
             <div class="absolute inset-0 bg-[#071E3D]/60"></div>
 
             <!-- Ornamen Cahaya -->
@@ -58,24 +58,22 @@
                     <path d="M2 6.5C48.5 2.5 108.5 1.5 198 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                 </svg>
 
-                <p class="text-white/90 text-sm lg:text-[15px] max-w-[300px] leading-relaxed font-light">
+                <p class="text-white/90 text-sm lg:text-[15px] max-w-75 leading-relaxed font-light">
                     Akses seluruh layanan digital instansi Pemerintah Kabupaten Aceh Barat dengan mudah melalui satu pintu. Transparan, cepat, dan aman.
                 </p>
             </div>
         </div>
 
-        <!-- SISI KANAN: Form Login Dinamis -->
-        <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-8 py-10 lg:py-12 bg-white rounded-[2rem]">
+        <!-- SISI KANAN: Form Login Dinamis (Menggunakan rounded-4xl) -->
+        <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-8 py-10 lg:py-12 bg-white rounded-4xl">
             
-            <div class="w-full max-w-[360px] mx-auto">
+            <div class="w-full max-w-90 mx-auto">
                 
-                <!-- Logo Saja (Dibuat Lebih Mendominasi) -->
+                <!-- Logo Saja -->
                 <div class="flex flex-col items-center mb-10">
                     <div class="flex items-center justify-center w-full mb-6">
-                        <!-- Ukuran logo diperbesar agar rapi dan mendominasi -->
                         <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo" class="h-24 md:h-28 w-auto object-contain drop-shadow-sm">
                     </div>
-                    <!-- Judul diperbesar sedikit agar seimbang -->
                     <h2 class="text-3xl font-extrabold text-[#071E3D] mb-2 tracking-tight">Selamat Datang</h2>
                     <p class="text-[14px] text-gray-500 font-medium">Pilih jenis akun untuk melanjutkan</p>
                 </div>
@@ -91,20 +89,19 @@
                     </div>
                 @endif
 
-                <!-- Tab Pemilihan Jenis Akun -->
-                <div class="flex bg-gray-100 p-1.5 rounded-[16px] mb-8">
-                    <button type="button" id="tab-asn" onclick="setLoginType('asn')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300">Akun ASN</button>
-                    <button type="button" id="tab-instansi" onclick="setLoginType('instansi')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300">Akun Instansi</button>
+                <!-- Tab Pemilihan Jenis Akun (Menggunakan rounded-2xl dan rounded-xl) -->
+                <div class="flex bg-gray-100 p-1.5 rounded-2xl mb-8">
+                    <button type="button" id="tab-asn" onclick="setLoginType('asn')" class="flex-1 py-3.5 text-[13px] font-bold rounded-xl bg-white text-[#071E3D] shadow-sm transition-all duration-300">Akun ASN</button>
+                    <button type="button" id="tab-instansi" onclick="setLoginType('instansi')" class="flex-1 py-3.5 text-[13px] font-bold rounded-xl text-gray-400 hover:text-[#071E3D] transition-all duration-300">Akun Instansi</button>
                 </div>
 
                 <!-- Form Login -->
                 <form action="{{ route('login') }}" method="POST" class="space-y-5">
                     @csrf
                     
-                    <!-- Input Tersembunyi untuk mendeteksi login sebagai apa di Backend -->
                     <input type="hidden" name="role" id="form-role" value="asn">
                     
-                    <!-- Input Identifier Dinamis (Dengan Label) -->
+                    <!-- Input Identifier Dinamis -->
                     <div>
                         <label id="label-identifier" class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email atau NIP</label>
                         <input type="text" id="input-identifier" name="identifier" required value="{{ old('identifier') }}" placeholder="Masukkan Email atau 18 digit NIP"
@@ -145,6 +142,13 @@
                     </a>
                 </p>
 
+                <!-- Link Kembali ke Beranda -->
+                <div class="mt-6 pt-5 border-t border-gray-100 text-center">
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[13px] font-bold text-gray-400 hover:text-[#278EA5] transition-colors">
+                        <i class="fa-solid fa-arrow-left-long"></i> Kembali ke Beranda
+                    </a>
+                </div>
+
             </div>
         </div>
 
@@ -174,8 +178,8 @@
             const label = document.getElementById('label-identifier');
             const formRole = document.getElementById('form-role');
 
-            const activeClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300';
-            const inactiveClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300';
+            const activeClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-xl bg-white text-[#071E3D] shadow-sm transition-all duration-300';
+            const inactiveClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-xl text-gray-400 hover:text-[#071E3D] transition-all duration-300';
 
             if (type === 'asn') {
                 tabAsn.className = activeClass;
@@ -184,15 +188,15 @@
                 label.innerText = 'Email atau NIP';
                 input.placeholder = 'Masukkan Email atau 18 digit NIP';
                 input.type = 'text';
-                formRole.value = 'asn'; // Mengubah input tersembunyi
+                formRole.value = 'asn';
             } else {
                 tabInstansi.className = activeClass;
                 tabAsn.className = inactiveClass;
                 
                 label.innerText = 'Email Instansi';
                 input.placeholder = 'nama@instansi.go.id';
-                input.type = 'email'; // Instansi wajib pakai format email
-                formRole.value = 'instansi'; // Mengubah input tersembunyi
+                input.type = 'email';
+                formRole.value = 'instansi';
             }
         }
     </script>
