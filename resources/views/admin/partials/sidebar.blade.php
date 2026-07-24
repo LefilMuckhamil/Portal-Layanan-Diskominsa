@@ -50,14 +50,21 @@
         </a>
     </div>
 
-    <div class="p-4 border-t border-white/10">
-        <div class="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer">
-            <img src="https://ui-avatars.com/api/?name=Admin+Portal&background=0D8ABC&color=fff" alt="User" class="w-9 h-9 rounded-full object-cover">
-            <div class="flex-1 min-w-0">
-                <p class="text-[13px] font-bold text-white truncate">Admin Portal</p>
-                <p class="text-[11px] text-gray-400 truncate">Administrator</p>
-            </div>
-            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+    <div class="p-4 border-t border-white/10 flex flex-col gap-3">
+    <!-- Info Profil -->
+    <div class="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl">
+        <img src="https://ui-avatars.com/api/?name=Admin+Portal&background=0D8ABC&color=fff" alt="User" class="w-9 h-9 rounded-full object-cover shrink-0">
+        <div class="flex-1 min-w-0">
+            <p class="text-[13px] font-bold text-white truncate">Admin Portal</p>
+            <p class="text-[11px] text-gray-400 truncate">Administrator</p>
         </div>
     </div>
+
+    <!-- Tombol Keluar / Logout -->
+    <!-- Catatan untuk Backend nanti: Sebaiknya gunakan <form method="POST"> untuk keamanan -->
+    <a href="{{ url('/') }}" class="flex items-center justify-center gap-2 w-full py-2.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl text-[12px] font-bold transition-all duration-300 group">
+        <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
+        Keluar Sistem
+    </a>
+</div>
 </aside>
