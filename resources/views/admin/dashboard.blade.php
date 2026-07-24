@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('header_title', 'Dashboard E-Tracking')
-@section('header_subtitle', 'Pantau seluruh permohonan layanan Diskominsa secara real-time.')
+@section('header_title', 'Dashboard Portal Layanan Diskominsa Aceh Barat')
+@section('header_subtitle', 'Pantau seluruh permohonan layanan Diskominsa.')
 
 @section('content')
     <!-- Deretan Kartu Statistik -->

@@ -3,7 +3,7 @@
         <div class="flex items-center gap-3">
             <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo" class="w-10 h-10 object-contain bg-white rounded-lg p-1">
             <div class="flex flex-col">
-                <span class="text-[16px] font-extrabold tracking-wide leading-tight">E-Tracking & Portal</span>
+                <span class="text-[16px] font-extrabold tracking-wide leading-tight">Portal Layanan</span>
                 <span class="text-[11px] text-cyan-400 font-medium">Diskominsa Aceh Barat</span>
             </div>
         </div>
