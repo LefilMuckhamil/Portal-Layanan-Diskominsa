@@ -73,3 +73,7 @@ Route::get('/register', function () {
 Route::get('/dashboard', function () {
     return view('admin.dashboard');
 })->name('admin.dashboard');
+
+Route::get('/teknis-digital/web-desa', function () {
+    return view('admin.web-desa.index');
+})->name('admin.web-desa.index');
