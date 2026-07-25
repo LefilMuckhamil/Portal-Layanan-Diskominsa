@@ -213,7 +213,7 @@
         
         <!-- Pagination -->
         <div class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30 text-[12px] font-medium text-gray-500">
-            <p>Menampilkan 1-2 dari 45 permohonan</p>
+            <p>Menampilkan 1-10 dari 10 permohonan</p>
             <div class="flex gap-1">
                 <button class="w-8 h-8 rounded-lg border border-gray-200 bg-white text-gray-400 cursor-not-allowed"><i class="fa-solid fa-chevron-left"></i></button>
                 <button class="w-8 h-8 rounded-lg bg-[#071E3D] text-white shadow-md">1</button>
