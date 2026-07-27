@@ -87,3 +87,8 @@ Route::get('/email-resmi', function () {
 Route::get('/layanan-tte', function () {
     return view('admin.tte.index');
 })->name('admin.tte.index');
+
+// Route Layanan Bantuan (Reset Password & OTP)
+Route::get('/layanan-bantuan', function () {
+    return view('admin.bantuan.index');
+})->name('admin.bantuan.index');

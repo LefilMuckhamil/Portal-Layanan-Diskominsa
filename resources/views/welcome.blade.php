@@ -23,7 +23,6 @@
     @include('partials.layanan')
     @include('partials.alur')
     @include('partials.tracking')
-    @include('partials.hero')
     @include('partials.bantuan')
     @include('partials.footer')
 

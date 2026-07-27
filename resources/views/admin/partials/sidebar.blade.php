@@ -39,9 +39,7 @@
             <span class="text-[13px]">Layanan TTE</span>
         </a>
 
-        <p class="px-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-6 mb-2">Bantuan & Sub Layanan</p>
-        
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all duration-300 group hover:translate-x-1">
+        <a href="{{ route('admin.bantuan.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all duration-300 group hover:translate-x-1">
             <i class="fa-solid fa-headset w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">
                 <span class="text-[13px]">Layanan Bantuan</span>
