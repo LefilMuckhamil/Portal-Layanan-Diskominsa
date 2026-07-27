@@ -77,3 +77,13 @@ Route::get('/dashboard', function () {
 Route::get('/teknis-digital/web-desa', function () {
     return view('admin.web-desa.index');
 })->name('admin.web-desa.index');
+
+// Route Email Resmi (ASN & Instansi)
+Route::get('/email-resmi', function () {
+    return view('admin.email.index');
+})->name('admin.email.index');
+
+// Route Layanan TTE
+Route::get('/layanan-tte', function () {
+    return view('admin.tte.index');
+})->name('admin.tte.index');

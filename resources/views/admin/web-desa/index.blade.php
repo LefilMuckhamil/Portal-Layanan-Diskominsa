@@ -217,7 +217,6 @@
             <div class="flex gap-1">
                 <button class="w-8 h-8 rounded-lg border border-gray-200 bg-white text-gray-400 cursor-not-allowed"><i class="fa-solid fa-chevron-left"></i></button>
                 <button class="w-8 h-8 rounded-lg bg-[#071E3D] text-white shadow-md">1</button>
-                <button class="w-8 h-8 rounded-lg bg-[#071E3D] text-white shadow-md">1</button>
                 <button class="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-200 transition-colors">2</button>
                 <button class="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-200 transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
