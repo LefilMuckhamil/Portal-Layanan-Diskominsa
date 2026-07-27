@@ -26,5 +26,6 @@
     @include('partials.bantuan')
     @include('partials.footer')
 
+    
 </body>
 </html>
