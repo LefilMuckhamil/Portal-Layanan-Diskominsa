@@ -92,3 +92,8 @@ Route::get('/layanan-tte', function () {
 Route::get('/layanan-bantuan', function () {
     return view('admin.bantuan.index');
 })->name('admin.bantuan.index');
+
+// Route Layanan Cloud Government
+Route::get('/layanan-cloud', function () {
+    return view('admin.cloud.index');
+})->name('admin.cloud.index');

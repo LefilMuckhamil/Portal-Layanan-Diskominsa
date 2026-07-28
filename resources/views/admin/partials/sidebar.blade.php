@@ -39,6 +39,14 @@
             <span class="text-[13px]">Layanan TTE</span>
         </a>
 
+        <a href="{{ route('admin.cloud.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all duration-300 group hover:translate-x-1">
+         <i class="fa-solid fa-cloud-arrow-up w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
+            <div class="flex flex-col leading-tight">
+                <span class="text-[13px]">Cloud Gov</span>
+               <span class="text-[10px] text-gray-400">Penyimpanan Instansi</span>
+            </div>
+        </a>
+
         <a href="{{ route('admin.bantuan.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all duration-300 group hover:translate-x-1">
             <i class="fa-solid fa-headset w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">
