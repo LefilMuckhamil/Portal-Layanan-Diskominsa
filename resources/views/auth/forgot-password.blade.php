@@ -36,7 +36,7 @@
     <div class="absolute inset-0 bg-[#071E3D]/40 -z-10"></div>
 
     <!-- KONTENER KARTU TENGAH (Efek Kaca Tipis / Glassmorphism) -->
-    <div class="bg-white/90 backdrop-blur-xl w-full max-w-135 rounded-4xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-6 sm:p-8 relative z-10 border border-white/40">
+<div class="bg-white/90 backdrop-blur-xl w-full max-w-md rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-6 sm:p-8 relative z-10 border border-white/40">
         
         <!-- Logo & Header -->
         <div class="flex items-center gap-4 mb-6 pb-5 border-b border-gray-200/60">

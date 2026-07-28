@@ -104,7 +104,7 @@
                     
                     <!-- Input Identifier Dinamis -->
                     <div>
-                        <label id="label-identifier" class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email atau NIP</label>
+                        <label id="label-identifier" class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email</label>
                         <input type="text" id="input-identifier" name="identifier" required value="{{ old('identifier') }}" placeholder="Masukkan Email atau 18 digit NIP"
                             class="w-full bg-gray-50 border border-gray-100 rounded-[14px] px-5 py-4 text-[14px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all duration-300">
                     </div>
@@ -186,8 +186,8 @@
                 tabAsn.className = activeClass;
                 tabInstansi.className = inactiveClass;
                 
-                label.innerText = 'Email atau NIP';
-                input.placeholder = 'Masukkan Email atau 18 digit NIP';
+                label.innerText = 'Email';
+                input.placeholder = 'Masukkan Email';
                 input.type = 'text';
                 formRole.value = 'asn'; // Mengubah input tersembunyi
             } else {
