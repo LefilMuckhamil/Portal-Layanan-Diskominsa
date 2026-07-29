@@ -97,3 +97,36 @@ Route::get('/layanan-bantuan', function () {
 Route::get('/layanan-cloud', function () {
     return view('admin.cloud.index');
 })->name('admin.cloud.index');
+
+// ==========================================
+// ROUTE FORM PENGAJUAN (FRONTEND USER)
+// ==========================================
+// Hanya bisa diakses jika user sudah login (middleware auth)
+Route::middleware(['auth'])->group(function () {
+    
+    // Form Website Desa
+    Route::get('/layanan/pengajuan-website', function () {
+        return view('pengajuan.website');
+    })->name('pengajuan.website');
+
+    // Form Email Resmi
+    Route::get('/layanan/pengajuan-email', function () {
+        return view('pengajuan.email');
+    })->name('pengajuan.email');
+
+    // Form Layanan TTE
+    Route::get('/layanan/pengajuan-tte', function () {
+        return view('pengajuan.tte');
+    })->name('pengajuan.tte');
+
+    // Form Cloud Gov
+    Route::get('/layanan/pengajuan-cloud', function () {
+        return view('pengajuan.cloud');
+    })->name('pengajuan.cloud');
+
+    // Form Bantuan
+    Route::get('/layanan/pengajuan-bantuan', function () {
+        return view('pengajuan.bantuan');
+    })->name('pengajuan.bantuan');
+
+});

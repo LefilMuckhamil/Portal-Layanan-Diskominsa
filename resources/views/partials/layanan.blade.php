@@ -21,7 +21,7 @@
                 </div>
                 <h3 class="font-bold text-white mb-2 text-[15px]">Website Desa</h3>
                 <p class="text-[13px] text-white/70 mb-4 leading-relaxed h-14">Pengembangan website resmi profil desa / ponpes.</p>
-                <a href="#" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
+                <a href="{{ route('pengajuan.website') }}" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
                     Ajukan <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
             </div>
@@ -33,7 +33,7 @@
                 </div>
                 <h3 class="font-bold text-white mb-2 text-[15px]">Email Resmi</h3>
                 <p class="text-[13px] text-white/70 mb-4 leading-relaxed h-14">Pembuatan akun email (Go.id) untuk pegawai pemerintah.</p>
-                <a href="#" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
+                <a href="{{ route('pengajuan.email') }}" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
                     Ajukan <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
             </div>
@@ -45,7 +45,7 @@
                 </div>
                 <h3 class="font-bold text-white mb-2 text-[15px]">Layanan TTE</h3>
                 <p class="text-[13px] text-white/70 mb-4 leading-relaxed h-14">Fasilitasi penerbitan Tanda Tangan Elektronik tersertifikasi.</p>
-                <a href="#" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
+                <a href="{{ route('pengajuan.tte') }}" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
                     Ajukan <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
             </div>
@@ -57,7 +57,7 @@
                 </div>
                 <h3 class="font-bold text-white mb-2 text-[15px]">Cloud Gov</h3>
                 <p class="text-[13px] text-white/70 mb-4 leading-relaxed h-14">Penyimpanan & berbagi file aman ASN dan Instansi.</p>
-                <a href="#" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
+                <a href="{{ route('pengajuan.cloud') }}" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
                     Ajukan <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
             </div>
@@ -69,7 +69,7 @@
                 </div>
                 <h3 class="font-bold text-white mb-2 text-[15px]">Bantuan</h3>
                 <p class="text-[13px] text-white/70 mb-4 leading-relaxed h-14">Reset password, masalah OTP, dan dukungan teknis.</p>
-                <a href="#" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
+                <a href="{{ route('pengajuan.bantuan') }}" class="text-cyan-400 font-bold text-[13px] hover:text-white transition-all flex items-center gap-1 group-hover:gap-2">
                     Ajukan <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
             </div>
