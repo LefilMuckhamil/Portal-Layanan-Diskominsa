@@ -130,3 +130,36 @@ Route::middleware(['auth'])->group(function () {
     })->name('pengajuan.bantuan');
 
 });
+
+use App\Http\Middleware\IsAdmin;
+
+// ==========================================
+// ROUTE KHUSUS ADMIN (Hanya bisa diakses jika role = admin)
+// ==========================================
+Route::middleware(['auth', IsAdmin::class])->group(function () {
+    
+    // Taruh SEMUA route admin di dalam sini
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+
+    Route::get('/email-resmi', function () {
+        return view('admin.email.index');
+    })->name('admin.email.index');
+    
+    // ... dan route admin lainnya (tte, bantuan, cloud)
+});
+
+
+// ==========================================
+// ROUTE KHUSUS USER (Hanya butuh login biasa)
+// ==========================================
+Route::middleware(['auth'])->group(function () {
+    
+    // Taruh SEMUA route form pengajuan user di sini
+    Route::get('/layanan/pengajuan-website', function () {
+        return view('pengajuan.website');
+    })->name('pengajuan.website');
+    
+    // ... dan form pengajuan lainnya
+});
