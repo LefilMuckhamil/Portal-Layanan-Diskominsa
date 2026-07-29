@@ -102,7 +102,6 @@
                     
                     <input type="hidden" name="role" id="form-role" value="asn">
                     
-                    <!-- PERUBAHAN: name="identifier" diganti menjadi name="email" -->
                     <div>
                         <label id="label-identifier" class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email</label>
                         <input type="email" id="input-identifier" name="email" required value="{{ old('email') }}" placeholder="Masukkan Email"
