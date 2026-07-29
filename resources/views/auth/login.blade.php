@@ -85,8 +85,8 @@
                 @endif
                 
                 @if ($errors->any())
-                    <div class="mb-6 p-3 bg-red-50 text-red-500 text-sm rounded-xl text-center font-medium">
-                        Kredensial tidak valid. Silakan coba lagi.
+                    <div class="mb-6 p-3 bg-red-50 border border-red-100 text-red-500 text-[13px] rounded-xl text-center font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i> Kredensial tidak valid. Silakan coba lagi.
                     </div>
                 @endif
 
@@ -97,15 +97,15 @@
                 </div>
 
                 <!-- Form Login -->
-                <form action="{{ route('login') }}" method="POST" class="space-y-5">
+                <form action="{{ url('/login') }}" method="POST" class="space-y-5">
                     @csrf
                     
                     <input type="hidden" name="role" id="form-role" value="asn">
                     
-                    <!-- Input Identifier Dinamis -->
+                    <!-- PERUBAHAN: name="identifier" diganti menjadi name="email" -->
                     <div>
                         <label id="label-identifier" class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email</label>
-                        <input type="text" id="input-identifier" name="identifier" required value="{{ old('identifier') }}" placeholder="Masukkan Email atau 18 digit NIP"
+                        <input type="email" id="input-identifier" name="email" required value="{{ old('email') }}" placeholder="Masukkan Email"
                             class="w-full bg-gray-50 border border-gray-100 rounded-[14px] px-5 py-4 text-[14px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all duration-300">
                     </div>
 
@@ -138,7 +138,7 @@
                 <!-- Link Daftar -->
                 <p class="text-center text-[13px] text-gray-500 font-medium mt-8">
                     Belum punya akun? 
-                    <a href="{{ route('register') }}" class="text-[#278EA5] hover:text-[#071E3D] font-bold underline decoration-2 underline-offset-4 transition-colors ml-1">
+                    <a href="{{ route('register') ?? '#' }}" class="text-[#278EA5] hover:text-[#071E3D] font-bold underline decoration-2 underline-offset-4 transition-colors ml-1">
                         Daftar Disini
                     </a>
                 </p>
@@ -188,16 +188,16 @@
                 
                 label.innerText = 'Email';
                 input.placeholder = 'Masukkan Email';
-                input.type = 'text';
-                formRole.value = 'asn'; // Mengubah input tersembunyi
+                input.type = 'email';
+                formRole.value = 'asn'; 
             } else {
                 tabInstansi.className = activeClass;
                 tabAsn.className = inactiveClass;
                 
                 label.innerText = 'Email Instansi';
                 input.placeholder = 'nama@instansi.go.id';
-                input.type = 'email'; // Instansi wajib pakai format email
-                formRole.value = 'instansi'; // Mengubah input tersembunyi
+                input.type = 'email'; 
+                formRole.value = 'instansi'; 
             }
         }
     </script>

@@ -163,3 +163,14 @@ Route::middleware(['auth'])->group(function () {
     
     // ... dan form pengajuan lainnya
 });
+
+use App\Http\Controllers\AuthController;
+
+// Route untuk menampilkan form login (Pasti Anda sudah punya ini)
+// Route::get('/login', ...)->name('login');
+
+// TAMBAHKAN 2 ROUTE INI:
+// Route untuk memproses data saat tombol "Masuk" diklik
+Route::post('/login', [AuthController::class, 'authenticate']);
+// Route untuk tombol logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
