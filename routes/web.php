@@ -1,176 +1,47 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Middleware\IsAdmin;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-// Halaman Utama (Landing Page)
+// 1. HALAMAN UTAMA (PUBLIC)
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Rute khusus pengunjung yang BELUM login (Guest)
+// 2. RUTE GUEST (Belum Login)
 Route::middleware('guest')->group(function () {
+    Route::get('/login', function () { return view('auth.login'); })->name('login');
+    Route::post('/login', [AuthController::class, 'authenticate']);
     
-    // Tampilan Halaman
-    Route::get('/login', function () {
-        return view('auth.login');
-    })->name('login');
-
-    Route::get('/register', function () {
-        return view('auth.register');
-    })->name('register');
-
-    Route::get('/forgot-password', function () {
-        return view('auth.forgot-password');
-    })->name('password.request');
-
-    /* 
-    | NANTINYA: 
-    | Buka komentar pada kode di bawah ini jika Controller sudah dibuat 
-    | untuk memproses pengiriman data (submit form).
-    */
-    // Route::post('/login', [AuthController::class, 'authenticate']);
-    // Route::post('/register', [AuthController::class, 'store']);
-    // Route::post('/forgot-password', [AuthController::class, 'sendResetLink']);
+    Route::get('/register', function () { return view('auth.register'); })->name('register');
+    
+    Route::get('/forgot-password', function () { return view('auth.forgot-password'); })->name('password.request');
+    Route::post('/forgot-password', function () {
+        return back()->with('status', 'Kami telah mengirimkan tautan reset kata sandi ke email Anda!');
+    })->name('password.email');
 });
 
-// Rute khusus pengunjung yang SUDAH login (Auth)
-Route::middleware('auth')->group(function () {
-    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-});
-
-Route::post('/forgot-password', function () {
-    // Ini hanya dummy agar tidak error, nanti diganti mengarah ke Controller
-    return back()->with('status', 'Kami telah mengirimkan tautan reset kata sandi ke email Anda!');
-})->name('password.email');
-
-
-
-// Route untuk halaman utama (Landing Page)
-Route::get('/', function () {
-    return view('welcome'); // Sesuaikan dengan nama file landing page Anda
-});
-
-// Route untuk halaman Login
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-// Route untuk halaman Register
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-
-// ==========================================
-// ROUTE DASHBOARD ADMIN
-// ==========================================
-Route::get('/dashboard', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
-
-Route::get('/teknis-digital/web-desa', function () {
-    return view('admin.web-desa.index');
-})->name('admin.web-desa.index');
-
-// Route Email Resmi (ASN & Instansi)
-Route::get('/email-resmi', function () {
-    return view('admin.email.index');
-})->name('admin.email.index');
-
-// Route Layanan TTE
-Route::get('/layanan-tte', function () {
-    return view('admin.tte.index');
-})->name('admin.tte.index');
-
-// Route Layanan Bantuan (Reset Password & OTP)
-Route::get('/layanan-bantuan', function () {
-    return view('admin.bantuan.index');
-})->name('admin.bantuan.index');
-
-// Route Layanan Cloud Government
-Route::get('/layanan-cloud', function () {
-    return view('admin.cloud.index');
-})->name('admin.cloud.index');
-
-// ==========================================
-// ROUTE FORM PENGAJUAN (FRONTEND USER)
-// ==========================================
-// Hanya bisa diakses jika user sudah login (middleware auth)
+// 3. RUTE USER (Sudah Login Biasa)
 Route::middleware(['auth'])->group(function () {
-    
-    // Form Website Desa
-    Route::get('/layanan/pengajuan-website', function () {
-        return view('pengajuan.website');
-    })->name('pengajuan.website');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Form Email Resmi
-    Route::get('/layanan/pengajuan-email', function () {
-        return view('pengajuan.email');
-    })->name('pengajuan.email');
-
-    // Form Layanan TTE
-    Route::get('/layanan/pengajuan-tte', function () {
-        return view('pengajuan.tte');
-    })->name('pengajuan.tte');
-
-    // Form Cloud Gov
-    Route::get('/layanan/pengajuan-cloud', function () {
-        return view('pengajuan.cloud');
-    })->name('pengajuan.cloud');
-
-    // Form Bantuan
-    Route::get('/layanan/pengajuan-bantuan', function () {
-        return view('pengajuan.bantuan');
-    })->name('pengajuan.bantuan');
-
+    // Pengelompokan awalan '/layanan' agar lebih rapi
+    Route::prefix('layanan')->group(function () {
+        Route::get('/pengajuan-website', function () { return view('pengajuan.website'); })->name('pengajuan.website');
+        Route::get('/pengajuan-email', function () { return view('pengajuan.email'); })->name('pengajuan.email');
+        Route::get('/pengajuan-tte', function () { return view('pengajuan.tte'); })->name('pengajuan.tte');
+        Route::get('/pengajuan-cloud', function () { return view('pengajuan.cloud'); })->name('pengajuan.cloud');
+        Route::get('/pengajuan-bantuan', function () { return view('pengajuan.bantuan'); })->name('pengajuan.bantuan');
+    });
 });
 
-use App\Http\Middleware\IsAdmin;
-
-// ==========================================
-// ROUTE KHUSUS ADMIN (Hanya bisa diakses jika role = admin)
-// ==========================================
+// 4. RUTE ADMIN (Sudah Login & Role Admin)
 Route::middleware(['auth', IsAdmin::class])->group(function () {
-    
-    // Taruh SEMUA route admin di dalam sini
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-
-    Route::get('/email-resmi', function () {
-        return view('admin.email.index');
-    })->name('admin.email.index');
-    
-    // ... dan route admin lainnya (tte, bantuan, cloud)
+    Route::get('/admin/dashboard', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+    Route::get('/teknis-digital/web-desa', function () { return view('admin.web-desa.index'); })->name('admin.web-desa.index');
+    Route::get('/email-resmi', function () { return view('admin.email.index'); })->name('admin.email.index');
+    Route::get('/layanan-tte', function () { return view('admin.tte.index'); })->name('admin.tte.index');
+    Route::get('/layanan-bantuan', function () { return view('admin.bantuan.index'); })->name('admin.bantuan.index');
+    Route::get('/layanan-cloud', function () { return view('admin.cloud.index'); })->name('admin.cloud.index');
 });
-
-
-// ==========================================
-// ROUTE KHUSUS USER (Hanya butuh login biasa)
-// ==========================================
-Route::middleware(['auth'])->group(function () {
-    
-    // Taruh SEMUA route form pengajuan user di sini
-    Route::get('/layanan/pengajuan-website', function () {
-        return view('pengajuan.website');
-    })->name('pengajuan.website');
-    
-    // ... dan form pengajuan lainnya
-});
-
-use App\Http\Controllers\AuthController;
-
-// Route untuk menampilkan form login (Pasti Anda sudah punya ini)
-// Route::get('/login', ...)->name('login');
-
-// TAMBAHKAN 2 ROUTE INI:
-// Route untuk memproses data saat tombol "Masuk" diklik
-Route::post('/login', [AuthController::class, 'authenticate']);
-// Route untuk tombol logout
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
