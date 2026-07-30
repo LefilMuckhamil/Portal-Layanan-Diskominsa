@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\IsAdmin;
+use App\Http\Controllers\UserDashboardController;
 
 // 1. HALAMAN UTAMA (PUBLIC)
 Route::get('/', function () {
@@ -44,4 +45,8 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::get('/layanan-tte', function () { return view('admin.tte.index'); })->name('admin.tte.index');
     Route::get('/layanan-bantuan', function () { return view('admin.bantuan.index'); })->name('admin.bantuan.index');
     Route::get('/layanan-cloud', function () { return view('admin.cloud.index'); })->name('admin.cloud.index');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
 });

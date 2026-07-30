@@ -57,19 +57,26 @@
                 </div>
 
                 <!-- Kanan: Profil & Logout -->
-                <div class="flex items-center relative group">
-                    <button class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <div class="flex items-center relative group z-50">
+                    <button class="flex items-center gap-3 hover:opacity-80 transition-opacity py-2">
                         <div class="text-right hidden sm:block">
-                            <!-- Nanti nama ini bisa diambil dari Auth::user()->name -->
-                            <p class="text-[13px] font-bold text-[#071E3D]">Pengguna Aktif</p>
-                            <p class="text-[11px] text-gray-500 font-medium">Instansi / ASN</p>
+                            <!-- Nama dan Role otomatis dari database -->
+                            <p class="text-[13px] font-bold text-[#071E3D]">{{ Auth::user()->name }}</p>
+                            <p class="text-[11px] text-gray-500 font-medium capitalize">{{ Auth::user()->role }}</p>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name=User&background=071E3D&color=fff" class="w-10 h-10 rounded-full border-2 border-gray-100 object-cover">
+                        <!-- Avatar otomatis mengikuti huruf depan nama User -->
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=071E3D&color=fff" class="w-10 h-10 rounded-full border-2 border-gray-100 object-cover">
                         <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
                     </button>
 
-                    <!-- Dropdown Logout -->
-                    <div class="dropdown-menu absolute right-0 top-14 w-48 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-50 py-2 origin-top-right transition-all">
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu absolute right-0 top-[60px] w-52 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-50 py-2 origin-top-right transition-all">
+                        
+                        <!-- Tambahan: Menu Riwayat Pengajuan -->
+                        <a href="{{ route('user.riwayat') }}" class="w-full text-left px-5 py-2.5 text-[13px] font-bold text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-colors flex items-center gap-2 border-b border-gray-50">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pengajuan
+                        </a>
+
                         <!-- Form Logout Laravel -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -90,8 +97,8 @@
     </main>
 
     <!-- FOOTER KECIL -->
-    <footer class="py-6 text-center text-gray-400 text-[12px] font-medium border-t border-gray-200">
-        &copy; 2026 Diskominsa Kabupaten Aceh Barat.
+    <footer class="py-6 text-center text-gray-400 text-[12px] font-medium border-t border-gray-200 mt-auto">
+        &copy; {{ date('Y') }} Diskominsa Kabupaten Aceh Barat.
     </footer>
 
 </body>
