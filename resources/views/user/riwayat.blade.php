@@ -2,6 +2,8 @@
 
 @section('title', 'Riwayat Pengajuan Saya')
 
+@section('max_width', 'max-w-7xl')
+
 @section('content')
     <!-- Background Container Lebih Luas & Estetik -->
     <div class="relative overflow-hidden bg-gradient-to-br from-white via-[#f8fafc] to-[#f1f8ff] rounded-[2.5rem] p-8 sm:p-10 lg:p-12 shadow-[0_20px_50px_-15px_rgba(7,30,61,0.08)] border border-white/80 w-full">

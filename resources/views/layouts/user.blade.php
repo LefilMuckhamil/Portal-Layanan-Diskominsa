@@ -91,8 +91,8 @@
         </div>
     </nav>
 
-    <!-- KONTEN FORM DINAMIS -->
-    <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-10">
+    <!-- KONTEN FORM DINAMIS (LEBAR SUDAH DIUBAH MENJADI DINAMIS) -->
+    <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 @yield('max_width', 'max-w-4xl')">
         @yield('content')
     </main>
 
