@@ -30,7 +30,7 @@
                 
                 <!-- Nama Instansi / Desa -->
                 <div class="md:col-span-2 group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Desa / Pesantren</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Desa atau Pesantren</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
                             <i class="fa-solid fa-building-columns"></i>
