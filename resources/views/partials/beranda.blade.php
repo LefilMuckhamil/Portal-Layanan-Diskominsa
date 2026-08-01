@@ -6,7 +6,7 @@
         <div class="container mx-auto px-6 relative z-20 flex flex-col lg:flex-row items-center">
             <!-- Teks Kiri -->
             <div class="w-full lg:w-1/2 text-white pr-0 lg:pr-4 mt-10">
-                <span class="bg-white/10 border border-white/20 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-6 inline-block backdrop-blur-sm">Sistem G2G Terpadu</span>
+                <span class="bg-white/10 border border-white/20 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-6 inline-block backdrop-blur-sm">Portal Layanan Terpadu</span>
                 <h2 class="text-4xl lg:text-[55px] font-extrabold mb-6 leading-tight">
                     Portal Layanan <br>
                     <span class="text-cyan-400">DISKOMINSA</span><br>
