@@ -59,40 +59,6 @@
         </div>
     </div>
 
-    <!-- Area Grafik -->
-    <div class="bg-white rounded-3xl p-7 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h3 class="text-lg font-extrabold text-[#071E3D]">Grafik Permintaan Layanan (Bulan Ini)</h3>
-                <p class="text-[13px] text-gray-400 font-medium mt-1">Tren permohonan masuk ke Diskominsa Aceh Barat</p>
-            </div>
-            <select class="bg-gray-50 border border-gray-100 text-[13px] font-bold text-gray-600 rounded-xl px-4 py-2 outline-none cursor-pointer">
-                <option>Semua Layanan</option>
-                <option>Web Desa</option>
-                <option>Email Resmi</option>
-            </select>
-        </div>
-        
-        <div class="w-full h-56 relative flex items-end justify-between px-2 pb-6 border-b border-gray-100 border-l">
-            <svg class="absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <path d="M0,80 Q10,60 20,65 T40,40 T60,50 T80,30 T100,10 L100,100 L0,100 Z" fill="url(#gradientBlue)" opacity="0.1"/>
-                <path d="M0,80 Q10,60 20,65 T40,40 T60,50 T80,30 T100,10" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="drop-shadow-md"/>
-                <defs>
-                    <linearGradient id="gradientBlue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#0ea5e9" />
-                        <stop offset="100%" stop-color="#ffffff" />
-                    </linearGradient>
-                </defs>
-            </svg>
-            <div class="absolute -bottom-5 w-full flex justify-between text-[11px] font-bold text-gray-400 px-2 left-0">
-                <span>Minggu 1</span>
-                <span>Minggu 2</span>
-                <span>Minggu 3</span>
-                <span>Minggu 4</span>
-            </div>
-        </div>
-    </div>
-
     <!-- TABEL MANAJEMEN E-TRACKING -->
     <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col">
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
