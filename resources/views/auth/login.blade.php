@@ -5,21 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Portal Layanan Diskominsa') }} - Masuk</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Google & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: #f4f7f6; 
-        }
-        
+        body { font-family: 'Outfit', sans-serif; background-color: #f4f7f6; }
         ::-webkit-scrollbar { display: none; }
-        
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
@@ -30,46 +22,34 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 selection:bg-cyan-300 selection:text-[#071E3D]">
 
-    <!-- KONTENER KARTU UTAMA -->
+    <!-- Container Utama -->
     <div class="bg-white w-full max-w-[1050px] rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 min-h-[650px]">
 
-        <!-- SISI KIRI: Banner dengan Background Foto Instansi -->
+        <!-- Bagian Kiri: Banner -->
         <div class="w-full md:w-1/2 rounded-[2rem] p-8 lg:p-12 flex flex-col relative overflow-hidden group">
-            
-            <!-- Foto Background -->
             <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
-            
-            <!-- Overlay Gradient Biru Gelap agar foto terlihat estetik dan teks tetap terbaca -->
             <div class="absolute inset-0 bg-gradient-to-br from-[#071E3D]/95 via-[#071E3D]/80 to-[#1F4287]/90 mix-blend-multiply"></div>
             <div class="absolute inset-0 bg-[#071E3D]/60"></div>
-
-            <!-- Ornamen Cahaya -->
             <div class="absolute -top-20 -left-20 w-64 h-64 bg-cyan-400 rounded-full mix-blend-screen filter blur-[80px] opacity-20 pointer-events-none"></div>
 
-            <!-- Konten Teks di Atas Foto -->
             <div class="relative z-10 flex flex-col h-full justify-center pb-10">
                 <h1 class="text-4xl lg:text-5xl font-extrabold text-white leading-[1.15] mb-2 tracking-tight">
-                    Sederhanakan<br>
-                    layanan dengan<br>
-                    portal terpadu.
+                    Sederhanakan<br>layanan dengan<br>portal terpadu.
                 </h1>
-                
                 <svg class="w-48 h-3 text-cyan-400 mb-6 drop-shadow-md" viewBox="0 0 200 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 6.5C48.5 2.5 108.5 1.5 198 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                 </svg>
-
                 <p class="text-white/90 text-sm lg:text-[15px] max-w-[300px] leading-relaxed font-light">
                     Akses seluruh layanan digital instansi Pemerintah Kabupaten Aceh Barat dengan mudah melalui satu pintu. Transparan, cepat, dan aman.
                 </p>
             </div>
         </div>
 
-        <!-- SISI KANAN: Form Login Dinamis -->
+        <!-- Bagian Kanan: Form Login -->
         <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-8 py-10 lg:py-12 bg-white rounded-[2rem]">
-            
             <div class="w-full max-w-[360px] mx-auto">
                 
-                <!-- Logo Saja -->
+                <!-- Header -->
                 <div class="flex flex-col items-center mb-10">
                     <div class="flex items-center justify-center w-full mb-6">
                         <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo" class="h-24 md:h-28 w-auto object-contain drop-shadow-sm">
@@ -78,6 +58,7 @@
                     <p class="text-[14px] text-gray-500 font-medium">Pilih jenis akun untuk melanjutkan</p>
                 </div>
 
+                <!-- Notifikasi Pesan -->
                 @if (session('status'))
                     <div class="mb-6 p-3 bg-green-50 text-green-600 text-sm rounded-xl text-center font-medium">
                         {{ session('status') }}
@@ -86,22 +67,24 @@
                 
                 @if ($errors->any())
                     <div class="mb-6 p-3 bg-red-50 border border-red-100 text-red-500 text-[13px] rounded-xl text-center font-bold flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-exclamation"></i> Kredensial tidak valid. Silakan coba lagi.
+                        <i class="fa-solid fa-circle-exclamation"></i> {{ $errors->first('email') }}
                     </div>
                 @endif
 
-                <!-- Tab Pemilihan Jenis Akun -->
+                <!-- Tab Pilihan Akun -->
                 <div class="flex bg-gray-100 p-1.5 rounded-[16px] mb-8">
                     <button type="button" id="tab-asn" onclick="setLoginType('asn')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300">Akun ASN</button>
                     <button type="button" id="tab-instansi" onclick="setLoginType('instansi')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300">Akun Instansi</button>
                 </div>
 
-                <!-- Form Login -->
+                <!-- Form Utama -->
                 <form action="{{ url('/login') }}" method="POST" class="space-y-5">
                     @csrf
                     
-                    <input type="hidden" name="role" id="form-role" value="asn">
+                    <!-- Penanda Tipe Login (Wajib sama dengan Controller) -->
+                    <input type="hidden" name="tipe_login" id="form-role" value="asn">
                     
+                    <!-- Input Email -->
                     <div>
                         <label id="label-identifier" class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email</label>
                         <input type="email" id="input-identifier" name="email" required value="{{ old('email') }}" placeholder="Masukkan Email"
@@ -121,7 +104,7 @@
                         </div>
                     </div>
 
-                    <!-- Lupa Password -->
+                    <!-- Lupa Sandi -->
                     <div class="flex justify-end pt-1 pb-2">
                         <a href="{{ route('password.request') ?? '#' }}" class="text-[12px] font-semibold text-gray-400 hover:text-[#071E3D] transition-colors">
                             Lupa kata sandi?
@@ -134,7 +117,7 @@
                     </button>
                 </form>
 
-                <!-- Link Daftar -->
+                <!-- Link Navigasi Bawah -->
                 <p class="text-center text-[13px] text-gray-500 font-medium mt-8">
                     Belum punya akun? 
                     <a href="{{ route('register') ?? '#' }}" class="text-[#278EA5] hover:text-[#071E3D] font-bold underline decoration-2 underline-offset-4 transition-colors ml-1">
@@ -142,7 +125,6 @@
                     </a>
                 </p>
 
-                <!-- Link Kembali ke Beranda -->
                 <div class="mt-6 pt-5 border-t border-gray-100 text-center">
                     <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[13px] font-bold text-gray-400 hover:text-[#278EA5] transition-colors">
                         <i class="fa-solid fa-arrow-left-long"></i> Kembali ke Beranda
@@ -154,23 +136,20 @@
 
     </div>
 
-    <!-- SCRIPT INTERAKTIF -->
+    <!-- Script Interaktif -->
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eye-icon');
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
             } else {
                 passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
             }
         }
 
-        // Logika Pergantian Form Sesuai Tab
         function setLoginType(type) {
             const tabAsn = document.getElementById('tab-asn');
             const tabInstansi = document.getElementById('tab-instansi');
@@ -187,7 +166,6 @@
                 
                 label.innerText = 'Email';
                 input.placeholder = 'Masukkan Email';
-                input.type = 'email';
                 formRole.value = 'asn'; 
             } else {
                 tabInstansi.className = activeClass;
@@ -195,7 +173,6 @@
                 
                 label.innerText = 'Email Instansi';
                 input.placeholder = 'nama@instansi.go.id';
-                input.type = 'email'; 
                 formRole.value = 'instansi'; 
             }
         }

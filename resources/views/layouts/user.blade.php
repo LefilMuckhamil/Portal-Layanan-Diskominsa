@@ -84,7 +84,13 @@
                         <button class="flex items-center gap-3 hover:opacity-80 transition-opacity py-2">
                             <div class="text-right hidden sm:block">
                                 <p class="text-[13px] font-bold text-[#071E3D]">{{ Auth::user()->name }}</p>
-                                <p class="text-[11px] text-gray-500 font-medium capitalize">{{ Auth::user()->role }}</p>
+                                <p class="text-[11px] text-gray-500 font-medium">
+                                    @if(Auth::user()->role === 'instansi')
+                                        Instansi
+                                    @else
+                                        ASN / User
+                                    @endif
+                                </p>
                             </div>
                             <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=071E3D&color=fff" class="w-10 h-10 rounded-full border-2 border-gray-100 object-cover">
                             <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
