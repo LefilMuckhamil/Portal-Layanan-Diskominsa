@@ -83,7 +83,7 @@
         
         <h3 class="text-2xl font-extrabold text-center text-[#071E3D] mb-2">Akses Dibatasi</h3>
         <p class="text-center text-gray-500 text-[14px] mb-8 leading-relaxed">
-            Maaf, Anda harus masuk (login) terlebih dahulu untuk dapat menggunakan fitur E-Tracking.
+            Maaf, Anda harus Login terlebih dahulu untuk dapat menggunakan fitur E-Tracking.
         </p>
         
         <div class="flex gap-3">
