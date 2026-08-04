@@ -38,7 +38,6 @@
             </div>
         </div>
         
-        <!-- Mockup Kanan -->
         <div class="w-full lg:w-1/2 mt-16 lg:mt-0 relative z-20 animate-float">
             <div class="relative max-w-[550px] mx-auto w-full">
                 <div class="bg-black p-2 md:p-3 rounded-t-3xl border-4 border-gray-800 shadow-2xl relative z-10 mx-4 md:mx-0">
