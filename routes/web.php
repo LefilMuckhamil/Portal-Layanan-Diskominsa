@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan');
+    Route::post('/pengajuan/{id}/kirim-pesan', [App\Http\Controllers\UserDashboardController::class, 'kirimPesan'])->name('user.kirim.pesan');
 });
 
 // 4. RUTE ADMIN (Sudah Login & Role Admin)

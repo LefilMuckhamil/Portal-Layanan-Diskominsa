@@ -8,69 +8,59 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminPengajuanController extends Controller
 {
-    // 1. Menampilkan semua data pengajuan dari semua user
+    // 1. Menampilkan semua data pengajuan
     public function index()
     {
-        // Berbeda dengan user, admin mengambil semua data tanpa 'where(user_id)'
         $pengajuans = Pengajuan::latest()->get(); 
         return view('admin.pengajuan.index', compact('pengajuans'));
     }
 
-    // 2. Menampilkan detail pengajuan untuk Admin
+    // 2. Menampilkan detail pengajuan
     public function show($id)
     {
         $pengajuan = Pengajuan::findOrFail($id);
         return view('admin.pengajuan.detail', compact('pengajuan'));
     }
 
-    // 3. Fungsi untuk Admin membalas pesan chat
-    public function balasPesan(Request $request, $id)
-    {
-        $request->validate(['pesan' => 'required|string']);
-        
-        $pengajuan = Pengajuan::findOrFail($id);
-
-        $semuaPesan = $pengajuan->pesan ?? [];
-        $semuaPesan[] = [
-            'pengirim' => Auth::user()->name ?? 'Admin Diskominsa',
-            'role'     => 'admin', // Penanda bahwa ini pesan dari Admin
-            'isi'      => $request->pesan,
-            'waktu'    => now()->format('d M Y, H:i')
-        ];
-
-        $pengajuan->pesan = $semuaPesan;
-        $pengajuan->save();
-
-        return back()->with('sukses', 'Pesan berhasil dikirim ke User!');
-    }
-
-    // 4. Fungsi untuk Admin menambah riwayat progress (Timeline)
-    public function updateProgress(Request $request, $id)
+    // 3. Fungsi Terpadu: Update Status, Timeline (Logs), dan Balas Chat
+    public function updateProgres(Request $request, $id)
     {
         $request->validate([
-            'judul_progress' => 'required|string',
-            'deskripsi'      => 'required|string',
-            'status_baru'    => 'nullable|string'
+            'status'  => ['required', 'string'],
+            'catatan' => ['nullable', 'string', 'max:500'],
+            'pesan'   => ['nullable', 'string', 'max:1000'],
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
+        
+        // Update status utama
+        $pengajuan->status = $request->status;
 
-        // Jika admin memilih status baru (misal: "Diproses" atau "Selesai"), update status utama
-        if ($request->status_baru) {
-            $pengajuan->status = $request->status_baru;
+        // Jika admin mengisi catatan progres (Masuk ke E-Tracking User)
+        if ($request->filled('catatan')) {
+            $logs = $pengajuan->logs ?? [];
+            $logs[] = [
+                'status'     => $request->status,
+                'catatan'    => $request->catatan,
+                'created_at' => now()->toDateTimeString(),
+            ];
+            $pengajuan->logs = $logs;
         }
 
-        // Tambahkan riwayat baru ke dalam array logs
-        $semuaLogs = $pengajuan->logs ?? [];
-        $semuaLogs[] = [
-            'judul'     => $request->judul_progress,
-            'deskripsi' => $request->deskripsi,
-            'waktu'     => now()->format('d M Y, H:i')
-        ];
+        // Jika admin mengisi balasan chat (Masuk ke Panel Bantuan User)
+        if ($request->filled('pesan')) {
+            $pesan = $pengajuan->pesan ?? [];
+            $pesan[] = [
+                'pengirim' => Auth::user()->name ?? 'Admin Diskominsa',
+                'role'     => 'admin',
+                'isi'      => $request->pesan,
+                'waktu'    => now()->format('d M Y, H:i')
+            ];
+            $pengajuan->pesan = $pesan;
+        }
 
-        $pengajuan->logs = $semuaLogs;
         $pengajuan->save();
 
-        return back()->with('sukses', 'Progress berhasil diupdate!');
+        return back()->with('sukses', 'Progres layanan dan pesan berhasil diperbarui!');
     }
 }
