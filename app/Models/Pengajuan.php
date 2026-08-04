@@ -22,8 +22,6 @@ class Pengajuan extends Model
     // Beritahu Laravel bahwa data_pengajuan adalah array/JSON
     protected $casts = [
         'data_pengajuan' => 'array',
-        'logs' => 'array',
-        'pesan' => 'array'
     ];
 
     // Relasi ke User yang mengajukan
