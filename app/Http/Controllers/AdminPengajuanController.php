@@ -63,4 +63,15 @@ class AdminPengajuanController extends Controller
 
         return back()->with('sukses', 'Progres layanan dan pesan berhasil diperbarui!');
     }
+
+    // 4. Menampilkan halaman khusus tabel Web Desa
+    public function webDesa()
+    {
+        // Ambil data pengajuan yang JENIS LAYANAN-nya hanya "Pembuatan Web Desa"
+        $pengajuans = Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa')
+                        ->latest()
+                        ->get(); 
+                        
+        return view('admin.web-desa.index', compact('pengajuans'));
+    }
 }

@@ -64,7 +64,7 @@
     </div>
 
     <!-- Tabel Daftar Permohonan Web Desa -->
-    <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col">
+    <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
         <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Ajuan Website</h3>
@@ -74,7 +74,7 @@
             <div class="flex gap-3">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
-                    <input type="text" placeholder="Cari nama desa..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
+                    <input type="text" placeholder="Cari permohonan..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
                 </div>
                 <div class="relative">
                     <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
@@ -94,118 +94,152 @@
                 <thead class="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
                     <tr>
                         <th class="py-3 px-6">ID Ajuan</th>
-                        <th class="py-3 px-6">Perangkat / Instansi</th>
-                        <th class="py-3 px-6">Domain Ajuan</th>
+                        <th class="py-3 px-6">Layanan / Instansi</th>
                         <th class="py-3 px-6">Tgl Masuk</th>
-                        <th class="py-3 px-6">Status (Edit)</th>
-                        <th class="py-3 px-6 text-right">Aksi</th>
+                        <th class="py-3 px-6">Status Terkini</th>
+                        <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     
-                    {{-- PERSIAPAN BE: Looping Data --}}
-                    {{-- @forelse ($data_web as $item) --}}
-                    
+                    @forelse ($pengajuans as $item)
                     <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
                         <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
-                            #WEB-001
+                            #REQ-{{ strtoupper(substr($item->id, -5)) }}
                         </td>
                         <td class="py-4 px-6 flex items-center gap-3">
                             <div class="w-9 h-9 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center font-bold">
-                                P
+                                <i class="fa-solid fa-layer-group text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-[13px] font-bold text-[#071E3D]">
-                                    Ahmad Fauzi (Keuchik)
+                                <p class="text-[13px] font-bold text-[#071E3D] capitalize">
+                                    {{ str_replace('_', ' ', $item->jenis_layanan) }}
                                 </p>
                                 <p class="text-[11px] text-gray-500 font-medium">
-                                    Desa Panggong
+                                    {{ $item->user->name ?? 'Pemohon' }}
                                 </p>
                             </div>
-                        </td>
-                        <td class="py-4 px-6">
-                            <a href="#" class="text-[12px] font-bold text-cyan-600 hover:underline">
-                                panggong.desa.id
-                            </a>
                         </td>
                         <td class="py-4 px-6 text-[12px] text-gray-500 font-bold">
-                            22 Jul 2026
-                        </td>
-                        
-                        <!-- Form Update Status Khusus Web -->
-                        <td class="py-4 px-6">
-                            <div class="relative inline-block">
-                                <select name="status" onchange="/* this.form.submit() */" class="appearance-none bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 font-extrabold text-[10px] uppercase tracking-wider py-1.5 pl-3 pr-7 rounded-lg cursor-pointer outline-none transition-all">
-                                    <option value="pending">Pending</option>
-                                    <option value="verifikasi" selected>Verifikasi Doc</option>
-                                    <option value="proses">Proses Develop</option>
-                                    <option value="selesai">Selesai / Online</option>
-                                    <option value="ditolak">Ditolak</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 transform -translate-y-1/2 text-[10px] text-blue-600 pointer-events-none"></i>
-                            </div>
-                        </td>
-                        
-                        <td class="py-4 px-6 text-right space-x-1">
-                            <button class="p-2 text-gray-400 hover:text-green-500 transition-colors bg-white hover:bg-green-50 rounded-lg shadow-sm border border-gray-100" title="Cek Dokumen Kelengkapan">
-                                <i class="fa-solid fa-file-lines text-[13px]"></i>
-                            </button>
-                            <button class="p-2 text-gray-400 hover:text-cyan-500 transition-colors bg-white hover:bg-cyan-50 rounded-lg shadow-sm border border-gray-100" title="Detail Tracking">
-                                <i class="fa-solid fa-eye text-[13px]"></i>
-                            </button>
-                        </td>
-                    </tr>
-
-                    <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
-                        <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
-                            #WEB-002
-                        </td>
-                        <td class="py-4 px-6 flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center font-bold">
-                                A
-                            </div>
-                            <div>
-                                <p class="text-[13px] font-bold text-[#071E3D]">
-                                    Ust. Rahmat
-                                </p>
-                                <p class="text-[11px] text-gray-500 font-medium">
-                                    Ponpes Al-Ikhlas
-                                </p>
-                            </div>
+                            {{ $item->created_at->format('d M Y') }}
                         </td>
                         <td class="py-4 px-6">
-                            <span class="text-[12px] font-bold text-gray-400">
-                                alikhlas.ponpes.id
+                            @php
+                                $badgeColor = match($item->status) {
+                                    'Pending', 'Menunggu Validasi' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                    'Verifikasi Doc', 'Proses Development' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                    'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                    'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                    default   => 'bg-gray-50 text-gray-600 border-gray-100'
+                                };
+                            @endphp
+                            <span class="px-3 py-1.5 rounded-lg border text-[10px] font-extrabold uppercase tracking-wider {{ $badgeColor }}">
+                                {{ $item->status }}
                             </span>
                         </td>
-                        <td class="py-4 px-6 text-[12px] text-gray-500 font-bold">
-                            20 Jul 2026
-                        </td>
-                        
-                        <td class="py-4 px-6">
-                            <div class="relative inline-block">
-                                <select name="status" class="appearance-none bg-amber-50 text-amber-600 border border-amber-100 hover:bg-amber-100 hover:border-amber-200 font-extrabold text-[10px] uppercase tracking-wider py-1.5 pl-3 pr-7 rounded-lg cursor-pointer outline-none transition-all">
-                                    <option value="pending" selected>Pending</option>
-                                    <option value="verifikasi">Verifikasi Doc</option>
-                                    <option value="proses">Proses Develop</option>
-                                    <option value="selesai">Selesai / Online</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 transform -translate-y-1/2 text-[10px] text-amber-600 pointer-events-none"></i>
-                            </div>
-                        </td>
-                        
-                        <td class="py-4 px-6 text-right space-x-1">
-                            <button class="p-2 text-gray-400 hover:text-green-500 transition-colors bg-white hover:bg-green-50 rounded-lg shadow-sm border border-gray-100" title="Cek Dokumen Kelengkapan">
-                                <i class="fa-solid fa-file-lines text-[13px]"></i>
-                            </button>
-                            <button class="p-2 text-gray-400 hover:text-cyan-500 transition-colors bg-white hover:bg-cyan-50 rounded-lg shadow-sm border border-gray-100" title="Detail Tracking">
-                                <i class="fa-solid fa-eye text-[13px]"></i>
+                        <td class="py-4 px-6 text-center space-x-1">
+                            <!-- Tombol ini sekarang memanggil ID spesifik modalnya -->
+                            <button type="button" onclick="bukaModalAdmin('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-cyan-50 hover:text-cyan-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Kelola & Balas Pesan">
+                                <i class="fa-solid fa-pen text-xs"></i>
                             </button>
                         </td>
                     </tr>
 
-                    {{-- @empty --}}
-                    {{-- @endforelse --}}
+                    <!-- ======================================================= -->
+                    <!-- MODAL KHUSUS UNTUK SETIAP ITEM (Di dalam perulangan) -->
+                    <!-- ======================================================= -->
+                    <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
+                        <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalAdmin('{{ $item->id }}')"></div>
+                        
+                        <div class="relative bg-white rounded-[2rem] p-8 max-w-xl w-full mx-4 shadow-2xl overflow-y-auto max-h-[95vh] custom-scrollbar">
+                            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                                <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center text-xl">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-extrabold text-[#071E3D]">Kelola Permohonan</h3>
+                                    <p class="text-[12px] text-gray-500">Update progres dan balas pesan pemohon.</p>
+                                </div>
+                            </div>
+                            
+                            <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}">
+                                @csrf
+                                @method('PUT')
+                                
+                                <!-- BAGIAN 1: STATUS & TIMELINE -->
+                                <div class="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl mb-5">
+                                    <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2">
+                                        <i class="fa-solid fa-bars-progress text-cyan-500"></i> 1. Update Timeline Progres
+                                    </h4>
+                                    
+                                    <div class="mb-4">
+                                        <label class="block text-[12px] font-bold text-gray-600 mb-2">Ubah Status</label>
+                                        <select name="status" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] text-[#071E3D] font-bold focus:border-cyan-400 outline-none transition-colors">
+                                            <option value="Pending" {{ $item->status == 'Pending' ? 'selected' : '' }}>PENDING</option>
+                                            <option value="Verifikasi Doc" {{ $item->status == 'Verifikasi Doc' ? 'selected' : '' }}>VERIFIKASI DOC</option>
+                                            <option value="Proses Development" {{ $item->status == 'Proses Development' ? 'selected' : '' }}>PROSES DEVELOPMENT</option>
+                                            <option value="Ditolak" {{ $item->status == 'Ditolak' ? 'selected' : '' }}>DITOLAK</option>
+                                            <option value="Selesai" {{ $item->status == 'Selesai' ? 'selected' : '' }}>SELESAI / ONLINE</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[12px] font-bold text-gray-600 mb-2">Catatan Progres (Opsional)</label>
+                                        <textarea name="catatan" rows="2" placeholder="Tuliskan catatan progres yang akan muncul di E-Tracking pemohon..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-cyan-400 resize-none"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- BAGIAN 2: RIWAYAT CHAT & BALAS PESAN -->
+                                <div class="bg-blue-50/30 border border-blue-100 p-5 rounded-2xl mb-8">
+                                    <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2">
+                                        <i class="fa-regular fa-comments text-blue-500"></i> 2. Riwayat Diskusi / Chat
+                                    </h4>
+                                    
+                                    <!-- Kotak Menampilkan Riwayat Pesan -->
+                                    <div class="bg-white border border-blue-100 rounded-xl p-4 mb-4 h-48 overflow-y-auto space-y-3 custom-scrollbar">
+                                        @if(!empty($item->pesan) && is_array($item->pesan))
+                                            @foreach($item->pesan as $chat)
+                                                <div class="flex flex-col {{ $chat['role'] === 'admin' ? 'items-end' : 'items-start' }}">
+                                                    <div class="max-w-[85%] p-3 rounded-2xl text-[12px] {{ $chat['role'] === 'admin' ? 'bg-[#071E3D] text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none' }}">
+                                                        <p class="font-bold text-[10px] opacity-80 mb-0.5">{{ $chat['pengirim'] }}</p>
+                                                        <p>{{ $chat['isi'] }}</p>
+                                                    </div>
+                                                    <span class="text-[9px] text-gray-400 mt-1">{{ $chat['waktu'] }}</span>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="flex items-center justify-center h-full">
+                                                <p class="text-[12px] text-gray-400 italic">Belum ada obrolan.</p>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <!-- Kolom Balas Pesan -->
+                                    <div>
+                                        <textarea name="pesan" rows="2" placeholder="Ketik pesan balasan atau pertanyaan kepada pemohon di sini..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- TOMBOL AKSI -->
+                                <div class="flex gap-3">
+                                    <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
+                                    <button type="submit" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-[#071E3D] hover:bg-[#1F4287] transition-colors shadow-lg shadow-blue-900/20">Simpan Perubahan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Akhir Modal -->
+                    
+                    @empty
+                    <tr>
+                        <td colspan="5" class="py-12 text-center">
+                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fa-solid fa-folder-open text-2xl text-gray-300"></i>
+                            </div>
+                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada permohonan</h3>
+                        </td>
+                    </tr>
+                    @endforelse
 
                 </tbody>
             </table>
@@ -213,13 +247,30 @@
         
         <!-- Pagination -->
         <div class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30 text-[12px] font-medium text-gray-500">
-            <p>Menampilkan 1-10 dari 10 permohonan</p>
-            <div class="flex gap-1">
-                <button class="w-8 h-8 rounded-lg border border-gray-200 bg-white text-gray-400 cursor-not-allowed"><i class="fa-solid fa-chevron-left"></i></button>
-                <button class="w-8 h-8 rounded-lg bg-[#071E3D] text-white shadow-md">1</button>
-                <button class="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-200 transition-colors">2</button>
-                <button class="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-200 transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
-            </div>
+            <p>Menampilkan riwayat terbaru</p>
         </div>
     </div>
+
+    <!-- SCRIPT PENGGERAK MODAL DINAMIS -->
+    <script>
+        function bukaModalAdmin(id) {
+            const modal = document.getElementById('modal-' + id);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function tutupModalAdmin(id) {
+            const modal = document.getElementById('modal-' + id);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
+    
+    <!-- CSS untuk Scrollbar -->
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 @endsection

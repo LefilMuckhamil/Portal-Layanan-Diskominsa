@@ -47,7 +47,10 @@ Route::middleware(['auth'])->group(function () {
 // 4. RUTE ADMIN (Sudah Login & Role Admin)
 Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::get('/admin/dashboard', function () { return view('admin.dashboard'); })->name('admin.dashboard');
-    Route::get('/teknis-digital/web-desa', function () { return view('admin.web-desa.index'); })->name('admin.web-desa.index');
+    
+    // UBAH: Arahkan rute Web Desa ke Controller agar bisa mengambil data dari database
+    Route::get('/teknis-digital/web-desa', [AdminPengajuanController::class, 'webDesa'])->name('admin.web-desa.index');
+    
     Route::get('/email-resmi', function () { return view('admin.email.index'); })->name('admin.email.index');
     Route::get('/layanan-tte', function () { return view('admin.tte.index'); })->name('admin.tte.index');
     Route::get('/layanan-bantuan', function () { return view('admin.bantuan.index'); })->name('admin.bantuan.index');
@@ -59,5 +62,8 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show');
         Route::post('/{id}/pesan', [AdminPengajuanController::class, 'balasPesan'])->name('admin.pengajuan.pesan');
         Route::post('/{id}/progress', [AdminPengajuanController::class, 'updateProgress'])->name('admin.pengajuan.progress');
+        
+        // PERBAIKAN: Hapus awalan '/admin/pengajuan' karena sudah terbungkus prefix di atasnya
+        Route::put('/{id}/update', [AdminPengajuanController::class, 'updateProgres'])->name('admin.pengajuan.update');
     });
 });
