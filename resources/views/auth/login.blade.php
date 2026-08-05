@@ -4,11 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Portal Layanan Diskominsa') }} - Masuk</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Google & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -25,10 +21,8 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 selection:bg-cyan-300 selection:text-[#071E3D]">
 
-    <!-- Container Utama -->
     <div class="bg-white w-full max-w-[1050px] rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 min-h-[650px]">
 
-        <!-- Bagian Kiri: Banner -->
         <div class="w-full md:w-1/2 rounded-[2rem] p-8 lg:p-12 flex flex-col relative overflow-hidden group">
             <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
             <div class="absolute inset-0 bg-gradient-to-br from-[#071E3D]/95 via-[#071E3D]/80 to-[#1F4287]/90 mix-blend-multiply"></div>
@@ -48,11 +42,9 @@
             </div>
         </div>
 
-        <!-- Bagian Kanan: Form Login -->
         <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-8 py-10 lg:py-12 bg-white rounded-[2rem]">
             <div class="w-full max-w-[380px] mx-auto">
                 
-                <!-- Header -->
                 <div class="flex flex-col items-center mb-10">
                     <div class="flex items-center justify-center w-full mb-6">
                         <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo" class="h-24 md:h-28 w-auto object-contain drop-shadow-sm">
@@ -61,7 +53,6 @@
                     <p class="text-[14px] text-gray-500 font-medium text-center">Silakan masuk menggunakan email resmi Anda</p>
                 </div>
 
-                <!-- Notifikasi Pesan -->
                 @if (session('sukses'))
                     <div class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 text-[13px] rounded-2xl font-bold flex items-center gap-3 shadow-sm">
                         <i class="fa-solid fa-circle-check text-lg"></i> {{ session('sukses') }}
@@ -74,11 +65,9 @@
                     </div>
                 @endif
 
-                <!-- Form Utama -->
                 <form action="{{ url('/login') }}" method="POST" class="space-y-5">
                     @csrf
                     
-                    <!-- Input Email -->
                     <div>
                         <label class="block text-[13px] font-bold text-gray-600 mb-2 ml-1">Email (@acehbaratkab.go.id)</label>
                         <div class="relative">
@@ -90,7 +79,6 @@
                         </div>
                     </div>
 
-                    <!-- Input Password -->
                     <div>
                         <label class="block text-[13px] font-bold text-gray-600 mb-2 ml-1">Kata Sandi</label>
                         <div class="relative">
@@ -106,21 +94,18 @@
                         </div>
                     </div>
 
-                    <!-- Lupa Sandi -->
                     <div class="flex justify-end pt-1 pb-2">
                         <a href="{{ route('password.request') ?? '#' }}" class="text-[13px] font-bold text-gray-400 hover:text-[#071E3D] transition-colors">
                             Lupa kata sandi?
                         </a>
                     </div>
 
-                    <!-- Tombol Masuk -->
                     <button type="submit" class="w-full bg-[#071E3D] hover:bg-[#1F4287] text-white font-extrabold rounded-2xl py-4 text-[15px] tracking-wide transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.15)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.25)] transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
                         Masuk Sekarang
                         <i class="fa-solid fa-arrow-right text-[13px] group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </form>
 
-                <!-- Link Registrasi -->
                 <p class="text-center text-[13px] text-gray-500 font-medium mt-8">
                     Belum punya akun? 
                     <a href="{{ route('register') ?? '#' }}" class="text-cyan-600 hover:text-[#071E3D] font-extrabold underline decoration-2 underline-offset-4 transition-colors ml-1">
@@ -139,7 +124,6 @@
 
     </div>
 
-    <!-- Script Tampil/Sembunyi Password -->
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
