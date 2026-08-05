@@ -24,6 +24,7 @@
         ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
         
+        /* Menghilangkan background kuning bawaan browser saat autofill */
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
@@ -73,36 +74,33 @@
                     </div>
                     <div>
                         <h4 class="text-white font-bold text-sm mb-1">Verifikasi Keamanan</h4>
-                        <p class="text-white/70 text-[12px] leading-relaxed">Seluruh pendaftaran akun baru akan melalui proses verifikasi oleh Admin untuk memastikan validitas data instansi & ASN.</p>
+                        <p class="text-white/70 text-[12px] leading-relaxed">Seluruh pendaftaran akun baru akan melalui proses verifikasi oleh Admin untuk memastikan validitas data ASN.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SISI KANAN: Form Registrasi Dinamis -->
+        <!-- SISI KANAN: Form Registrasi ASN -->
         <div class="w-full md:w-7/12 flex flex-col justify-start px-4 sm:px-8 py-8 lg:py-10 bg-white rounded-4xl overflow-y-auto">
             
             <div class="w-full max-w-[550px] mx-auto">
                 
                 <!-- Logo & Header -->
-                <div class="flex flex-col items-center mb-8">
+                <div class="flex flex-col items-center mb-10">
                     <div class="flex items-center justify-center w-full mb-4 md:mb-6">
                         <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo" class="h-16 md:h-20 w-auto object-contain drop-shadow-sm">
                     </div>
-                    <h2 class="text-2xl md:text-3xl font-extrabold text-[#071E3D] mb-1.5 tracking-tight text-center">Pendaftaran Akun Baru</h2>
-                    <p class="text-[13px] text-gray-500 font-medium text-center">Lengkapi formulir di bawah ini dengan data yang valid</p>
-                </div>
-
-                <!-- Tab Pemilihan Jenis Akun -->
-                <div class="flex bg-gray-100 p-1.5 rounded-2xl mb-8">
-                    <button type="button" id="tab-asn" onclick="setRegType('asn')" class="flex-1 py-3 text-[13px] font-bold rounded-xl bg-white text-[#071E3D] shadow-sm transition-all duration-300">Pendaftar ASN</button>
-                    <button type="button" id="tab-instansi" onclick="setRegType('instansi')" class="flex-1 py-3 text-[13px] font-bold rounded-xl text-gray-400 hover:text-[#071E3D] transition-all duration-300">Pendaftar Instansi</button>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-[#071E3D] mb-1.5 tracking-tight text-center">Pendaftaran Akun ASN</h2>
+                    <p class="text-[13px] text-gray-500 font-medium text-center">Lengkapi formulir di bawah ini dengan data diri dan instansi yang valid</p>
                 </div>
 
                 <!-- Notifikasi Error Global -->
                 @if ($errors->any())
-                    <div class="mb-6 p-3 bg-red-50 border border-red-100 text-red-500 text-[13px] rounded-xl font-medium">
-                        <ul class="list-disc list-inside">
+                    <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-[13px] rounded-2xl font-medium shadow-sm">
+                        <div class="flex items-center gap-2 mb-2 font-bold">
+                            <i class="fa-solid fa-circle-exclamation"></i> Terdapat kesalahan pengisian:
+                        </div>
+                        <ul class="list-disc list-inside space-y-1 ml-1 text-red-500">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -110,157 +108,134 @@
                     </div>
                 @endif
 
-                <!-- ================== FORM ASN ================== -->
-                <form id="form-asn" action="{{ route('register') }}" method="POST" class="space-y-4">
+                <!-- ================== FORM PENDAFTARAN UTAMA ================== -->
+                <form action="{{ route('register') }}" method="POST" class="space-y-5">
                     @csrf
+                    <!-- Hidden Role -->
                     <input type="hidden" name="role" value="asn">
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                        
                         <!-- Nama Lengkap -->
                         <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Nama Lengkap (beserta gelar)</label>
-                            <input type="text" name="name" required value="{{ old('name') }}" placeholder="Cth: Budi Santoso, S.Kom"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Nama Lengkap (beserta gelar)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-regular fa-user text-[13px]"></i>
+                                </div>
+                                <input type="text" name="name" required value="{{ old('name') }}" placeholder="Cth: Budi Santoso, S.Kom"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                            </div>
                         </div>
+
                         <!-- NIP -->
                         <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">NIP</label>
-                            <input type="text" name="nip" required value="{{ old('nip') }}" placeholder="18 Digit NIP"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">NIP</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-regular fa-id-badge text-[13px]"></i>
+                                </div>
+                                <input type="text" name="nip" required value="{{ old('nip') }}" placeholder="18 Digit NIP"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                            </div>
                         </div>
-                        <!-- Email -->
+
+                        <!-- Instansi / Unit Kerja -->
                         <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Email Resmi (Go.id)</label>
-                            <input type="email" name="email" required value="{{ old('email') }}" placeholder="nama@acehbarat.go.id"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Asal Instansi / SKPK</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-regular fa-building text-[13px]"></i>
+                                </div>
+                                <input type="text" name="unit_kerja" required value="{{ old('unit_kerja') }}" placeholder="Cth: Diskominsa"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                            </div>
                         </div>
-                        <!-- No HP -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Nomor HP / WhatsApp</label>
-                            <input type="text" name="phone" required value="{{ old('phone') }}" placeholder="08xxxxxxxxx"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
-                        <!-- Unit Kerja -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Unit Kerja / SKPD</label>
-                            <input type="text" name="unit_kerja" required value="{{ old('unit_kerja') }}" placeholder="Cth: Diskominsa"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
+
                         <!-- Jabatan -->
                         <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Jabatan</label>
-                            <input type="text" name="jabatan" required value="{{ old('jabatan') }}" placeholder="Cth: Kepala Bidang"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Jabatan</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-solid fa-briefcase text-[13px]"></i>
+                                </div>
+                                <input type="text" name="jabatan" required value="{{ old('jabatan') }}" placeholder="Cth: Kepala Bidang"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                            </div>
                         </div>
+
+                        <!-- Nomor HP -->
+                        <div>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Nomor HP / WhatsApp</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-solid fa-mobile-screen text-[13px]"></i>
+                                </div>
+                                <input type="text" name="phone" required value="{{ old('phone') }}" placeholder="Cth: 08xxxxxxxxx"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Email (@acehbarat.go.id)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-regular fa-envelope text-[13px]"></i>
+                                </div>
+                                <input type="email" name="email" required value="{{ old('email') }}" placeholder="nama@acehbaratkab.go.id"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                            </div>
+                        </div>
+
                         <!-- Password -->
                         <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Kata Sandi</label>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Kata Sandi</label>
                             <div class="relative">
-                                <input type="password" id="asn_password" name="password" required placeholder="Minimal 8 karakter"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-4 pr-10 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                                <button type="button" onclick="togglePassword('asn_password', 'asn_eye')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#071E3D]">
-                                    <i id="asn_eye" class="fa-regular fa-eye-slash text-[13px]"></i>
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-solid fa-lock text-[13px]"></i>
+                                </div>
+                                <input type="password" id="password" name="password" required placeholder="Minimal 8 karakter"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-10 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                                <button type="button" onclick="togglePassword('password', 'eye_password')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyan-600 focus:outline-none p-1 transition-colors">
+                                    <i id="eye_password" class="fa-regular fa-eye-slash text-[13px]"></i>
                                 </button>
                             </div>
                         </div>
+
                         <!-- Confirm Password -->
                         <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Konfirmasi Sandi</label>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Konfirmasi Sandi</label>
                             <div class="relative">
-                                <input type="password" id="asn_password_conf" name="password_confirmation" required placeholder="Ulangi kata sandi"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-4 pr-10 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                                <button type="button" onclick="togglePassword('asn_password_conf', 'asn_eye_conf')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#071E3D]">
-                                    <i id="asn_eye_conf" class="fa-regular fa-eye-slash text-[13px]"></i>
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fa-solid fa-shield-check text-[13px]"></i>
+                                </div>
+                                <input type="password" id="password_conf" name="password_confirmation" required placeholder="Ulangi kata sandi"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-10 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
+                                <button type="button" onclick="togglePassword('password_conf', 'eye_conf')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyan-600 focus:outline-none p-1 transition-colors">
+                                    <i id="eye_conf" class="fa-regular fa-eye-slash text-[13px]"></i>
                                 </button>
                             </div>
                         </div>
+
                     </div>
 
-                    <button type="submit" class="w-full mt-2 bg-[#071E3D] hover:bg-[#1F4287] text-white font-bold rounded-[14px] py-4 text-[14px] transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.2)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.3)] transform hover:-translate-y-0.5">
-                        Kirim Pendaftaran ASN
-                    </button>
-                </form>
-
-                <!-- ================== FORM INSTANSI ================== -->
-                <form id="form-instansi" action="{{ route('register') }}" method="POST" class="space-y-4 hidden">
-                    @csrf
-                    <input type="hidden" name="role" value="instansi">
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Nama Instansi -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Nama Instansi / Desa</label>
-                            <input type="text" name="instansi_name" required value="{{ old('instansi_name') }}" placeholder="Cth: Desa Panggong"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
-                        <!-- Email Instansi -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Email Instansi</label>
-                            <input type="email" name="email" required value="{{ old('email') }}" placeholder="instansi@desa.go.id"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
-                        <!-- Nama PIC -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Penanggung Jawab (PIC)</label>
-                            <input type="text" name="pic_name" required value="{{ old('pic_name') }}" placeholder="Nama pengelola akun"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
-                        <!-- Jabatan PIC -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Jabatan PIC</label>
-                            <input type="text" name="pic_jabatan" required value="{{ old('pic_jabatan') }}" placeholder="Cth: Sekretaris Desa"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
-                        <!-- No HP -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Nomor HP / WhatsApp</label>
-                            <input type="text" name="phone" required value="{{ old('phone') }}" placeholder="08xxxxxxxxx"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
-                        <!-- Alamat -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Alamat Instansi</label>
-                            <input type="text" name="alamat" required value="{{ old('alamat') }}" placeholder="Alamat lengkap instansi"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                        </div>
-                        <!-- Password -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Kata Sandi</label>
-                            <div class="relative">
-                                <input type="password" id="ins_password" name="password" required placeholder="Minimal 8 karakter"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-4 pr-10 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                                <button type="button" onclick="togglePassword('ins_password', 'ins_eye')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#071E3D]">
-                                    <i id="ins_eye" class="fa-regular fa-eye-slash text-[13px]"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Confirm Password -->
-                        <div>
-                            <label class="block text-[12px] font-bold text-[#071E3D] mb-1.5 ml-1">Konfirmasi Sandi</label>
-                            <div class="relative">
-                                <input type="password" id="ins_password_conf" name="password_confirmation" required placeholder="Ulangi kata sandi"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-4 pr-10 py-3.5 text-[13px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-50 outline-none transition-all">
-                                <button type="button" onclick="togglePassword('ins_password_conf', 'ins_eye_conf')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#071E3D]">
-                                    <i id="ins_eye_conf" class="fa-regular fa-eye-slash text-[13px]"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full mt-2 bg-[#071E3D] hover:bg-[#1F4287] text-white font-bold rounded-[14px] py-4 text-[14px] transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.2)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.3)] transform hover:-translate-y-0.5">
-                        Kirim Pendaftaran Instansi
+                    <!-- Tombol Submit -->
+                    <button type="submit" class="w-full mt-6 bg-[#071E3D] hover:bg-[#1F4287] text-white font-extrabold rounded-xl py-4 text-[14px] tracking-wide transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.15)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.25)] transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
+                        Daftar Akun Sekarang
+                        <i class="fa-solid fa-arrow-right text-[12px] group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </form>
 
                 <!-- Link Kembali ke Login -->
-                <div class="mt-8 pt-4 border-t border-gray-100 flex flex-col items-center gap-3">
+                <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col items-center gap-3">
                     <p class="text-[13px] text-gray-500 font-medium">
                         Sudah memiliki akun? 
-                        <a href="{{ route('login') }}" class="text-[#278EA5] hover:text-[#071E3D] font-bold underline decoration-2 underline-offset-4 transition-colors ml-1">
+                        <a href="{{ route('login') }}" class="text-cyan-600 hover:text-[#071E3D] font-extrabold underline decoration-2 underline-offset-4 transition-colors ml-1">
                             Masuk Disini
                         </a>
                     </p>
-                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[13px] font-bold text-gray-400 hover:text-[#278EA5] transition-colors mt-2">
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[12px] font-bold text-gray-400 hover:text-[#071E3D] transition-colors mt-2">
                         <i class="fa-solid fa-arrow-left-long"></i> Kembali ke Beranda
                     </a>
                 </div>
@@ -270,9 +245,8 @@
 
     </div>
 
-    <!-- SCRIPT INTERAKTIF -->
+    <!-- SCRIPT INTERAKTIF (Hanya untuk Tampil/Sembunyi Password) -->
     <script>
-        // Logika Toggle Mata Password Dinamis
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -284,29 +258,6 @@
                 input.type = 'password';
                 icon.classList.remove('fa-eye');
                 icon.classList.add('fa-eye-slash');
-            }
-        }
-
-        // Logika Pergantian Form Sesuai Tab
-        function setRegType(type) {
-            const tabAsn = document.getElementById('tab-asn');
-            const tabInstansi = document.getElementById('tab-instansi');
-            const formAsn = document.getElementById('form-asn');
-            const formInstansi = document.getElementById('form-instansi');
-
-            const activeClass = 'flex-1 py-3 text-[13px] font-bold rounded-xl bg-white text-[#071E3D] shadow-sm transition-all duration-300';
-            const inactiveClass = 'flex-1 py-3 text-[13px] font-bold rounded-xl text-gray-400 hover:text-[#071E3D] transition-all duration-300';
-
-            if (type === 'asn') {
-                tabAsn.className = activeClass;
-                tabInstansi.className = inactiveClass;
-                formAsn.classList.remove('hidden');
-                formInstansi.classList.add('hidden');
-            } else {
-                tabInstansi.className = activeClass;
-                tabAsn.className = inactiveClass;
-                formInstansi.classList.remove('hidden');
-                formAsn.classList.add('hidden');
             }
         }
     </script>

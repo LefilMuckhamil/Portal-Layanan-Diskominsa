@@ -2,33 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // 1. login
     public function authenticate(Request $request)
     {
         $request->validate([
-            'email'      => ['required', 'email'],
-            'password'   => ['required'],
-            'tipe_login' => ['required'], 
+            'email'    => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-
-            if ($user->role !== 'admin' && $user->role !== $request->tipe_login) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return back()->withErrors([
-                    'email' => 'Akses ditolak. Anda terdaftar sebagai ' . ucfirst($user->role) . '.',
-                ])->onlyInput('email');
-            }
-
+            
             $request->session()->regenerate();
+            $user = Auth::user();
 
             return $user->role === 'admin' 
                 ? redirect()->intended('/admin/dashboard') 
@@ -38,6 +30,52 @@ class AuthController extends Controller
         return back()->withErrors([
             'email' => 'Maaf, Email atau Password Anda salah.',
         ])->onlyInput('email');
+    }
+
+    // 2. proses register
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name'       => ['required', 'string', 'max:255'],
+            'unit_kerja' => ['required', 'string', 'max:255'],
+            'jabatan'    => ['required', 'string', 'max:255'],
+            'phone'      => ['required', 'string', 'max:20'],
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+            
+            'nip' => [
+                'required', 
+                'string', 
+                'size:18', 
+                'unique:users,nip' 
+            ],
+            
+            'email' => [
+                'required', 
+                'string', 
+                'email', 
+                'max:255', 
+                'unique:users,email', 
+                'ends_with:@acehbaratkab.go.id'
+            ],
+        ], [
+            'email.ends_with'    => 'Pendaftaran wajib menggunakan email resmi @acehbaratkab.go.id.',
+            'email.unique'       => 'Email ini sudah terdaftar di sistem.',
+            'nip.unique'         => 'NIP ini sudah terdaftar. Silakan gunakan NIP Anda yang sebenarnya.',
+            'nip.size'           => 'NIP harus berjumlah tepat 18 digit.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.'
+        ]);
+
+        User::create([
+            'name'       => $request->name,
+            'nip'        => $request->nip,
+            'unit_kerja' => $request->unit_kerja,
+            'jabatan'    => $request->jabatan,
+            'phone'      => $request->phone,
+            'email'      => $request->email,
+            'password'   => Hash::make($request->password),
+            'role'       => 'asn', 
+        ]);
+        return redirect()->route('login')->with('sukses', 'Akun berhasil didaftarkan! Silakan masuk menggunakan email dan kata sandi Anda.');
     }
 
     public function logout(Request $request)
