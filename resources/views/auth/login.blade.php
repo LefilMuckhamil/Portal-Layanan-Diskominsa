@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Portal Layanan Diskominsa') }} - Masuk</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Google & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -47,7 +50,7 @@
 
         <!-- Bagian Kanan: Form Login -->
         <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-8 py-10 lg:py-12 bg-white rounded-[2rem]">
-            <div class="w-full max-w-[360px] mx-auto">
+            <div class="w-full max-w-[380px] mx-auto">
                 
                 <!-- Header -->
                 <div class="flex flex-col items-center mb-10">
@@ -55,50 +58,49 @@
                         <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo" class="h-24 md:h-28 w-auto object-contain drop-shadow-sm">
                     </div>
                     <h2 class="text-3xl font-extrabold text-[#071E3D] mb-2 tracking-tight">Selamat Datang</h2>
-                    <p class="text-[14px] text-gray-500 font-medium">Pilih jenis akun untuk melanjutkan</p>
+                    <p class="text-[14px] text-gray-500 font-medium text-center">Silakan masuk menggunakan email resmi Anda</p>
                 </div>
 
                 <!-- Notifikasi Pesan -->
-                @if (session('status'))
-                    <div class="mb-6 p-3 bg-green-50 text-green-600 text-sm rounded-xl text-center font-medium">
-                        {{ session('status') }}
+                @if (session('sukses'))
+                    <div class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 text-[13px] rounded-2xl font-bold flex items-center gap-3 shadow-sm">
+                        <i class="fa-solid fa-circle-check text-lg"></i> {{ session('sukses') }}
                     </div>
                 @endif
                 
                 @if ($errors->any())
-                    <div class="mb-6 p-3 bg-red-50 border border-red-100 text-red-500 text-[13px] rounded-xl text-center font-bold flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-exclamation"></i> {{ $errors->first('email') }}
+                    <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-500 text-[13px] rounded-2xl font-bold flex items-center gap-3 shadow-sm">
+                        <i class="fa-solid fa-circle-exclamation text-lg"></i> {{ $errors->first('email') }}
                     </div>
                 @endif
-
-                <!-- Tab Pilihan Akun -->
-                <div class="flex bg-gray-100 p-1.5 rounded-[16px] mb-8">
-                    <button type="button" id="tab-asn" onclick="setLoginType('asn')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300">Akun ASN</button>
-                    <button type="button" id="tab-instansi" onclick="setLoginType('instansi')" class="flex-1 py-3.5 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300">Akun Instansi</button>
-                </div>
 
                 <!-- Form Utama -->
                 <form action="{{ url('/login') }}" method="POST" class="space-y-5">
                     @csrf
                     
-                    <!-- Penanda Tipe Login (Wajib sama dengan Controller) -->
-                    <input type="hidden" name="tipe_login" id="form-role" value="asn">
-                    
                     <!-- Input Email -->
                     <div>
-                        <label id="label-identifier" class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email</label>
-                        <input type="email" id="input-identifier" name="email" required value="{{ old('email') }}" placeholder="Masukkan Email"
-                            class="w-full bg-gray-50 border border-gray-100 rounded-[14px] px-5 py-4 text-[14px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all duration-300">
+                        <label class="block text-[13px] font-bold text-gray-600 mb-2 ml-1">Email (@acehbaratkab.go.id)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400">
+                                <i class="fa-regular fa-envelope text-[14px]"></i>
+                            </div>
+                            <input type="email" name="email" required value="{{ old('email') }}" placeholder="nama@acehbaratkab.go.id"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-5 py-4 text-[14px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all duration-300">
+                        </div>
                     </div>
 
                     <!-- Input Password -->
                     <div>
-                        <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Kata Sandi</label>
+                        <label class="block text-[13px] font-bold text-gray-600 mb-2 ml-1">Kata Sandi</label>
                         <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-gray-400">
+                                <i class="fa-solid fa-lock text-[14px]"></i>
+                            </div>
                             <input type="password" id="password" name="password" required placeholder="••••••••"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-[14px] pl-5 pr-12 py-4 text-[14px] text-[#071E3D] font-medium placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all duration-300">
+                                class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-12 py-4 text-[14px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all duration-300">
                             
-                            <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#071E3D] p-2 transition-colors">
+                            <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cyan-600 p-2 transition-colors focus:outline-none">
                                 <i id="eye-icon" class="fa-regular fa-eye-slash text-[15px]"></i>
                             </button>
                         </div>
@@ -106,27 +108,28 @@
 
                     <!-- Lupa Sandi -->
                     <div class="flex justify-end pt-1 pb-2">
-                        <a href="{{ route('password.request') ?? '#' }}" class="text-[12px] font-semibold text-gray-400 hover:text-[#071E3D] transition-colors">
+                        <a href="{{ route('password.request') ?? '#' }}" class="text-[13px] font-bold text-gray-400 hover:text-[#071E3D] transition-colors">
                             Lupa kata sandi?
                         </a>
                     </div>
 
                     <!-- Tombol Masuk -->
-                    <button type="submit" class="w-full bg-[#071E3D] hover:bg-[#1F4287] text-white font-bold rounded-[14px] py-4 text-[15px] transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.2)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.3)] transform hover:-translate-y-0.5">
-                        Masuk
+                    <button type="submit" class="w-full bg-[#071E3D] hover:bg-[#1F4287] text-white font-extrabold rounded-2xl py-4 text-[15px] tracking-wide transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.15)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.25)] transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
+                        Masuk Sekarang
+                        <i class="fa-solid fa-arrow-right text-[13px] group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </form>
 
-                <!-- Link Navigasi Bawah -->
+                <!-- Link Registrasi -->
                 <p class="text-center text-[13px] text-gray-500 font-medium mt-8">
                     Belum punya akun? 
-                    <a href="{{ route('register') ?? '#' }}" class="text-[#278EA5] hover:text-[#071E3D] font-bold underline decoration-2 underline-offset-4 transition-colors ml-1">
+                    <a href="{{ route('register') ?? '#' }}" class="text-cyan-600 hover:text-[#071E3D] font-extrabold underline decoration-2 underline-offset-4 transition-colors ml-1">
                         Daftar Disini
                     </a>
                 </p>
 
                 <div class="mt-6 pt-5 border-t border-gray-100 text-center">
-                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[13px] font-bold text-gray-400 hover:text-[#278EA5] transition-colors">
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-2 text-[13px] font-bold text-gray-400 hover:text-[#071E3D] transition-colors">
                         <i class="fa-solid fa-arrow-left-long"></i> Kembali ke Beranda
                     </a>
                 </div>
@@ -136,7 +139,7 @@
 
     </div>
 
-    <!-- Script Interaktif -->
+    <!-- Script Tampil/Sembunyi Password -->
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
@@ -147,33 +150,6 @@
             } else {
                 passwordInput.type = 'password';
                 eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
-            }
-        }
-
-        function setLoginType(type) {
-            const tabAsn = document.getElementById('tab-asn');
-            const tabInstansi = document.getElementById('tab-instansi');
-            const input = document.getElementById('input-identifier');
-            const label = document.getElementById('label-identifier');
-            const formRole = document.getElementById('form-role');
-
-            const activeClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-[12px] bg-white text-[#071E3D] shadow-sm transition-all duration-300';
-            const inactiveClass = 'flex-1 py-3.5 text-[13px] font-bold rounded-[12px] text-gray-400 hover:text-[#071E3D] transition-all duration-300';
-
-            if (type === 'asn') {
-                tabAsn.className = activeClass;
-                tabInstansi.className = inactiveClass;
-                
-                label.innerText = 'Email';
-                input.placeholder = 'Masukkan Email';
-                formRole.value = 'asn'; 
-            } else {
-                tabInstansi.className = activeClass;
-                tabAsn.className = inactiveClass;
-                
-                label.innerText = 'Email Instansi';
-                input.placeholder = 'nama@instansi.go.id';
-                formRole.value = 'instansi'; 
             }
         }
     </script>
