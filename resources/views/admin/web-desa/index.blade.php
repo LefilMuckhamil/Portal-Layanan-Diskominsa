@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('header_title', 'Manajemen Web Desa & Pesantren')
+@section('header_title', 'Manajemen Website')
 @section('header_subtitle', 'Kelola permohonan, verifikasi berkas, dan pantau progres pembuatan website.')
 
 @section('content')
@@ -42,7 +42,7 @@
                     <i class="fa-solid fa-code"></i>
                 </div>
             </div>
-            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Proses Develop</p>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Proses Development</p>
             <div class="flex items-end gap-2 mt-1">
                 <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $proses ?? 0 }}</h3>
                 <span class="text-[10px] font-bold text-blue-500 mb-1">Dikerjakan</span>
@@ -70,7 +70,7 @@
                     <i class="fa-solid fa-circle-xmark"></i>
                 </div>
             </div>
-            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Ajuan Ditolak</p>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Ditolak</p>
             <div class="flex items-end gap-2 mt-1">
                 <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $ditolak ?? 0 }}</h3>
                 <span class="text-[10px] font-bold text-rose-500 mb-1">Dibatalkan</span>
@@ -99,7 +99,7 @@
                 <form method="GET" action="{{ route('admin.web-desa.index') }}" class="flex gap-3">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pemohon/desa..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket/Pemohon..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
                     </div>
                     <div class="relative">
                         <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
@@ -126,7 +126,7 @@
                 <thead class="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
                     <tr>
                         <th class="py-3 px-6">Id Permohonan</th>
-                        <th class="py-3 px-6">Nama</th>
+                        <th class="py-3 px-6">Nama </th>
                         <th class="py-3 px-6">Tgl Masuk</th>
                         <th class="py-3 px-6">Status</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
@@ -180,16 +180,39 @@
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </button>
 
-                            <!-- DELETE: Hapus Data -->
-                            <form action="{{ route('admin.pengajuan.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data permohonan ini secara permanen?')">
+                            <!-- DELETE: Tombol pemicu Modal Delete -->
+                            <form id="form-delete-{{ $item->id }}" action="{{ route('admin.pengajuan.destroy', $item->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Hapus Permanen">
+                                <button type="button" onclick="bukaModalDelete('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Hapus Permanen">
                                     <i class="fa-solid fa-trash-can text-xs"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
+
+                    <!-- ======================================================= -->
+                    <!-- MODAL 3: KONFIRMASI HAPUS PERMANEN (BARU) -->
+                    <!-- ======================================================= -->
+                    <div id="modal-delete-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
+                        <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalDelete('{{ $item->id }}')"></div>
+                        
+                        <div class="relative bg-white rounded-[2rem] p-8 max-w-sm w-full mx-4 shadow-2xl text-center">
+                            <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-5 border-4 border-white shadow-md">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Permohonan?</h3>
+                            <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">
+                                Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data permohonan <b class="text-[#071E3D]">#REQ-{{ strtoupper(substr($item->id, -5)) }}</b> secara permanen?
+                            </p>
+                            
+                            <div class="flex gap-3">
+                                <button type="button" onclick="tutupModalDelete('{{ $item->id }}')" class="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
+                                <!-- Tombol ini men-submit form delete secara Javascript -->
+                                <button type="button" onclick="document.getElementById('form-delete-{{ $item->id }}').submit()" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-500 hover:bg-rose-600 transition-colors shadow-lg shadow-rose-500/20">Ya, Hapus!</button>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Modal Info Pemohon (Disembunyikan) -->
                     <div id="modal-info-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
@@ -265,7 +288,7 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-[12px] font-bold text-gray-600 mb-2">Catatan Progres (Opsional)</label>
+                                        <label class="block text-[12px] font-bold text-gray-600 mb-2">Catatan Progres</label>
                                         <textarea name="catatan" rows="2" placeholder="Tuliskan catatan progres yang akan muncul di E-Tracking pemohon..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-cyan-400 resize-none"></textarea>
                                     </div>
                                 </div>
@@ -396,6 +419,18 @@
             const modalInfo = document.getElementById('modal-info-' + id);
             modalInfo.classList.add('hidden');
             modalInfo.classList.remove('flex');
+        }
+        
+        // Modal Delete (Tong Sampah)
+        function bukaModalDelete(id) {
+            const modalDelete = document.getElementById('modal-delete-' + id);
+            modalDelete.classList.remove('hidden');
+            modalDelete.classList.add('flex');
+        }
+        function tutupModalDelete(id) {
+            const modalDelete = document.getElementById('modal-delete-' + id);
+            modalDelete.classList.add('hidden');
+            modalDelete.classList.remove('flex');
         }
     </script>
     

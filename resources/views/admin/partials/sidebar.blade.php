@@ -22,7 +22,7 @@
             <i class="fa-solid fa-laptop-code w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">
                 <span class="text-[13px]">Teknis & Digital</span>
-                <span class="text-[10px] text-gray-400">Website Desa & Pesantren</span>
+                <span class="text-[10px] text-gray-400">Website</span>
             </div>
         </a>
 
@@ -30,19 +30,22 @@
             <i class="fa-solid fa-envelope-circle-check w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">
                 <span class="text-[13px]">Email Resmi</span>
-                <span class="text-[10px] text-gray-400">Akun ASN & Instansi</span>
+                <span class="text-[10px] text-gray-400">Asn & Instansi</span>
             </div>
         </a>
 
         <a href="{{ route('admin.tte.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all duration-300 group hover:translate-x-1">
             <i class="fa-solid fa-file-signature w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
-            <span class="text-[13px]">Layanan TTE</span>
+            <div class="flex flex-col leading-tight">
+                <span class="text-[13px]">Layanan TTE</span>
+                <span class="text-[10px] text-gray-400">Tanda Tangan Elektronik</span>
+            </div>
         </a>
 
         <a href="{{ route('admin.cloud.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all duration-300 group hover:translate-x-1">
          <i class="fa-solid fa-cloud-arrow-up w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">
-                <span class="text-[13px]">Cloud Gov</span>
+                <span class="text-[13px]">Cloud Goverment</span>
                <span class="text-[10px] text-gray-400">Penyimpanan Instansi</span>
             </div>
         </a>
