@@ -67,3 +67,19 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         Route::put('/{id}/update', [AdminPengajuanController::class, 'updateProgres'])->name('admin.pengajuan.update');
     });
 });
+
+Route::get('/admin/dashboard', function () {
+        // Ambil jumlah masing-masing layanan
+        $countWeb     = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa')->count();
+        $countEmail   = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
+        $countTTE     = \App\Models\Pengajuan::where('jenis_layanan', 'Layanan TTE')->count();
+        $countCloud   = \App\Models\Pengajuan::where('jenis_layanan', 'Cloud Government')->count();
+        $countBantuan = \App\Models\Pengajuan::where('jenis_layanan', 'Reset Password / OTP')->count();
+
+        // Ambil semua data permohonan terbaru untuk tabel
+        $pengajuans = \App\Models\Pengajuan::latest()->get();
+
+        return view('admin.dashboard', compact(
+            'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan', 'pengajuans'
+        )); 
+    })->name('admin.dashboard');
