@@ -4,88 +4,120 @@
 @section('header_subtitle', 'Kelola permohonan, verifikasi berkas, dan pantau progres pembuatan website.')
 
 @section('content')
-    <!-- Deretan Kartu Statistik Khusus Web -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Kartu 1 -->
-        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-xl">
+    <!-- Deretan Kartu Statistik Dinamis -->
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+        
+        <!-- Kartu 1: Total -->
+        <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-lg">
                     <i class="fa-solid fa-laptop-code"></i>
                 </div>
             </div>
-            <p class="text-[12px] font-bold text-gray-400 uppercase tracking-wide">Total Permohonan</p>
-            <div class="flex items-end gap-3 mt-1">
-                <h3 class="text-3xl font-extrabold text-[#071E3D]">45</h3>
-                <span class="text-[12px] font-bold text-indigo-500 mb-1">Unit Web</span>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Total Permohonan</p>
+            <div class="flex items-end gap-2 mt-1">
+                <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $total ?? 0 }}</h3>
+                <span class="text-[10px] font-bold text-indigo-500 mb-1">Unit Web</span>
             </div>
         </div>
 
-        <!-- Kartu 2 -->
-        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl">
+        <!-- Kartu 2: Menunggu -->
+        <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-lg">
                     <i class="fa-solid fa-file-circle-exclamation"></i>
                 </div>
             </div>
-            <p class="text-[12px] font-bold text-gray-400 uppercase tracking-wide">Menunggu Verifikasi</p>
-            <div class="flex items-end gap-3 mt-1">
-                <h3 class="text-3xl font-extrabold text-[#071E3D]">8</h3>
-                <span class="text-[12px] font-bold text-amber-500 mb-1">Permohonan</span>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Menunggu Verif</p>
+            <div class="flex items-end gap-2 mt-1">
+                <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pending ?? 0 }}</h3>
+                <span class="text-[10px] font-bold text-amber-500 mb-1">Permohonan</span>
             </div>
         </div>
 
-        <!-- Kartu 3 -->
-        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl">
+        <!-- Kartu 3: Proses -->
+        <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-lg">
                     <i class="fa-solid fa-code"></i>
                 </div>
             </div>
-            <p class="text-[12px] font-bold text-gray-400 uppercase tracking-wide">Proses Development</p>
-            <div class="flex items-end gap-3 mt-1">
-                <h3 class="text-3xl font-extrabold text-[#071E3D]">12</h3>
-                <span class="text-[12px] font-bold text-blue-500 mb-1">Sedang dikerjakan</span>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Proses Develop</p>
+            <div class="flex items-end gap-2 mt-1">
+                <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $proses ?? 0 }}</h3>
+                <span class="text-[10px] font-bold text-blue-500 mb-1">Dikerjakan</span>
             </div>
         </div>
 
-        <!-- Kartu 4 -->
-        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-            <div class="flex justify-between items-start mb-4">
-                <div class="w-12 h-12 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center text-xl">
+        <!-- Kartu 4: Selesai -->
+        <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-11 h-11 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center text-lg">
                     <i class="fa-solid fa-check-circle"></i>
                 </div>
             </div>
-            <p class="text-[12px] font-bold text-gray-400 uppercase tracking-wide">Selesai / Online</p>
-            <div class="flex items-end gap-3 mt-1">
-                <h3 class="text-3xl font-extrabold text-[#071E3D]">25</h3>
-                <span class="text-[12px] font-bold text-green-500 mb-1">Web Aktif</span>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Selesai</p>
+            <div class="flex items-end gap-2 mt-1">
+                <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $selesai ?? 0 }}</h3>
+                <span class="text-[10px] font-bold text-green-500 mb-1">Web Aktif</span>
+            </div>
+        </div>
+
+        <!-- Kartu 5: Ditolak -->
+        <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+            </div>
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Ajuan Ditolak</p>
+            <div class="flex items-end gap-2 mt-1">
+                <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $ditolak ?? 0 }}</h3>
+                <span class="text-[10px] font-bold text-rose-500 mb-1">Dibatalkan</span>
             </div>
         </div>
     </div>
 
     <!-- Tabel Daftar Permohonan Web Desa -->
     <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
+        
+        <!-- Notifikasi -->
+        @if(session('sukses'))
+            <div class="bg-green-50 text-green-600 px-6 py-3 border-b border-green-100 text-[13px] font-bold flex items-center gap-2">
+                <i class="fa-solid fa-check-circle"></i> {{ session('sukses') }}
+            </div>
+        @endif
+
         <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Ajuan Website</h3>
                 <p class="text-[12px] text-gray-400 font-medium mt-1">Kelola data dan perbarui status progres pembuatan website.</p>
             </div>
             
-            <div class="flex gap-3">
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
-                    <input type="text" placeholder="Cari permohonan..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
-                </div>
-                <div class="relative">
-                    <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
-                    <select class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none cursor-pointer">
-                        <option value="">Semua Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="verifikasi">Verifikasi Dokumen</option>
-                        <option value="proses">Proses Development</option>
-                        <option value="selesai">Selesai / Online</option>
-                    </select>
-                </div>
+            <!-- FORM PENCARIAN, FILTER & TOMBOL CREATE -->
+            <div class="flex gap-3 items-center">
+                <form method="GET" action="{{ route('admin.web-desa.index') }}" class="flex gap-3">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pemohon/desa..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
+                        <select name="status" onchange="this.form.submit()" class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none cursor-pointer">
+                            <option value="">Semua Status</option>
+                            <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Verifikasi Doc" {{ request('status') == 'Verifikasi Doc' ? 'selected' : '' }}>Verifikasi Dokumen</option>
+                            <option value="Proses Development" {{ request('status') == 'Proses Development' ? 'selected' : '' }}>Proses Development</option>
+                            <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        </select>
+                    </div>
+                </form>
+
+                <!-- Tombol CREATE -->
+                <button type="button" onclick="bukaModalCreate()" class="px-4 py-2 bg-[#071E3D] hover:bg-[#1F4287] text-white text-[12px] font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tambah Ajuan
+                </button>
             </div>
         </div>
 
@@ -93,10 +125,10 @@
             <table class="w-full text-left border-collapse min-w-[900px]">
                 <thead class="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
                     <tr>
-                        <th class="py-3 px-6">ID Ajuan</th>
-                        <th class="py-3 px-6">Layanan / Instansi</th>
+                        <th class="py-3 px-6">Id Permohonan</th>
+                        <th class="py-3 px-6">Nama</th>
                         <th class="py-3 px-6">Tgl Masuk</th>
-                        <th class="py-3 px-6">Status Terkini</th>
+                        <th class="py-3 px-6">Status</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -137,20 +169,70 @@
                                 {{ $item->status }}
                             </span>
                         </td>
-                        <td class="py-4 px-6 text-center space-x-1">
-                            <!-- Tombol ini sekarang memanggil ID spesifik modalnya -->
-                            <button type="button" onclick="bukaModalAdmin('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-cyan-50 hover:text-cyan-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Kelola & Balas Pesan">
+                        <td class="py-4 px-6 text-center space-x-1 whitespace-nowrap">
+                            <!-- READ: Detail User -->
+                            <button type="button" onclick="bukaModalInfo('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Lihat Profil Pemohon">
+                                <i class="fa-regular fa-address-card text-xs"></i>
+                            </button>
+                            
+                            <!-- UPDATE: Kelola Status & Chat -->
+                            <button type="button" onclick="bukaModalAdmin('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-cyan-50 hover:text-cyan-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Kelola Progres & Pesan">
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </button>
+
+                            <!-- DELETE: Hapus Data -->
+                            <form action="{{ route('admin.pengajuan.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data permohonan ini secara permanen?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Hapus Permanen">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
 
-                    <!-- ======================================================= -->
-                    <!-- MODAL KHUSUS UNTUK SETIAP ITEM (Di dalam perulangan) -->
-                    <!-- ======================================================= -->
+                    <!-- Modal Info Pemohon (Disembunyikan) -->
+                    <div id="modal-info-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
+                        <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalInfo('{{ $item->id }}')"></div>
+                        <div class="relative bg-white rounded-[2rem] p-8 max-w-md w-full mx-4 shadow-2xl">
+                            <div class="absolute top-6 right-6">
+                                <button onclick="tutupModalInfo('{{ $item->id }}')" class="text-gray-400 hover:text-rose-500 transition-colors">
+                                    <i class="fa-solid fa-xmark text-xl"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="flex flex-col items-center text-center mb-6">
+                                <div class="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center text-3xl mb-4 border-4 border-white shadow-md">
+                                    <i class="fa-regular fa-user"></i>
+                                </div>
+                                <h3 class="text-xl font-extrabold text-[#071E3D]">{{ $item->user->name ?? '-' }}</h3>
+                                <p class="text-[12px] text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full mt-2">NIP: {{ $item->user->nip ?? 'Tidak ada' }}</p>
+                            </div>
+                            
+                            <div class="space-y-4 bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Asal Instansi / Desa</p>
+                                    <p class="text-[13px] font-bold text-[#071E3D]">{{ $item->user->unit_kerja ?? '-' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Jabatan Pemohon</p>
+                                    <p class="text-[13px] font-bold text-[#071E3D]">{{ $item->user->jabatan ?? '-' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Nomor HP / WhatsApp</p>
+                                    <p class="text-[13px] font-bold text-[#071E3D]"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $item->user->phone ?? '-' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email Resmi</p>
+                                    <p class="text-[13px] font-bold text-[#071E3D]">{{ $item->user->email ?? '-' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Kelola Status (Disembunyikan) -->
                     <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
                         <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalAdmin('{{ $item->id }}')"></div>
-                        
                         <div class="relative bg-white rounded-[2rem] p-8 max-w-xl w-full mx-4 shadow-2xl overflow-y-auto max-h-[95vh] custom-scrollbar">
                             <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
                                 <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center text-xl">
@@ -166,7 +248,6 @@
                                 @csrf
                                 @method('PUT')
                                 
-                                <!-- BAGIAN 1: STATUS & TIMELINE -->
                                 <div class="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl mb-5">
                                     <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2">
                                         <i class="fa-solid fa-bars-progress text-cyan-500"></i> 1. Update Timeline Progres
@@ -179,7 +260,7 @@
                                             <option value="Verifikasi Doc" {{ $item->status == 'Verifikasi Doc' ? 'selected' : '' }}>VERIFIKASI DOC</option>
                                             <option value="Proses Development" {{ $item->status == 'Proses Development' ? 'selected' : '' }}>PROSES DEVELOPMENT</option>
                                             <option value="Ditolak" {{ $item->status == 'Ditolak' ? 'selected' : '' }}>DITOLAK</option>
-                                            <option value="Selesai" {{ $item->status == 'Selesai' ? 'selected' : '' }}>SELESAI / ONLINE</option>
+                                            <option value="Selesai" {{ $item->status == 'Selesai' ? 'selected' : '' }}>SELESAI</option>
                                         </select>
                                     </div>
 
@@ -189,13 +270,11 @@
                                     </div>
                                 </div>
 
-                                <!-- BAGIAN 2: RIWAYAT CHAT & BALAS PESAN -->
                                 <div class="bg-blue-50/30 border border-blue-100 p-5 rounded-2xl mb-8">
                                     <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2">
                                         <i class="fa-regular fa-comments text-blue-500"></i> 2. Riwayat Diskusi / Chat
                                     </h4>
                                     
-                                    <!-- Kotak Menampilkan Riwayat Pesan -->
                                     <div class="bg-white border border-blue-100 rounded-xl p-4 mb-4 h-48 overflow-y-auto space-y-3 custom-scrollbar">
                                         @if(!empty($item->pesan) && is_array($item->pesan))
                                             @foreach($item->pesan as $chat)
@@ -214,13 +293,11 @@
                                         @endif
                                     </div>
 
-                                    <!-- Kolom Balas Pesan -->
                                     <div>
                                         <textarea name="pesan" rows="2" placeholder="Ketik pesan balasan atau pertanyaan kepada pemohon di sini..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
                                     </div>
                                 </div>
 
-                                <!-- TOMBOL AKSI -->
                                 <div class="flex gap-3">
                                     <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
                                     <button type="submit" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-[#071E3D] hover:bg-[#1F4287] transition-colors shadow-lg shadow-blue-900/20">Simpan Perubahan</button>
@@ -228,7 +305,6 @@
                             </form>
                         </div>
                     </div>
-                    <!-- Akhir Modal -->
                     
                     @empty
                     <tr>
@@ -236,7 +312,7 @@
                             <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <i class="fa-solid fa-folder-open text-2xl text-gray-300"></i>
                             </div>
-                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada permohonan</h3>
+                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada data permohonan</h3>
                         </td>
                     </tr>
                     @endforelse
@@ -244,29 +320,85 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- MODAL CREATE: TAMBAH AJUAN MANUAL -->
+    <!-- ======================================================= -->
+    <div id="modal-create" class="fixed inset-0 z-[100] hidden items-center justify-center">
+        <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalCreate()"></div>
         
-        <!-- Pagination -->
-        <div class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30 text-[12px] font-medium text-gray-500">
-            <p>Menampilkan riwayat terbaru</p>
+        <div class="relative bg-white rounded-[2rem] p-8 max-w-lg w-full mx-4 shadow-2xl">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-extrabold text-[#071E3D]">Tambah Permohonan</h3>
+                    <p class="text-[12px] text-gray-500">Input ajuan Web Desa secara manual.</p>
+                </div>
+            </div>
+            
+            <form method="POST" action="{{ route('admin.pengajuan.storeWebDesa') }}">
+                @csrf
+                <div class="mb-6">
+                    <label class="block text-[12px] font-bold text-gray-600 mb-2">Pilih Nama / Instansi Pemohon (ASN)</label>
+                    <select name="user_id" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-bold focus:border-indigo-400 outline-none transition-colors">
+                        <option value="">-- Pilih ASN Terdaftar --</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->unit_kerja }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-[10px] text-gray-400 mt-2">*Pastikan pemohon sudah mendaftarkan akun di sistem.</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" onclick="tutupModalCreate()" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
+                    <button type="submit" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-900/20">Buat Permohonan</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <!-- SCRIPT PENGGERAK MODAL DINAMIS -->
     <script>
+        // Modal Create
+        function bukaModalCreate() {
+            const modal = document.getElementById('modal-create');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        function tutupModalCreate() {
+            const modal = document.getElementById('modal-create');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Modal Update (Pena)
         function bukaModalAdmin(id) {
             const modal = document.getElementById('modal-' + id);
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
-
         function tutupModalAdmin(id) {
             const modal = document.getElementById('modal-' + id);
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
+
+        // Modal Info (Identitas)
+        function bukaModalInfo(id) {
+            const modalInfo = document.getElementById('modal-info-' + id);
+            modalInfo.classList.remove('hidden');
+            modalInfo.classList.add('flex');
+        }
+        function tutupModalInfo(id) {
+            const modalInfo = document.getElementById('modal-info-' + id);
+            modalInfo.classList.add('hidden');
+            modalInfo.classList.remove('flex');
+        }
     </script>
     
-    <!-- CSS untuk Scrollbar -->
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }

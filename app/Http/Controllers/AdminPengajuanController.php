@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AdminPengajuanController extends Controller
 {
-    // 1. Menampilkan semua data pengajuan
     public function index()
     {
         $pengajuans = Pengajuan::latest()->get(); 
@@ -22,7 +22,6 @@ class AdminPengajuanController extends Controller
         return view('admin.pengajuan.detail', compact('pengajuan'));
     }
 
-    // 3. Fungsi Terpadu: Update Status, Timeline (Logs), dan Balas Chat
     public function updateProgres(Request $request, $id)
     {
         $request->validate([
@@ -32,11 +31,8 @@ class AdminPengajuanController extends Controller
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
-        
-        // Update status utama
         $pengajuan->status = $request->status;
 
-        // Jika admin mengisi catatan progres (Masuk ke E-Tracking User)
         if ($request->filled('catatan')) {
             $logs = $pengajuan->logs ?? [];
             $logs[] = [
@@ -47,7 +43,7 @@ class AdminPengajuanController extends Controller
             $pengajuan->logs = $logs;
         }
 
-        // Jika admin mengisi balasan chat (Masuk ke Panel Bantuan User)
+        // Jika admin mengisi balasan chat (Panel Bantuan User)
         if ($request->filled('pesan')) {
             $pesan = $pengajuan->pesan ?? [];
             $pesan[] = [
@@ -64,14 +60,58 @@ class AdminPengajuanController extends Controller
         return back()->with('sukses', 'Progres layanan dan pesan berhasil diperbarui!');
     }
 
-    // 4. Menampilkan halaman khusus tabel Web Desa
-    public function webDesa()
+    public function destroy($id)
     {
-        // Ambil data pengajuan yang JENIS LAYANAN-nya hanya "Pembuatan Web Desa"
-        $pengajuans = Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa')
-                        ->latest()
-                        ->get(); 
+        $pengajuan = Pengajuan::findOrFail($id);
+        $pengajuan->delete();
+
+        return back()->with('sukses', 'Data permohonan berhasil dihapus permanen.');
+    }
+
+    public function webDesa(Request $request)
+    {
+        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa')->with('user');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('unit_kerja', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->get(); 
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa');
+        
+        $total   = (clone $baseQuery)->count();
+        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
+        $proses  = (clone $baseQuery)->where('status', 'Proses Development')->count();
+        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+        
+        $users = User::where('role', 'asn')->get();
                         
-        return view('admin.web-desa.index', compact('pengajuans'));
+        return view('admin.web-desa.index', compact(
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+        ));
+    }
+
+    public function storeWebDesa(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        Pengajuan::create([
+            'user_id'       => $request->user_id,
+            'jenis_layanan' => 'Pembuatan Web Desa',
+            'status'        => 'Pending',
+        ]);
+
+        return back()->with('sukses', 'Permohonan baru berhasil ditambahkan secara manual.');
     }
 }
