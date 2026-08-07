@@ -35,24 +35,13 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 selection:bg-cyan-300 selection:text-[#071E3D]">
 
-    <!-- KONTENER KARTU UTAMA -->
     <div class="bg-white w-full max-w-[1150px] rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] p-3 sm:p-4 md:p-5 flex flex-col md:flex-row gap-6 h-auto md:h-[750px]">
-
-        <!-- SISI KIRI: Banner dengan Background Foto Instansi -->
-        <div class="hidden md:flex w-full md:w-5/12 rounded-4xl p-8 lg:p-12 flex-col relative overflow-hidden group">
-            
-            <!-- Foto Background -->
-            <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
-            
-            <!-- Overlay Gradient Biru Gelap -->
-            <div class="absolute inset-0 bg-gradient-to-br from-[#071E3D]/95 via-[#071E3D]/85 to-[#1F4287]/90 mix-blend-multiply"></div>
-            <div class="absolute inset-0 bg-[#071E3D]/50"></div>
-
-            <!-- Ornamen Cahaya -->
-            <div class="absolute -top-20 -left-20 w-64 h-64 bg-cyan-400 rounded-full mix-blend-screen filter blur-[80px] opacity-20 pointer-events-none"></div>
-
-            <!-- Konten Teks di Atas Foto -->
-            <div class="relative z-10 flex flex-col h-full justify-center pb-10">
+        <div class="hidden md:flex w-full md:w-5/12 rounded-4xl p-8 lg:p-12 flex-col relative overflow-hidden group">    
+            <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">     
+              <div class="absolute inset-0 bg-gradient-to-br from-[#071E3D]/95 via-[#071E3D]/85 to-[#1F4287]/90 mix-blend-multiply"></div>
+                <div class="absolute inset-0 bg-[#071E3D]/50"></div>
+                     <div class="absolute -top-20 -left-20 w-64 h-64 bg-cyan-400 rounded-full mix-blend-screen filter blur-[80px] opacity-20 pointer-events-none"></div>
+                         <div class="relative z-10 flex flex-col h-full justify-center pb-10">
                 <h1 class="text-4xl lg:text-5xl font-extrabold text-white leading-[1.15] mb-2 tracking-tight">
                     Mulai<br>
                     digitalisasi<br>
@@ -67,7 +56,6 @@
                     Daftarkan akun Anda untuk mendapatkan akses penuh ke seluruh layanan digital G2G Kabupaten Aceh Barat.
                 </p>
 
-                <!-- Box Info di Kiri -->
                 <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full bg-cyan-400/20 text-cyan-400 flex items-center justify-center shrink-0 mt-0.5">
                         <i class="fa-solid fa-shield-halved text-sm"></i>
@@ -80,12 +68,8 @@
             </div>
         </div>
 
-        <!-- SISI KANAN: Form Registrasi ASN -->
         <div class="w-full md:w-7/12 flex flex-col justify-start px-4 sm:px-8 py-8 lg:py-10 bg-white rounded-4xl overflow-y-auto">
-            
             <div class="w-full max-w-[550px] mx-auto">
-                
-                <!-- Logo & Header -->
                 <div class="flex flex-col items-center mb-10">
                     <div class="flex items-center justify-center w-full mb-4 md:mb-6">
                         <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo" class="h-16 md:h-20 w-auto object-contain drop-shadow-sm">
@@ -94,7 +78,6 @@
                     <p class="text-[13px] text-gray-500 font-medium text-center">Lengkapi formulir di bawah ini dengan data diri dan instansi yang valid</p>
                 </div>
 
-                <!-- Notifikasi Error Global -->
                 @if ($errors->any())
                     <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-[13px] rounded-2xl font-medium shadow-sm">
                         <div class="flex items-center gap-2 mb-2 font-bold">
@@ -108,17 +91,14 @@
                     </div>
                 @endif
 
-                <!-- ================== FORM PENDAFTARAN UTAMA ================== -->
                 <form action="{{ route('register') }}" method="POST" class="space-y-5">
                     @csrf
-                    <!-- Hidden Role -->
                     <input type="hidden" name="role" value="asn">
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                         
-                        <!-- Nama Lengkap -->
                         <div>
-                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Nama Lengkap (beserta gelar)</label>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Nama Lengkap</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                                     <i class="fa-regular fa-user text-[13px]"></i>
@@ -128,7 +108,6 @@
                             </div>
                         </div>
 
-                        <!-- NIP -->
                         <div>
                             <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">NIP</label>
                             <div class="relative">
@@ -140,9 +119,8 @@
                             </div>
                         </div>
 
-                        <!-- Instansi / Unit Kerja -->
                         <div>
-                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Asal Instansi / SKPK</label>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Instansi</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                                     <i class="fa-regular fa-building text-[13px]"></i>
@@ -152,7 +130,6 @@
                             </div>
                         </div>
 
-                        <!-- Jabatan -->
                         <div>
                             <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Jabatan</label>
                             <div class="relative">
@@ -164,9 +141,8 @@
                             </div>
                         </div>
 
-                        <!-- Nomor HP -->
                         <div>
-                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Nomor HP / WhatsApp</label>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Nomor HP</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                                     <i class="fa-solid fa-mobile-screen text-[13px]"></i>
@@ -176,7 +152,6 @@
                             </div>
                         </div>
 
-                        <!-- Email -->
                         <div>
                             <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Email (@acehbarat.go.id)</label>
                             <div class="relative">
@@ -188,7 +163,6 @@
                             </div>
                         </div>
 
-                        <!-- Password -->
                         <div>
                             <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Kata Sandi</label>
                             <div class="relative">
@@ -203,7 +177,6 @@
                             </div>
                         </div>
 
-                        <!-- Confirm Password -->
                         <div>
                             <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Konfirmasi Sandi</label>
                             <div class="relative">
@@ -220,14 +193,12 @@
 
                     </div>
 
-                    <!-- Tombol Submit -->
                     <button type="submit" class="w-full mt-6 bg-[#071E3D] hover:bg-[#1F4287] text-white font-extrabold rounded-xl py-4 text-[14px] tracking-wide transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.15)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.25)] transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
                         Daftar Akun Sekarang
                         <i class="fa-solid fa-arrow-right text-[12px] group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </form>
 
-                <!-- Link Kembali ke Login -->
                 <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col items-center gap-3">
                     <p class="text-[13px] text-gray-500 font-medium">
                         Sudah memiliki akun? 
@@ -245,7 +216,6 @@
 
     </div>
 
-    <!-- SCRIPT INTERAKTIF (Hanya untuk Tampil/Sembunyi Password) -->
     <script>
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
