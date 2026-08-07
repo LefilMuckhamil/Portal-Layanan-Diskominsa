@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Controllers\UserDashboardController;
@@ -13,7 +14,6 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () { return view('auth.login'); })->name('login');
     Route::post('/login', [AuthController::class, 'authenticate']);
-    
     Route::get('/register', function () { return view('auth.register'); })->name('register');
     
     Route::get('/forgot-password', function () { return view('auth.forgot-password'); })->name('password.request');
@@ -47,23 +47,38 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         $countCloud   = \App\Models\Pengajuan::where('jenis_layanan', 'Cloud Government')->count();
         $countBantuan = \App\Models\Pengajuan::where('jenis_layanan', 'Reset Password / OTP')->count();
         $pengajuans   = \App\Models\Pengajuan::latest()->get();
+        $chatAktif    = Cache::get('chat_global_aktif', true);
 
         return view('admin.dashboard', compact(
-            'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan', 'pengajuans'
+            'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan', 'pengajuans', 'chatAktif'
         )); 
     })->name('admin.dashboard');
+
+    Route::get('/admin/pengaturan', function () {
+        $chatAktif = Cache::get('chat_global_aktif', true);
+        return view('admin.pengaturan', compact('chatAktif'));
+    })->name('admin.pengaturan');
+
+    Route::post('/admin/toggle-chat', function () {
+        $status = Cache::get('chat_global_aktif', true);
+        Cache::put('chat_global_aktif', !$status);
+        return back()->with('sukses', 'Status Global Chat berhasil diperbarui!');
+    })->name('admin.toggleChat');
     
     Route::get('/teknis-digital/web-desa', [AdminPengajuanController::class, 'webDesa'])->name('admin.web-desa.index');
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
-    Route::get('/layanan-tte', function () { return view('admin.tte.index'); })->name('admin.tte.index');
+    Route::get('/layanan-tte', [AdminPengajuanController::class, 'layananTte'])->name('admin.tte.index');
     Route::get('/layanan-bantuan', function () { return view('admin.bantuan.index'); })->name('admin.bantuan.index');
     Route::get('/layanan-cloud', function () { return view('admin.cloud.index'); })->name('admin.cloud.index');
 
     Route::prefix('admin/pengajuan')->group(function () {
         Route::get('/', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan.index');
         Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show');
+        
         Route::post('/store-web-desa', [AdminPengajuanController::class, 'storeWebDesa'])->name('admin.pengajuan.storeWebDesa');
         Route::post('/store-email', [AdminPengajuanController::class, 'storeEmailResmi'])->name('admin.pengajuan.storeEmail');
+        Route::post('/store-tte', [AdminPengajuanController::class, 'storeTte'])->name('admin.pengajuan.storeTte');
+        
         Route::delete('/{id}/destroy', [AdminPengajuanController::class, 'destroy'])->name('admin.pengajuan.destroy');
         Route::post('/{id}/pesan', [AdminPengajuanController::class, 'balasPesan'])->name('admin.pengajuan.pesan');
         Route::post('/{id}/progress', [AdminPengajuanController::class, 'updateProgress'])->name('admin.pengajuan.progress');

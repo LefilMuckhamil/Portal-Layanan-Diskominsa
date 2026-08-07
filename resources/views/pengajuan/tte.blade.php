@@ -17,30 +17,47 @@
             <input type="hidden" name="jenis_layanan" value="tte">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
+                <!-- Baris 1 -->
                 <div>
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Lengkap (Sesuai KTP)</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Lengkap</label>
                     <input type="text" name="data_pengajuan[nama_lengkap]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
-                </div>
-                <div>
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor Induk Kependudukan (NIK)</label>
-                    <input type="number" name="data_pengajuan[nik]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
                 </div>
                 <div>
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">NIP</label>
                     <input type="number" name="data_pengajuan[nip]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
                 </div>
+
+                <!-- Baris 2 -->
                 <div>
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Pangkat & Jabatan</label>
-                    <input type="text" name="data_pengajuan[jabatan]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Instansi</label>
+                    <input type="text" name="data_pengajuan[instansi]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
                 </div>
+                <div>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor HP / WhatsApp</label>
+                    <input type="number" name="data_pengajuan[nomor_hp]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
+                </div>
+
+                <!-- Baris 3 -->
+                <div>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email Aktif</label>
+                    <input type="email" name="data_pengajuan[email]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Alamat Domisili</label>
+                    <input type="text" name="data_pengajuan[alamat]" required class="w-full bg-white/80 border border-blue-100 rounded-2xl px-5 py-3.5 text-[14px] focus:border-cyan-400 outline-none">
+                </div>
+
+                <!-- Baris 4 (Upload File full-width) -->
                 <div class="md:col-span-2">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Upload Surat Rekomendasi Kepala OPD (PDF)</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Upload File yang Ingin di-TTE (PDF)</label>
                     <input type="file" name="file_pendukung" required accept=".pdf" class="w-full bg-white/50 border border-blue-100 rounded-2xl px-4 py-3 text-[13px] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-bold file:bg-[#071E3D] file:text-white cursor-pointer">
                 </div>
             </div>
 
             <div class="pt-6 mt-8 border-t border-blue-900/10 flex justify-end">
-                <button type="submit" class="bg-gradient-to-r from-[#071E3D] to-[#1F4287] text-white px-10 py-4 rounded-2xl font-bold text-[15px] shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto">Kirim Pengajuan <i class="fa-solid fa-paper-plane ml-2"></i></button>
+                <button type="submit" class="bg-gradient-to-r from-[#071E3D] to-[#1F4287] text-white px-10 py-4 rounded-2xl font-bold text-[15px] shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto">
+                    Kirim Pengajuan <i class="fa-solid fa-paper-plane ml-2"></i>
+                </button>
             </div>
         </form>
     </div>

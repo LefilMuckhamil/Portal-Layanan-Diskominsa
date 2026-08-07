@@ -57,7 +57,18 @@
                 <span class="text-[10px] text-gray-400">Permohonan Reset PW / OTP</span>
             </div>
         </a>
+
+        <a href="{{ route('admin.pengaturan') }}" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl font-medium transition-all duration-300 group hover:translate-x-1">
+            <i class="fa-solid fa-gear w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
+            <div class="flex flex-col leading-tight">
+                <span class="text-[13px]">Pengaturan</span>
+                <span class="text-[10px] text-gray-400">Konfigurasi Sistem</span>
+            </div>
+        </a>
+      
+
     </div>
+
 
     <div class="p-4 border-t border-white/10 flex flex-col gap-3">
     <!-- Info Profil -->
@@ -68,6 +79,8 @@
             <p class="text-[11px] text-gray-400 truncate">Administrator</p>
         </div>
     </div>
+
+    
 
     <!-- Tombol Keluar / Logout -->
     <!-- Catatan untuk Backend nanti: Sebaiknya gunakan <form method="POST"> untuk keamanan -->
