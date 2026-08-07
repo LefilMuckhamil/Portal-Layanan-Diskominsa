@@ -6,12 +6,10 @@ use App\Http\Middleware\IsAdmin;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminPengajuanController;
 
-// 1. HALAMAN UTAMA (PUBLIC)
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// 2. RUTE GUEST (Belum Login)
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () { return view('auth.login'); })->name('login');
     Route::post('/login', [AuthController::class, 'authenticate']);
@@ -24,11 +22,9 @@ Route::middleware('guest')->group(function () {
     })->name('password.email');
 });
 
-// 3. RUTE USER (Sudah Login Biasa)
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Pengelompokan awalan '/layanan' agar lebih rapi
     Route::prefix('layanan')->group(function () {
         Route::get('/pengajuan-website', function () { return view('pengajuan.website'); })->name('pengajuan.website');
         Route::get('/pengajuan-email', function () { return view('pengajuan.email'); })->name('pengajuan.email');
@@ -37,17 +33,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengajuan-bantuan', function () { return view('pengajuan.bantuan'); })->name('pengajuan.bantuan');
     });
 
-    // Riwayat Pengajuan User (Tabel, Detail, & Chat)
     Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan');
     Route::post('/pengajuan/{id}/kirim-pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.kirim.pesan');
 });
 
-// 4. RUTE ADMIN (Sudah Login & Role Admin)
 Route::middleware(['auth', IsAdmin::class])->group(function () {
-    
-    // Dashboard Admin dengan Statistik Lengkap
     Route::get('/admin/dashboard', function () {
         $countWeb     = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa')->count();
         $countEmail   = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
@@ -61,18 +53,17 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         )); 
     })->name('admin.dashboard');
     
-    // Halaman Spesifik Layanan
     Route::get('/teknis-digital/web-desa', [AdminPengajuanController::class, 'webDesa'])->name('admin.web-desa.index');
-    Route::get('/email-resmi', function () { return view('admin.email.index'); })->name('admin.email.index');
+    Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
     Route::get('/layanan-tte', function () { return view('admin.tte.index'); })->name('admin.tte.index');
     Route::get('/layanan-bantuan', function () { return view('admin.bantuan.index'); })->name('admin.bantuan.index');
     Route::get('/layanan-cloud', function () { return view('admin.cloud.index'); })->name('admin.cloud.index');
 
-    // Route CRUD Proses Pengajuan oleh Admin
     Route::prefix('admin/pengajuan')->group(function () {
         Route::get('/', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan.index');
         Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show');
         Route::post('/store-web-desa', [AdminPengajuanController::class, 'storeWebDesa'])->name('admin.pengajuan.storeWebDesa');
+        Route::post('/store-email', [AdminPengajuanController::class, 'storeEmailResmi'])->name('admin.pengajuan.storeEmail');
         Route::delete('/{id}/destroy', [AdminPengajuanController::class, 'destroy'])->name('admin.pengajuan.destroy');
         Route::post('/{id}/pesan', [AdminPengajuanController::class, 'balasPesan'])->name('admin.pengajuan.pesan');
         Route::post('/{id}/progress', [AdminPengajuanController::class, 'updateProgress'])->name('admin.pengajuan.progress');

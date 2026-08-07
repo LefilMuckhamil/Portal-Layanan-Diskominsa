@@ -25,7 +25,7 @@
                         <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
                         <option value="Verifikasi Doc" {{ request('status') == 'Verifikasi Doc' ? 'selected' : '' }}>Verifikasi Dokumen</option>
                         <option value="Proses Development" {{ request('status') == 'Proses Development' ? 'selected' : '' }}>Proses Pembuatan</option>
-                        <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai / Aktif</option>
+                        <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
                         <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                     </select>
                 </div>
@@ -41,11 +41,11 @@
         <table class="w-full text-left border-collapse min-w-[900px]">
             <thead class="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
                 <tr>
-                    <th class="py-3 px-6">ID Ajuan</th>
-                    <th class="py-3 px-6">Data Pegawai / Instansi</th>
+                    <th class="py-3 px-6">Id Permohonan</th>
+                    <th class="py-3 px-6">Nama</th>
                     <th class="py-3 px-6">Tgl Masuk</th>
-                    <th class="py-3 px-6">Status Terkini</th>
-                    <th class="py-3 px-6 text-center">Aksi (CRUD)</th>
+                    <th class="py-3 px-6">Status</th>
+                    <th class="py-3 px-6 text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -164,11 +164,11 @@
                                         <option value="Verifikasi Doc" {{ $item->status == 'Verifikasi Doc' ? 'selected' : '' }}>VERIFIKASI DOC</option>
                                         <option value="Proses Development" {{ $item->status == 'Proses Development' ? 'selected' : '' }}>PROSES PEMBUATAN</option>
                                         <option value="Ditolak" {{ $item->status == 'Ditolak' ? 'selected' : '' }}>DITOLAK</option>
-                                        <option value="Selesai" {{ $item->status == 'Selesai' ? 'selected' : '' }}>SELESAI / AKTIF</option>
+                                        <option value="Selesai" {{ $item->status == 'Selesai' ? 'selected' : '' }}>SELESAI</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-[12px] font-bold text-gray-600 mb-2">Catatan Progres (Opsional)</label>
+                                    <label class="block text-[12px] font-bold text-gray-600 mb-2">Catatan Progres</label>
                                     <textarea name="catatan" rows="2" placeholder="Tuliskan catatan progres yang akan muncul di E-Tracking pemohon..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
                                 </div>
                             </div>
