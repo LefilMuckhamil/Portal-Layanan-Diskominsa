@@ -15,7 +15,6 @@ class AdminPengajuanController extends Controller
         return view('admin.pengajuan.index', compact('pengajuans'));
     }
 
-    // 2. Menampilkan detail pengajuan
     public function show($id)
     {
         $pengajuan = Pengajuan::findOrFail($id);
@@ -43,7 +42,6 @@ class AdminPengajuanController extends Controller
             $pengajuan->logs = $logs;
         }
 
-        // Jika admin mengisi balasan chat (Panel Bantuan User)
         if ($request->filled('pesan')) {
             $pesan = $pengajuan->pesan ?? [];
             $pesan[] = [
@@ -113,5 +111,54 @@ class AdminPengajuanController extends Controller
         ]);
 
         return back()->with('sukses', 'Permohonan baru berhasil ditambahkan secara manual.');
+    }
+
+    public function emailResmi(Request $request)
+    {
+        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->with('user');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nip', 'like', "%{$search}%")
+                  ->orWhere('unit_kerja', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->get(); 
+
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi');
+        
+        $total   = (clone $baseQuery)->count();
+        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
+        $proses  = (clone $baseQuery)->where('status', 'Proses Development')->count();
+        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+        
+        $users = User::where('role', 'asn')->get();
+                        
+        return view('admin.email.index', compact(
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+        ));
+    }
+
+    public function storeEmailResmi(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        Pengajuan::create([
+            'user_id'       => $request->user_id,
+            'jenis_layanan' => 'Pembuatan Email Resmi',
+            'status'        => 'Pending',
+        ]);
+
+        return back()->with('sukses', 'Permohonan Email Resmi berhasil ditambahkan secara manual.');
     }
 }

@@ -1,12 +1,10 @@
 <!-- Bagian Hero / Beranda -->
 <section id="beranda" class="relative bg-[#071E3D] bg-gradient-to-br from-[#071E3D] to-[#1F4287] overflow-hidden pb-20 pt-10">
-    <!-- Ornamen Background -->
     <div class="absolute top-10 left-10 w-96 h-96 bg-[#1F4287] rounded-full mix-blend-screen filter blur-[100px] opacity-40"></div>
     <div class="absolute bottom-10 right-20 w-80 h-80 bg-blue-400 rounded-full mix-blend-screen filter blur-[120px] opacity-20"></div>
 
     <div class="container mx-auto px-6 relative z-20 flex flex-col lg:flex-row items-center">
         
-        <!-- Konten Kiri -->
         <div class="w-full lg:w-1/2 text-white pr-0 lg:pr-4 mt-10">
             <span class="bg-white/10 border border-white/20 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-6 inline-block backdrop-blur-sm">Portal Layanan Terpadu</span>
             <h2 class="text-4xl lg:text-[55px] font-extrabold mb-6 leading-tight">
@@ -18,7 +16,6 @@
                 Solusi layanan digital terpadu satu pintu untuk seluruh ASN dan Instansi Pemerintah di lingkungan Kabupaten Aceh Barat.
             </p>
             
-            <!-- Tombol Aksi -->
             <div class="flex flex-wrap gap-4 mb-12">
                 <a href="#layanan" class="bg-cyan-400 hover:bg-cyan-300 text-[#071E3D] px-6 py-3 rounded-xl font-bold shadow-lg flex items-center gap-2 transition">
                     Ajukan Layanan
@@ -67,15 +64,10 @@
     </div>
 </section>
 
-<!-- Modal Peringatan Login -->
 <div id="authModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
-    <!-- Latar belakang gelap (klik area gelap untuk tutup) -->
     <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="closeAuthModal()"></div>
-    
-    <!-- Kotak Modal -->
     <div class="relative bg-white rounded-[2rem] p-8 max-w-md w-full mx-4 shadow-2xl transform scale-95 transition-all">
         
-        <!-- LOGO DISKOMINSA -->
         <div class="flex items-center justify-center mx-auto mb-6">
             <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo Diskominsa" class="h-12 w-auto object-contain drop-shadow-sm">
         </div>
