@@ -173,7 +173,7 @@
                                 </div>
                             </div>
                             <div class="bg-blue-50/30 border border-blue-100 p-5 rounded-2xl mb-8">
-                                <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2"><i class="fa-regular fa-comments text-blue-500"></i> 2. Riwayat Diskusi / Chat</h4>
+                                <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2"><i class="fa-regular fa-comments text-blue-500"></i>Riwayat Diskusi </h4>
                                 <div class="bg-white border border-blue-100 rounded-xl p-4 mb-4 h-48 overflow-y-auto space-y-3 custom-scrollbar">
                                     @if(!empty($item->pesan) && is_array($item->pesan))
                                         @foreach($item->pesan as $chat)
@@ -189,9 +189,15 @@
                                         <div class="flex items-center justify-center h-full"><p class="text-[12px] text-gray-400 italic">Belum ada obrolan.</p></div>
                                     @endif
                                 </div>
-                                <div>
-                                    <textarea name="pesan" rows="2" placeholder="Ketik pesan balasan atau pertanyaan kepada pemohon di sini..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
-                                </div>
+                                @if($chatAktif)
+                                    <div>
+                                        <textarea name="pesan" rows="2" placeholder="Ketik pesan balasan atau pertanyaan kepada pemohon di sini..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
+                                    </div>
+                                @else
+                                    <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl text-center">
+                                        <p class="text-[12px] font-bold text-rose-500"><i class="fa-solid fa-lock mr-1"></i> Fitur obrolan sedang dinonaktifkan sementara oleh Admin.</p>
+                                    </div>
+                                @endif
                             </div>
                             <div class="flex gap-3">
                                 <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
