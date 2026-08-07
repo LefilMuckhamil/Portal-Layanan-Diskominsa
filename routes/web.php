@@ -56,7 +56,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
 
     Route::get('/admin/pengaturan', function () {
         $chatAktif = Cache::get('chat_global_aktif', true);
-        return view('admin.pengaturan', compact('chatAktif'));
+        return view('admin.pengaturan.index', compact('chatAktif'));
     })->name('admin.pengaturan');
 
     Route::post('/admin/toggle-chat', function () {
@@ -84,4 +84,33 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         Route::post('/{id}/progress', [AdminPengajuanController::class, 'updateProgress'])->name('admin.pengajuan.progress');
         Route::put('/{id}/update', [AdminPengajuanController::class, 'updateProgres'])->name('admin.pengajuan.update');
     });
+
+    // Jangan lupa pastikan ada 'use Illuminate\Support\Facades\Cache;' di paling atas file web.php jika belum ada.
+
+    // Dashboard Admin dengan Statistik & Status Chat
+    Route::get('/admin/dashboard', function () {
+        $countWeb     = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa')->count();
+        $countEmail   = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
+        $countTTE     = \App\Models\Pengajuan::where('jenis_layanan', 'Layanan TTE')->count();
+        $countCloud   = \App\Models\Pengajuan::where('jenis_layanan', 'Cloud Government')->count();
+        $countBantuan = \App\Models\Pengajuan::where('jenis_layanan', 'Reset Password / OTP')->count();
+        $pengajuans   = \App\Models\Pengajuan::latest()->get();
+        
+        // Baca status saklar chat (Default-nya true/ON)
+        $chatAktif = \Illuminate\Support\Facades\Cache::get('chat_global_aktif', true);
+
+        return view('admin.dashboard', compact(
+            'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan', 'pengajuans', 'chatAktif'
+        )); 
+    })->name('admin.dashboard');
+
+    // Rute Master Switch untuk ON/OFF Chat
+    Route::post('/admin/toggle-chat', function () {
+        // Ambil status saat ini, lalu balikkan (jika true jadi false, jika false jadi true)
+        $statusSekarang = \Illuminate\Support\Facades\Cache::get('chat_global_aktif', true);
+        \Illuminate\Support\Facades\Cache::put('chat_global_aktif', !$statusSekarang);
+
+        $pesan = !$statusSekarang ? 'diaktifkan' : 'dinonaktifkan';
+        return back()->with('sukses', "Fitur Global Chat berhasil $pesan!");
+    })->name('admin.toggleChat');
 });
