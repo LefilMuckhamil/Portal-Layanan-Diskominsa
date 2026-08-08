@@ -215,19 +215,18 @@ class AdminPengajuanController extends Controller
     {
         $query = Pengajuan::where('jenis_layanan', 'Cloud Government');
         
-        // Fitur Pencarian Cloud
         if ($request->filled('search')) {
             $query->where('data_pengajuan', 'like', '%' . $request->search . '%');
         }
 
-        // Fitur Filter Status Cloud
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         $pengajuans = $query->latest()->get();
 
-        // Hitung data untuk 5 Kartu Statistik (Sama seperti Email/TTE)
+
         $baseQuery = Pengajuan::where('jenis_layanan', 'Cloud Government');
         
         $total   = (clone $baseQuery)->count();
@@ -236,8 +235,8 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        // Ambil data ASN & Instansi untuk Form Tambah Manual (Admin tidak ikut)
-        $users = User::whereIn('role', ['asn', 'instansi'])->get();
+       
+        $users = User::whereIn('role', ['asn'])->get();
                         
         return view('admin.cloud.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
