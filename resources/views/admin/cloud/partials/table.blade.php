@@ -109,3 +109,12 @@
         </table>
     </div>
 </div>
+
+<script>
+    function disableSubmitButton(form) {
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.classList.add('opacity-70', 'cursor-not-allowed');
+        btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-2"></i>';
+    }
+</script>
