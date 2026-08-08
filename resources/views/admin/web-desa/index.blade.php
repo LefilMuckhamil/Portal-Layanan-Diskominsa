@@ -315,10 +315,15 @@
                                             </div>
                                         @endif
                                     </div>
-
+                                @if($chatAktif)
                                     <div>
                                         <textarea name="pesan" rows="2" placeholder="Ketik pesan balasan atau pertanyaan kepada pemohon di sini..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
                                     </div>
+                                @else
+                                    <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl text-center">
+                                        <p class="text-[12px] font-bold text-rose-500"><i class="fa-solid fa-lock mr-1"></i> Fitur obrolan sedang dinonaktifkan sementara oleh Admin.</p>
+                                    </div>
+                                @endif
                                 </div>
 
                                 <div class="flex gap-3">
@@ -362,7 +367,7 @@
                 </div>
             </div>
             
-            <form method="POST" action="{{ route('admin.pengajuan.storeWebDesa') }}">
+            <form method="POST" action="{{ route('admin.pengajuan.storeWebDesa') }}" onsubmit="disableSubmitButton(this)">
                 @csrf
                 <div class="mb-6">
                     <label class="block text-[12px] font-bold text-gray-600 mb-2">Pilih Nama / Instansi Pemohon (ASN)</label>
@@ -432,6 +437,14 @@
             modalDelete.classList.add('hidden');
             modalDelete.classList.remove('flex');
         }
+
+    
+    function disableSubmitButton(form) {
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true; // Matikan tombol
+        btn.classList.add('opacity-70', 'cursor-not-allowed'); // Ubah tampilan
+        btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-2"></i>'; // Ganti teks
+    }
     </script>
     
     <style>
