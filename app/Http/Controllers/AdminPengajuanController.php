@@ -66,9 +66,10 @@ class AdminPengajuanController extends Controller
         return back()->with('sukses', 'Data permohonan berhasil dihapus permanen.');
     }
 
-    public function webDesa(Request $request)
+    public function website(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa')->with('user');
+        // Parameter diubah menjadi 'Pembuatan Website'
+        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->with('user');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -83,7 +84,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->get(); 
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Web Desa');
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Website');
         
         $total   = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
@@ -91,14 +92,16 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        $users = User::where('role', 'asn')->get();
+        // Menampilkan ASN & Instansi (sama seperti logika CloudGov sebelumnya)
+        $users = User::whereIn('role', ['asn', 'instansi'])->get();
                         
-        return view('admin.web-desa.index', compact(
+        // Path view diubah menjadi admin.website.index
+        return view('admin.website.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
         ));
     }
 
-    public function storeWebDesa(Request $request)
+    public function storeWebsite(Request $request)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -106,11 +109,11 @@ class AdminPengajuanController extends Controller
 
         Pengajuan::create([
             'user_id'       => $request->user_id,
-            'jenis_layanan' => 'Pembuatan Web Desa',
+            'jenis_layanan' => 'Pembuatan Website',
             'status'        => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan baru berhasil ditambahkan secara manual.');
+        return back()->with('sukses', 'Permohonan Website berhasil ditambahkan secara manual.');
     }
 
     public function emailResmi(Request $request)
@@ -266,4 +269,57 @@ class AdminPengajuanController extends Controller
 
         return back()->with('sukses', 'Ajuan Cloud Government berhasil dibuat manual!');
     }
+
+    public function layananBantuan(Request $request)
+    {
+        $query = Pengajuan::where('jenis_layanan', 'Reset Password / OTP');
+        
+        if ($request->filled('search')) {
+            $query->where('data_pengajuan', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->get();
+
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Reset Password / OTP');
+        
+        $total   = (clone $baseQuery)->count();
+        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Menunggu', 'Menunggu Respons'])->count();
+        $proses  = (clone $baseQuery)->whereIn('status', ['Proses', 'Sedang Ditangani'])->count();
+        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+        
+        $users = User::whereIn('role', ['asn', 'instansi'])->get();
+                        
+        return view('admin.bantuan.index', compact(
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+        ));
+    }
+
+    public function storeBantuan(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+
+        Pengajuan::create([
+            'user_id'        => $user->id,
+            'jenis_layanan'  => 'Reset Password / OTP',
+            'status'         => 'Pending',
+            'data_pengajuan' => json_encode([
+                'nama_pelapor' => $user->name,
+                'email'        => $user->email,
+                'kendala'      => 'Reset Sandi Email / OTP',
+                'pesan_kendala'=> 'Tiket bantuan dibuat manual oleh Admin'
+            ])
+        ]);
+
+        return back()->with('sukses', 'Tiket Bantuan berhasil dibuat manual!');
+    }
+
 }

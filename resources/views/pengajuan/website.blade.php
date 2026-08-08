@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Pengajuan Web Desa')
+@section('title', 'Pengajuan Website Instansi')
 
 @section('content')
     <!-- KONTENER UTAMA DENGAN GRADASI & SHADOW -->
@@ -17,36 +17,70 @@
                 <i class="fa-solid fa-globe"></i>
             </div>
             <div>
-                <h2 class="text-2xl font-extrabold text-[#071E3D] tracking-tight mb-1">Form Pengajuan Website</h2>
-                <p class="text-[14px] text-gray-600 font-medium">Lengkapi data desa atau pesantren untuk pembuatan website resmi instansi Anda.</p>
+                <h2 class="text-2xl font-extrabold text-[#071E3D] tracking-tight mb-1">Form Pengajuan Website Instansi</h2>
+                <p class="text-[14px] text-gray-600 font-medium">Lengkapi data instansi (G2G) untuk pembuatan website resmi pemerintahan.</p>
             </div>
         </div>
 
         <!-- Form Input -->
-        <form action="#" method="POST" class="relative z-10 space-y-6">
+        <!-- Tambahkan enctype="multipart/form-data" untuk menangani file upload -->
+        <form action="{{ route('pengajuan.website.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
                 
-                <!-- Nama Instansi / Desa -->
-                <div class="md:col-span-2 group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Desa atau Pesantren</label>
+                <!-- Nama Pemohon -->
+                <div class="group">
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Lengkap Pemohon</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <input type="text" name="nama" required placeholder="Nama lengkap beserta gelar" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                    </div>
+                </div>
+
+                <!-- NIP -->
+                <div class="group">
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">NIP Pemohon</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
+                            <i class="fa-solid fa-id-badge"></i>
+                        </div>
+                        <input type="text" name="nip" required placeholder="Masukkan NIP" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                    </div>
+                </div>
+
+                <!-- Instansi / SKPK -->
+                <div class="group">
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Asal Instansi / SKPK</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
                             <i class="fa-solid fa-building-columns"></i>
                         </div>
-                        <input type="text" placeholder="Contoh: Desa Panggong" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <input type="text" name="instansi" required placeholder="Contoh: Dinas Kesehatan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- Nama Keuchik / Pimpinan -->
+                <!-- Nomor HP / WA -->
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Kepala Desa / Pimpinan</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor HP / WhatsApp</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <input type="text" name="no_hp" required placeholder="Contoh: 081234567890" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                    </div>
+                </div>
+
+                <!-- Nama Pimpinan -->
+                <div class="group">
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Kepala Dinas / Pimpinan</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
                             <i class="fa-solid fa-user-tie"></i>
                         </div>
-                        <input type="text" placeholder="Masukkan nama lengkap" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <input type="text" name="pimpinan" required placeholder="Masukkan nama pimpinan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
@@ -58,15 +92,15 @@
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors z-20">
                                 <i class="fa-solid fa-link"></i>
                             </div>
-                            <input type="text" placeholder="namadesa" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 border-r-0 rounded-l-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all z-10">
+                            <input type="text" name="domain" required placeholder="namainstansi" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 border-r-0 rounded-l-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all z-10">
                         </div>
-                        <span class="bg-gray-100/80 backdrop-blur-sm border border-blue-100 text-gray-500 font-bold text-[14px] px-5 py-3.5 rounded-r-2xl flex items-center border-l-0">.desa.id</span>
+                        <span class="bg-gray-100/80 backdrop-blur-sm border border-blue-100 text-gray-500 font-bold text-[14px] px-5 py-3.5 rounded-r-2xl flex items-center border-l-0">.go.id</span>
                     </div>
                 </div>
 
-                <!-- Upload SK (Desain Drag & Drop) -->
+                <!-- Upload Surat (Desain Drag & Drop) -->
                 <div class="md:col-span-2">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Upload SK Kepala Desa / Pimpinan (PDF)</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Upload Surat Permohonan (PDF)</label>
                     <div class="relative flex justify-center px-6 pt-6 pb-7 border-2 border-blue-200 border-dashed rounded-2xl hover:border-cyan-400 hover:bg-cyan-50/50 transition-colors bg-white/50 group">
                         <div class="space-y-2 text-center">
                             <!-- Ikon Upload -->
@@ -76,11 +110,11 @@
                             <div class="flex flex-col sm:flex-row items-center text-sm text-gray-600 justify-center gap-1">
                                 <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-bold text-cyan-600 hover:text-cyan-500 focus-within:outline-none px-1">
                                     <span>Klik untuk memilih file</span>
-                                    <input id="file-upload" name="file-upload" type="file" class="sr-only" accept=".pdf">
+                                    <input id="file-upload" name="file_surat" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = this.files[0].name">
                                 </label>
                                 <p>atau drag and drop di sini</p>
                             </div>
-                            <p class="text-xs text-gray-400 font-medium mt-1">Hanya format PDF. Maksimal 2MB.</p>
+                            <p id="file-name" class="text-xs text-gray-400 font-medium mt-1">Hanya format PDF. Maksimal 2MB.</p>
                         </div>
                     </div>
                 </div>
@@ -95,4 +129,14 @@
         </form>
 
     </div>
+
+    <!-- Script Anti Double Submit -->
+    <script>
+        function disableSubmitButton(form) {
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-2"></i>';
+        }
+    </script>
 @endsection
