@@ -161,15 +161,11 @@ class AdminPengajuanController extends Controller
 
         return back()->with('sukses', 'Permohonan Email Resmi berhasil ditambahkan secara manual.');
     }
-    // =========================================================================
-    // D. FUNGSI KHUSUS LAYANAN TTE
-    // =========================================================================
 
     public function layananTte(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Layanan TTE')->with('user');
 
-        // Fitur Pencarian
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('user', function($q) use ($search) {
@@ -179,14 +175,12 @@ class AdminPengajuanController extends Controller
             });
         }
 
-        // Fitur Filter Status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         $pengajuans = $query->latest()->get(); 
 
-        // Hitung data untuk 5 Kartu Statistik
         $baseQuery = Pengajuan::where('jenis_layanan', 'Layanan TTE');
         
         $total   = (clone $baseQuery)->count();
@@ -195,7 +189,6 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        // Ambil nama-nama ASN untuk Form Tambah Manual
         $users = User::where('role', 'asn')->get();
                         
         return view('admin.tte.index', compact(
@@ -216,5 +209,38 @@ class AdminPengajuanController extends Controller
         ]);
 
         return back()->with('sukses', 'Permohonan TTE berhasil ditambahkan secara manual.');
+    }
+
+   public function layananCloud(Request $request)
+    {
+        $query = Pengajuan::where('jenis_layanan', 'Cloud Government');
+        
+        // Fitur Pencarian Cloud
+        if ($request->filled('search')) {
+            $query->where('data_pengajuan', 'like', '%' . $request->search . '%');
+        }
+
+        // Fitur Filter Status Cloud
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->get();
+
+        // Hitung data untuk 5 Kartu Statistik (Sama seperti Email/TTE)
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Cloud Government');
+        
+        $total   = (clone $baseQuery)->count();
+        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Menunggu Validasi'])->count();
+        $proses  = (clone $baseQuery)->whereIn('status', ['Proses', 'Sedang Diproses'])->count();
+        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+        
+        // Ambil data ASN & Instansi untuk Form Tambah Manual (Admin tidak ikut)
+        $users = User::whereIn('role', ['asn', 'instansi'])->get();
+                        
+        return view('admin.cloud.index', compact(
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+        ));
     }
 }

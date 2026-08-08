@@ -69,7 +69,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
     Route::get('/layanan-tte', [AdminPengajuanController::class, 'layananTte'])->name('admin.tte.index');
     Route::get('/layanan-bantuan', function () { return view('admin.bantuan.index'); })->name('admin.bantuan.index');
-    Route::get('/layanan-cloud', function () { return view('admin.cloud.index'); })->name('admin.cloud.index');
+    Route::get('/layanan-cloud', [AdminPengajuanController::class, 'layananCloud'])->name('admin.cloud.index');
 
     Route::prefix('admin/pengajuan')->group(function () {
         Route::get('/', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan.index');
@@ -78,6 +78,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         Route::post('/store-web-desa', [AdminPengajuanController::class, 'storeWebDesa'])->name('admin.pengajuan.storeWebDesa');
         Route::post('/store-email', [AdminPengajuanController::class, 'storeEmailResmi'])->name('admin.pengajuan.storeEmail');
         Route::post('/store-tte', [AdminPengajuanController::class, 'storeTte'])->name('admin.pengajuan.storeTte');
+        Route::post('/store-cloud', [AdminPengajuanController::class, 'storeCloud'])->name('admin.pengajuan.storeCloud');
         
         Route::delete('/{id}/destroy', [AdminPengajuanController::class, 'destroy'])->name('admin.pengajuan.destroy');
         Route::post('/{id}/pesan', [AdminPengajuanController::class, 'balasPesan'])->name('admin.pengajuan.pesan');
