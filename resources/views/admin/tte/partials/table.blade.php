@@ -183,7 +183,7 @@
                             @csrf
                             @method('PUT')
                             <div class="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl mb-5">
-                                <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-bars-progress text-blue-500"></i> 1. Update Timeline & File</h4>
+                                <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-bars-progress text-blue-500"></i> Update Timeline & File</h4>
                                 
                                 <div class="mb-4">
                                     <label class="block text-[12px] font-bold text-gray-600 mb-2">Pilih Status Baru</label>
