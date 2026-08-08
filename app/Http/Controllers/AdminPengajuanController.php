@@ -242,4 +242,28 @@ class AdminPengajuanController extends Controller
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
         ));
     }
+
+    public function storeCloud(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+
+        Pengajuan::create([
+            'user_id'        => $user->id,
+            'jenis_layanan'  => 'Cloud Government',
+            'status'         => 'Pending',
+            'data_pengajuan' => json_encode([
+                'nama_pemohon'  => $user->name,
+                'nip'           => $user->nip ?? '-',
+                'jenis_cloud'   => 'Personal',
+                'kapasitas'     => '15 GB',
+                'alasan'        => 'Dibuat manual oleh Admin'
+            ])
+        ]);
+
+        return back()->with('sukses', 'Ajuan Cloud Government berhasil dibuat manual!');
+    }
 }
