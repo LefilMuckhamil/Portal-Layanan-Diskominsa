@@ -43,8 +43,10 @@ Route::middleware(['auth'])->group(function () {
         
         // Rute untuk Submit Form Pengajuan dari User
         Route::post('/pengajuan-website/store', [UserPengajuanController::class, 'storeWebsite'])->name('pengajuan.website.store');
-        // Tambahkan juga rute store untuk layanan lain di sini nanti
-        // Route::post('/pengajuan-email/store', ...)->name('pengajuan.email.store');
+        Route::post('/pengajuan/email/store', [UserPengajuanController::class, 'storeEmail'])->name('pengajuan.email.store');
+        Route::post('/pengajuan/tte/store', [UserPengajuanController::class, 'storeTte'])->name('pengajuan.tte.store');
+        Route::post('/pengajuan/cloud/store', [UserPengajuanController::class, 'storeCloud'])->name('pengajuan.cloud.store');
+        Route::post('/pengajuan/bantuan/store', [UserPengajuanController::class, 'storeBantuan'])->name('pengajuan.bantuan.store');
     });
 
     // 2. Riwayat & Interaksi Chat User

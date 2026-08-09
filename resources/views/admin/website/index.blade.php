@@ -96,7 +96,7 @@
             
             <!-- FORM PENCARIAN, FILTER & TOMBOL CREATE -->
             <div class="flex gap-3 items-center">
-                <form method="GET" action="{{ route('admin.web-desa.index') }}" class="flex gap-3">
+                <form method="GET" action="{{ route('admin.website.index') }}" class="flex gap-3">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket/Pemohon..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
@@ -367,7 +367,7 @@
                 </div>
             </div>
             
-            <form method="POST" action="{{ route('admin.pengajuan.storeWebDesa') }}" onsubmit="disableSubmitButton(this)">
+            <form method="POST" action="{{ route('admin.pengajuan.storeWebsite') }}" onsubmit="disableSubmitButton(this)">
                 @csrf
                 <div class="mb-6">
                     <label class="block text-[12px] font-bold text-gray-600 mb-2">Pilih Nama / Instansi Pemohon (ASN)</label>
