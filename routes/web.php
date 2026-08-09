@@ -6,7 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminPengajuanController;
-use App\Http\Controllers\UserPengajuanController; // Pastikan controller ini sudah kamu buat
+use App\Http\Controllers\UserPengajuanController; 
+use App\Http\Controllers\SubmissionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -47,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/pengajuan/tte/store', [UserPengajuanController::class, 'storeTte'])->name('pengajuan.tte.store');
         Route::post('/pengajuan/cloud/store', [UserPengajuanController::class, 'storeCloud'])->name('pengajuan.cloud.store');
         Route::post('/pengajuan/bantuan/store', [UserPengajuanController::class, 'storeBantuan'])->name('pengajuan.bantuan.store');
+        Route::post('/layanan/{jenis}/store', [SubmissionController::class, 'store'])->name('user.pengajuan.store');
     });
 
     // 2. Riwayat & Interaksi Chat User
@@ -118,4 +120,5 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         Route::post('/{id}/pesan', [AdminPengajuanController::class, 'balasPesan'])->name('admin.pengajuan.pesan');
         Route::post('/{id}/progress', [AdminPengajuanController::class, 'updateProgress'])->name('admin.pengajuan.progress');
     });
+
 });

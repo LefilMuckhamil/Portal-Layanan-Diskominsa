@@ -23,7 +23,7 @@
 
         <!-- Form Input -->
         <!-- Action diarahkan ke route store (pastikan rute ini nanti dibuat di web.php) -->
-        <form action="{{ route('pengajuan.email.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
+       <form action="{{ route('user.pengajuan.store', 'email') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">

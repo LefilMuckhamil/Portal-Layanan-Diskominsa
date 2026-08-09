@@ -152,5 +152,57 @@
             }
         });
     </script>
+
+            @if(session('sukses'))
+        <!-- Pop-up Sukses -->
+        <div id="success-modal" class="fixed inset-0 z-[9999] flex items-center justify-center">
+            <!-- Background Gelap -->
+            <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="document.getElementById('success-modal').remove()"></div>
+            
+            <!-- Kotak Modal -->
+            <div class="relative bg-white rounded-[2rem] p-8 max-w-sm w-full mx-4 shadow-2xl text-center transform transition-all animate-bounce-short">
+                
+                <!-- Ikon Centang (Sesuai Desain Screenshot) -->
+                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <div class="w-14 h-14 bg-white rounded-full shadow-sm flex items-center justify-center text-emerald-500 text-3xl">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                </div>
+                
+                <!-- Judul & Pesan -->
+                <h3 class="text-2xl font-extrabold text-[#071E3D] mb-2">Berhasil!</h3>
+                <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">{{ session('sukses') }}</p>
+                
+                <!-- 🎫 KOTAK NOMOR TIKET -->
+                @if(session('tiket'))
+                <div class="bg-cyan-50/40 border border-cyan-100/80 rounded-2xl p-4 mb-6 relative overflow-hidden">
+                    <div class="absolute -right-3 -top-3 text-cyan-500/10 text-6xl"><i class="fa-solid fa-ticket"></i></div>
+                    <p class="text-[10px] font-extrabold text-cyan-800 uppercase tracking-wider mb-1 relative z-10">Nomor Tiket Anda</p>
+                    <p class="text-2xl font-black text-[#071E3D] tracking-tight relative z-10">{{ session('tiket') }}</p>
+                </div>
+                @endif
+                
+                <!-- Tombol Aksi -->
+                <div class="flex gap-3">
+                    <button type="button" onclick="document.getElementById('success-modal').remove()" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-50 hover:bg-gray-100 transition-colors text-[13px]">
+                        Tutup
+                    </button>
+                    <a href="{{ route('user.riwayat') }}" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-[#071E3D] hover:bg-[#1F4287] transition-colors shadow-lg shadow-blue-900/10 text-[13px] flex items-center justify-center gap-2">
+                        Cek Riwayat <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .animate-bounce-short { animation: bounceShort 0.4s ease-out forwards; }
+            @keyframes bounceShort {
+                0% { transform: scale(0.8); opacity: 0; }
+                50% { transform: scale(1.05); opacity: 1; }
+                100% { transform: scale(1); opacity: 1; }
+            }
+        </style>
+        @endif
+
 </body>
 </html>
