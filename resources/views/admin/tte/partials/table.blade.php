@@ -179,7 +179,8 @@
                             </div>
                         </div>
                         
-                        <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data">
+                        <!-- Perhatikan tag form di bawah ini sudah lengkap dengan enctype dan onsubmit -->
+                        <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
                             @csrf
                             @method('PUT')
                             <div class="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl mb-5">

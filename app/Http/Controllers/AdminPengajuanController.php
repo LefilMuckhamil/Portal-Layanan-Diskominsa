@@ -6,44 +6,65 @@ use App\Models\User;
 use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminPengajuanController extends Controller
 {
+    // Nampilin semua daftar permohonan masuk secara global
     public function index()
     {
         $pengajuans = Pengajuan::latest()->get(); 
         return view('admin.pengajuan.index', compact('pengajuans'));
     }
 
+    // Nampilin halaman detail buat satu pengajuan spesifik
     public function show($id)
     {
         $pengajuan = Pengajuan::findOrFail($id);
         return view('admin.pengajuan.detail', compact('pengajuan'));
     }
 
+    // Handle segala update dari admin (status, catatan log, chat balas ke user, dan upload file hasil TTE)
     public function updateProgres(Request $request, $id)
     {
         $request->validate([
-            'status'  => ['required', 'string'],
-            'catatan' => ['nullable', 'string', 'max:500'],
-            'pesan'   => ['nullable', 'string', 'max:1000'],
+            'status'     => ['required', 'string'],
+            'catatan'    => ['nullable', 'string', 'max:500'],
+            'pesan'      => ['nullable', 'string', 'max:1000'],
+            'file_hasil' => ['nullable', 'mimes:pdf', 'max:5120'], 
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
         $pengajuan->status = $request->status;
 
-        if ($request->filled('catatan')) {
-            $logs = $pengajuan->logs ?? [];
-            $logs[] = [
-                'status'     => $request->status,
-                'catatan'    => $request->catatan,
-                'created_at' => now()->toDateTimeString(),
-            ];
-            $pengajuan->logs = $logs;
+        // Amankan dan decode data JSON bawaan
+        $dataPengajuan = is_array($pengajuan->data_pengajuan) 
+            ? $pengajuan->data_pengajuan 
+            : json_decode($pengajuan->data_pengajuan ?? '{}', true);
+
+        // Kalau admin upload file hasil (contohnya pdf TTE), simpan filenya
+        if ($request->hasFile('file_hasil')) {
+            if (isset($dataPengajuan['file_hasil']) && Storage::disk('public')->exists($dataPengajuan['file_hasil'])) {
+                Storage::disk('public')->delete($dataPengajuan['file_hasil']);
+            }
+            
+            $dataPengajuan['file_hasil'] = $request->file('file_hasil')->store('dokumen_hasil', 'public');
+            $pengajuan->data_pengajuan = $dataPengajuan;
         }
 
+        // Bikin jejak rekam atau timeline log biar user tahu progresnya
+        $logs = is_array($pengajuan->logs) ? $pengajuan->logs : json_decode($pengajuan->logs ?? '[]', true);
+        $logs[] = [
+            'status'     => $request->status,
+            'catatan'    => $request->catatan ?? 'Status diperbarui menjadi ' . $request->status,
+            'created_at' => now()->toDateTimeString(),
+            'updated_by' => Auth::user()->name ?? 'Admin', 
+        ];
+        $pengajuan->logs = $logs;
+
+        // Kalau admin ngetik pesan, simpan juga ke obrolan
         if ($request->filled('pesan')) {
-            $pesan = $pengajuan->pesan ?? [];
+            $pesan = is_array($pengajuan->pesan) ? $pengajuan->pesan : json_decode($pengajuan->pesan ?? '[]', true);
             $pesan[] = [
                 'pengirim' => Auth::user()->name ?? 'Admin Diskominsa',
                 'role'     => 'admin',
@@ -55,9 +76,10 @@ class AdminPengajuanController extends Controller
 
         $pengajuan->save();
 
-        return back()->with('sukses', 'Progres layanan dan pesan berhasil diperbarui!');
+        return back()->with('sukses', 'Update progres dan file hasil sukses disimpan!');
     }
 
+    // Hapus data permohonan permanen dari sistem
     public function destroy($id)
     {
         $pengajuan = Pengajuan::findOrFail($id);
@@ -66,9 +88,9 @@ class AdminPengajuanController extends Controller
         return back()->with('sukses', 'Data permohonan berhasil dihapus permanen.');
     }
 
+    // Nampilin halaman kelola daftar ajuan Website Instansi
     public function website(Request $request)
     {
-        // Parameter diubah menjadi 'Pembuatan Website'
         $query = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->with('user');
 
         if ($request->filled('search')) {
@@ -92,20 +114,17 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        // Menampilkan ASN & Instansi (sama seperti logika CloudGov sebelumnya)
         $users = User::whereIn('role', ['asn', 'instansi'])->get();
                         
-        // Path view diubah menjadi admin.website.index
         return view('admin.website.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
         ));
     }
 
+    // Admin bikin tiket ajuan Website secara manual 
     public function storeWebsite(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
+        $request->validate(['user_id' => 'required|exists:users,id']);
 
         Pengajuan::create([
             'user_id'       => $request->user_id,
@@ -113,9 +132,10 @@ class AdminPengajuanController extends Controller
             'status'        => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan Website berhasil ditambahkan secara manual.');
+        return back()->with('sukses', 'Permohonan Website berhasil ditambahkan manual.');
     }
 
+    // Nampilin halaman kelola daftar ajuan Email Resmi
     public function emailResmi(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->with('user');
@@ -134,7 +154,6 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->get(); 
-
         $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi');
         
         $total   = (clone $baseQuery)->count();
@@ -150,11 +169,10 @@ class AdminPengajuanController extends Controller
         ));
     }
 
+    // Admin bikin tiket ajuan Email secara manual
     public function storeEmailResmi(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
+        $request->validate(['user_id' => 'required|exists:users,id']);
 
         Pengajuan::create([
             'user_id'       => $request->user_id,
@@ -162,9 +180,10 @@ class AdminPengajuanController extends Controller
             'status'        => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan Email Resmi berhasil ditambahkan secara manual.');
+        return back()->with('sukses', 'Permohonan Email Resmi berhasil ditambahkan manual.');
     }
 
+    // Nampilin halaman kelola daftar ajuan TTE
     public function layananTte(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Layanan TTE')->with('user');
@@ -183,7 +202,6 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->get(); 
-
         $baseQuery = Pengajuan::where('jenis_layanan', 'Layanan TTE');
         
         $total   = (clone $baseQuery)->count();
@@ -199,11 +217,10 @@ class AdminPengajuanController extends Controller
         ));
     }
 
+    // Admin bikin tiket ajuan TTE secara manual
     public function storeTte(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
+        $request->validate(['user_id' => 'required|exists:users,id']);
 
         Pengajuan::create([
             'user_id'       => $request->user_id,
@@ -211,10 +228,11 @@ class AdminPengajuanController extends Controller
             'status'        => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan TTE berhasil ditambahkan secara manual.');
+        return back()->with('sukses', 'Permohonan TTE berhasil ditambahkan manual.');
     }
 
-   public function layananCloud(Request $request)
+    // Nampilin halaman kelola daftar ajuan Cloud Gov
+    public function layananCloud(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Cloud Government');
         
@@ -222,14 +240,11 @@ class AdminPengajuanController extends Controller
             $query->where('data_pengajuan', 'like', '%' . $request->search . '%');
         }
 
-
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         $pengajuans = $query->latest()->get();
-
-
         $baseQuery = Pengajuan::where('jenis_layanan', 'Cloud Government');
         
         $total   = (clone $baseQuery)->count();
@@ -238,7 +253,6 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-       
         $users = User::whereIn('role', ['asn'])->get();
                         
         return view('admin.cloud.index', compact(
@@ -246,12 +260,10 @@ class AdminPengajuanController extends Controller
         ));
     }
 
+    // Admin bikin tiket ajuan Cloud secara manual dan langsung ngisi format bawaan
     public function storeCloud(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id'
-        ]);
-
+        $request->validate(['user_id' => 'required|exists:users,id']);
         $user = User::findOrFail($request->user_id);
 
         Pengajuan::create([
@@ -270,6 +282,7 @@ class AdminPengajuanController extends Controller
         return back()->with('sukses', 'Ajuan Cloud Government berhasil dibuat manual!');
     }
 
+    // Nampilin halaman kelola tiket Pusat Bantuan atau Kendala
     public function layananBantuan(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Reset Password / OTP');
@@ -283,7 +296,6 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->get();
-
         $baseQuery = Pengajuan::where('jenis_layanan', 'Reset Password / OTP');
         
         $total   = (clone $baseQuery)->count();
@@ -299,12 +311,10 @@ class AdminPengajuanController extends Controller
         ));
     }
 
+    // Admin bikin tiket kendala bantuan secara manual buat bantu user
     public function storeBantuan(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id'
-        ]);
-
+        $request->validate(['user_id' => 'required|exists:users,id']);
         $user = User::findOrFail($request->user_id);
 
         Pengajuan::create([
@@ -321,5 +331,4 @@ class AdminPengajuanController extends Controller
 
         return back()->with('sukses', 'Tiket Bantuan berhasil dibuat manual!');
     }
-
 }

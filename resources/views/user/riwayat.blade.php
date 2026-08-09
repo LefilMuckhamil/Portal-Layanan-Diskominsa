@@ -136,10 +136,29 @@
                 <div id="panel-detail-{{ $item->id }}" class="panel-detail hidden flex-grow flex-col overflow-y-auto p-5 space-y-4 bg-gray-50/30 custom-scrollbar">
                     
                     <!-- Info ID -->
+                  <!-- Info ID -->
                     <div class="bg-cyan-50/60 border border-cyan-100 p-3.5 rounded-2xl">
                         <p class="text-[11px] font-bold text-cyan-800 uppercase tracking-wider">Permohonan Aktif</p>
                         <p class="text-[13px] font-extrabold text-[#071E3D]">#REQ-{{ strtoupper(substr($item->id, -5)) }} ({{ str_replace('_', ' ', $item->jenis_layanan) }})</p>
                     </div>
+
+                    @php
+                        // Decode data JSON untuk mengecek apakah ada file hasil dari admin
+                        $dataPengajuan = is_string($item->data_pengajuan) ? json_decode($item->data_pengajuan, true) : ($item->data_pengajuan ?? []);
+                    @endphp
+
+                    <!-- TOMBOL DOWNLOAD (Hanya Muncul Jika Selesai & Ada File Hasil) -->
+                    @if($item->status === 'Selesai' && !empty($dataPengajuan['file_hasil']))
+                    <div class="bg-emerald-50/60 border border-emerald-100 p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                        <div>
+                            <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider mb-0.5">Dokumen Selesai</p>
+                            <p class="text-[13px] font-extrabold text-[#071E3D]">File TTE Tersedia</p>
+                        </div>
+                        <a href="{{ asset('storage/' . $dataPengajuan['file_hasil']) }}" target="_blank" download class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-[12px] font-bold shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2 shrink-0">
+                            <i class="fa-solid fa-download"></i> Unduh File
+                        </a>
+                    </div>
+                    @endif
 
                     <!-- Timeline Progress dari Admin -->
                     <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
