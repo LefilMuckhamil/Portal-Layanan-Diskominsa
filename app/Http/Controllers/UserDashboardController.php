@@ -5,52 +5,58 @@ namespace App\Http\Controllers;
 use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class UserDashboardController extends Controller
 {
-    // 1. Fungsi untuk menampilkan tabel riwayat (Sudah ada sebelumnya)
+    /**
+     * Ambil semua data riwayat pengajuan khusus buat user yang lagi login.
+     * Sekalian ngecek saklar fitur chat dari admin lagi nyala atau dimatiin.
+     */
     public function riwayat()
     {
-        // Mengambil data pengajuan khusus milik user yang sedang login, diurutkan dari yang terbaru
         $pengajuans = Pengajuan::where('user_id', Auth::id())->latest()->get();
-        
-        return view('user.riwayat', compact('pengajuans'));
+        $chatAktif = Cache::get('chat_global_aktif', true);
+
+        return view('user.riwayat', compact('pengajuans', 'chatAktif'));
     }
 
-    // 2. Fungsi untuk menampilkan halaman detail & timeline
+    /**
+     * Nampilin halaman detail dan timeline dari satu pengajuan spesifik.
+     * Ada validasi otomatis biar user cuma bisa ngecek data miliknya sendiri.
+     */
     public function show($id)
     {
-        // Cari data pengajuan berdasarkan ID, pastikan itu milik user yang sedang login
         $pengajuan = Pengajuan::where('user_id', Auth::id())->findOrFail($id);
         
         return view('user.detail', compact('pengajuan'));
     }
 
-    // 3. Fungsi untuk memproses pengiriman pesan chat
+    /**
+     * Proses pengiriman pesan dari user ke admin.
+     * Pesan barunya bakal ditimpa dan ditambahin ke dalam array JSON yang udah ada di database.
+     */
     public function kirimPesan(Request $request, $id)
     {
-        // Validasi input pesan tidak boleh kosong
         $request->validate([
-            'pesan' => 'required|string'
+            'pesan' => ['required', 'string']
         ]);
 
-        // Cari data pengajuan
         $pengajuan = Pengajuan::where('user_id', Auth::id())->findOrFail($id);
 
-        // Ambil array pesan lama (jika ada), lalu tambahkan pesan yang baru diketik
         $semuaPesan = $pengajuan->pesan ?? [];
+        
         $semuaPesan[] = [
             'pengirim' => Auth::user()->name,
-            'role' => 'user',
-            'isi' => $request->pesan,
-            'waktu' => now()->format('d M Y, H:i')
+            'role'     => 'user',
+            'isi'      => $request->pesan,
+            'waktu'    => now()->format('d M Y, H:i')
         ];
 
-        // Simpan array pesan terbaru ke dalam database
-        $pengajuan->pesan = $semuaPesan;
-        $pengajuan->save();
+        $pengajuan->update([
+            'pesan' => $semuaPesan
+        ]);
 
-        // Kembalikan user ke halaman yang sama (refresh)
-        return back()->with('sukses', 'Pesan berhasil dikirim!');
+        return back()->with('sukses', 'Pesan kamu berhasil terkirim!');
     }
 }

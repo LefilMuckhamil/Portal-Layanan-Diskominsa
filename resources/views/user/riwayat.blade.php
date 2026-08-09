@@ -185,15 +185,24 @@
 
                 </div>
 
-                <!-- Kotak Ketik Pesan Aktif -->
+                <!-- Kotak Ketik Pesan Aktif DENGAN PENGECEKAN SAKLAR GLOBAL CHAT -->
                 <div id="panel-form-{{ $item->id }}" class="panel-form hidden p-4 border-t border-gray-100 bg-white">
-                    <form action="{{ route('user.kirim.pesan', $item->id) }}" method="POST" class="flex gap-2">
-                        @csrf
-                        <input type="text" name="pesan" required placeholder="Tulis pesan ke admin..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-cyan-400">
-                        <button type="submit" class="w-12 h-12 shrink-0 bg-[#071E3D] hover:bg-[#1F4287] text-white rounded-xl flex items-center justify-center transition-colors shadow-md">
-                            <i class="fa-solid fa-paper-plane text-xs"></i>
-                        </button>
-                    </form>
+                    @if($chatAktif ?? true)
+                        <form action="{{ route('user.kirim.pesan', $item->id) }}" method="POST" class="flex gap-2">
+                            @csrf
+                            <input type="text" name="pesan" required placeholder="Tulis pesan ke admin..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-cyan-400">
+                            <button type="submit" class="w-12 h-12 shrink-0 bg-[#071E3D] hover:bg-[#1F4287] text-white rounded-xl flex items-center justify-center transition-colors shadow-md">
+                                <i class="fa-solid fa-paper-plane text-xs"></i>
+                            </button>
+                        </form>
+                    @else
+                        <!-- Tampilan Jika Chat Dinonaktifkan Admin -->
+                        <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl text-center">
+                            <p class="text-[12px] font-bold text-rose-500">
+                                <i class="fa-solid fa-lock mr-1"></i> Fitur obrolan sedang dinonaktifkan sementara oleh Admin.
+                            </p>
+                        </div>
+                    @endif
                 </div>
             @endforeach
 

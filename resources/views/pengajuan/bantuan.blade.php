@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Pusat Bantuan & Kendala')
+@section('title', 'Pusat Bantuan')
 
 @section('content')
     <!-- KONTENER UTAMA DENGAN GRADASI & SHADOW -->
@@ -16,8 +16,8 @@
                 <i class="fa-solid fa-headset"></i>
             </div>
             <div>
-                <h2 class="text-2xl font-extrabold text-[#071E3D] tracking-tight mb-1">Pusat Bantuan & Kendala</h2>
-                <p class="text-[14px] text-gray-600 font-medium">Laporkan kendala terkait layanan, permohonan reset password, atau error sistem.</p>
+                <h2 class="text-2xl font-extrabold text-[#071E3D] tracking-tight mb-1">Pusat Bantuan</h2>
+                <p class="text-[14px] text-gray-600 font-medium">Laporkan kendala terkait layanan, permohonan reset password</p>
             </div>
         </div>
 
@@ -35,7 +35,7 @@
                             <i class="fa-solid fa-layer-group"></i>
                         </div>
                         <select name="kategori" required class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-rose-400 focus:ring-4 focus:ring-rose-400/10 outline-none transition-all shadow-sm appearance-none cursor-pointer">
-                            <option value="Reset Password" selected>Reset Password / Lupa Sandi</option>
+                            <option value="Reset Password" selected>Reset Password</option>
                             <!-- Kategori lain bisa ditambahkan via Database nantinya -->
                         </select>
                         <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
