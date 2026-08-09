@@ -137,7 +137,7 @@
                     @forelse ($pengajuans as $item)
                     <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
                         <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
-                            #REQ-{{ strtoupper(substr($item->id, -5)) }}
+                            {{ $item->nomor_tiket }}
                         </td>
                         <td class="py-4 px-6 flex items-center gap-3">
                             <div class="w-9 h-9 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center font-bold">
@@ -203,7 +203,7 @@
                             </div>
                             <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Permohonan?</h3>
                             <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">
-                                Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data permohonan <b class="text-[#071E3D]">#REQ-{{ strtoupper(substr($item->id, -5)) }}</b> secara permanen?
+                                Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data permohonan <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?
                             </p>
                             
                             <div class="flex gap-3">

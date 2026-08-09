@@ -42,13 +42,14 @@ class AdminPengajuanController extends Controller
             ? $pengajuan->data_pengajuan 
             : json_decode($pengajuan->data_pengajuan ?? '{}', true);
 
-        // Kalau admin upload file hasil (contohnya pdf TTE), simpan filenya
+        // Kalau admin upload file hasil, simpan pakai nama aslinya
         if ($request->hasFile('file_hasil')) {
             if (isset($dataPengajuan['file_hasil']) && Storage::disk('public')->exists($dataPengajuan['file_hasil'])) {
                 Storage::disk('public')->delete($dataPengajuan['file_hasil']);
             }
             
-            $dataPengajuan['file_hasil'] = $request->file('file_hasil')->store('dokumen_hasil', 'public');
+            $file = $request->file('file_hasil');
+            $dataPengajuan['file_hasil'] = $file->storeAs('dokumen_hasil', $file->getClientOriginalName(), 'public');
             $pengajuan->data_pengajuan = $dataPengajuan;
         }
 

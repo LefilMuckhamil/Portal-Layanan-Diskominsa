@@ -29,4 +29,26 @@ class Pengajuan extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Accessor untuk meng-generate nomor tiket cantik secara otomatis.
+     * Tidak disimpan di database, murni untuk tampilan visual.
+     */
+    public function getNomorTiketAttribute()
+    {
+        $kodeLayanan = match($this->jenis_layanan) {
+            'Pembuatan Website'     => 'WEB',
+            'Pembuatan Email Resmi' => 'EML',
+            'Layanan TTE'           => 'TTE',
+            'Cloud Government'      => 'CLD',
+            'Reset Password / OTP'  => 'HLP',
+            default                 => 'REQ'
+        };
+
+        // Ambil 5 karakter terakhir dari ID, ubah ke huruf besar
+        $idUnik = strtoupper(substr($this->id, -5));
+
+        return '#' . $kodeLayanan . '-' . $idUnik;
+    }
+
 }

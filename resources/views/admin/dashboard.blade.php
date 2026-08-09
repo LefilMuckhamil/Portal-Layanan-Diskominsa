@@ -120,7 +120,7 @@
                     @forelse ($pengajuans as $item)
                     <tr class="hover:bg-cyan-50/10 transition-colors duration-200">
                         <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
-                            #REQ-{{ strtoupper(substr($item->id, -5)) }}
+                            {{ $item->nomor_tiket }}
                         </td>
                         <td class="py-4 px-6 flex items-center gap-3">
                             <div class="w-9 h-9 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-sm">

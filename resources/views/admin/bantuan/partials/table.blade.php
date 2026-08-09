@@ -52,7 +52,7 @@
                 @endphp
                 <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
                     <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
-                        #TKT-{{ strtoupper(substr($item->id, -5)) }}
+                        {{ $item->nomor_tiket }}
                     </td>
                     <td class="py-4 px-6 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-cyan-50 text-cyan-500 flex items-center justify-center font-bold">
@@ -107,7 +107,7 @@
                     <div class="relative bg-white rounded-[2rem] p-8 max-w-sm w-full mx-4 shadow-2xl text-center">
                         <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-5 border-4 border-white shadow-md"><i class="fa-solid fa-triangle-exclamation"></i></div>
                         <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Tiket?</h3>
-                        <p class="text-[13px] text-gray-500 mb-6">Yakin menghapus tiket <b class="text-[#071E3D]">#TKT-{{ strtoupper(substr($item->id, -5)) }}</b>?</p>
+                        <p class="text-[13px] text-gray-500 mb-6">Yakin menghapus tiket <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b>?</p>
                         <div class="flex gap-3">
                             <button type="button" onclick="tutupModalDelete('{{ $item->id }}')" class="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200">Batal</button>
                             <button type="button" onclick="document.getElementById('form-delete-{{ $item->id }}').submit()" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-500 hover:bg-rose-600">Ya, Hapus!</button>
@@ -122,7 +122,7 @@
                         <div class="absolute top-6 right-6"><button onclick="tutupModalInfo('{{ $item->id }}')" class="text-gray-400 hover:text-rose-500"><i class="fa-solid fa-xmark text-xl"></i></button></div>
                         <div class="flex items-center gap-4 mb-6 border-b border-gray-100 pb-4">
                             <div class="w-12 h-12 bg-cyan-50 text-cyan-500 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-headset"></i></div>
-                            <div><h3 class="text-lg font-extrabold text-[#071E3D]">Detail Kendala</h3><p class="text-[12px] text-gray-500">Tiket #TKT-{{ strtoupper(substr($item->id, -5)) }}</p></div>
+                            <div><h3 class="text-lg font-extrabold text-[#071E3D]">Detail Kendala</h3><p class="text-[12px] text-gray-500">Tiket {{ $item->nomor_tiket }}</p></div>
                         </div>
                         <div class="space-y-4 bg-gray-50 p-5 rounded-2xl border border-gray-100">
                             <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Nama Pelapor</p><p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['nama_pelapor'] ?? '-' }}</p></div>

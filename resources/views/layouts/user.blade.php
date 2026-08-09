@@ -11,53 +11,62 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { font-family: 'Outfit', sans-serif; background-color: #F3F4F6; }
-        .dropdown-menu { display: none; }
-        .group:hover .dropdown-menu { display: block; }
+        body { font-family: 'Outfit', sans-serif; background-color: #F8FAFC; }
+        /* Scrollbar halus untuk seluruh halaman */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="text-gray-800 antialiased min-h-screen flex flex-col">
 
-    <nav class="bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] sticky top-0 z-50">
+    <!-- Efek Glassmorphism pada Navbar -->
+    <nav class="bg-white/90 backdrop-blur-lg shadow-[0_4px_20px_rgba(0,0,0,0.02)] border-b border-gray-100 sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-[#071E3D] rounded-xl flex items-center justify-center text-white font-bold">
-                        D
-                    </div>
-                    <div>
-                        <h1 class="text-[15px] font-extrabold text-[#071E3D] leading-tight">Layanan Digital</h1>
-                        <p class="text-[11px] text-gray-500 font-medium">Diskominsa Kab. Aceh Barat</p>
+                <!-- BAGIAN KIRI: LOGO DISKOMINSA -->
+                <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.location.href='/'">
+                    <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo Diskominsa" class="h-10 w-auto object-contain drop-shadow-sm">
+                    
+                    <!-- Garis pemisah tipis antara logo dan teks -->
+                    <div class="border-l-2 border-gray-200 pl-3 hidden sm:block">
+                        <h1 class="text-[15px] font-extrabold text-[#071E3D] leading-tight tracking-tight">Layanan Digital</h1>
+                        <p class="text-[11px] text-cyan-600 font-bold">Diskominsa Kab. Aceh Barat</p>
                     </div>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="{{ route('pengajuan.website') }}" class="{{ request()->routeIs('pengajuan.website') ? 'bg-cyan-50 text-cyan-600 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-lg text-[13px] transition-all">
+                <!-- BAGIAN TENGAH: MENU NAVIGASI -->
+                <div class="hidden md:flex items-center space-x-1.5">
+                    <a href="{{ route('pengajuan.website') }}" class="{{ request()->routeIs('pengajuan.website') ? 'bg-cyan-50 text-cyan-600 font-bold shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-xl text-[13px] transition-all duration-300">
                         <i class="fa-solid fa-globe mr-1.5"></i> Web Desa
                     </a>
-                    <a href="{{ route('pengajuan.email') }}" class="{{ request()->routeIs('pengajuan.email') ? 'bg-cyan-50 text-cyan-600 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-lg text-[13px] transition-all">
+                    <a href="{{ route('pengajuan.email') }}" class="{{ request()->routeIs('pengajuan.email') ? 'bg-cyan-50 text-cyan-600 font-bold shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-xl text-[13px] transition-all duration-300">
                         <i class="fa-solid fa-envelope mr-1.5"></i> Email
                     </a>
-                    <a href="{{ route('pengajuan.tte') }}" class="{{ request()->routeIs('pengajuan.tte') ? 'bg-cyan-50 text-cyan-600 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-lg text-[13px] transition-all">
+                    <a href="{{ route('pengajuan.tte') }}" class="{{ request()->routeIs('pengajuan.tte') ? 'bg-cyan-50 text-cyan-600 font-bold shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-xl text-[13px] transition-all duration-300">
                         <i class="fa-solid fa-pen-nib mr-1.5"></i> TTE
                     </a>
-                    <a href="{{ route('pengajuan.cloud') }}" class="{{ request()->routeIs('pengajuan.cloud') ? 'bg-cyan-50 text-cyan-600 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-lg text-[13px] transition-all">
+                    <a href="{{ route('pengajuan.cloud') }}" class="{{ request()->routeIs('pengajuan.cloud') ? 'bg-cyan-50 text-cyan-600 font-bold shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-xl text-[13px] transition-all duration-300">
                         <i class="fa-solid fa-cloud mr-1.5"></i> Cloud Gov
                     </a>
-                    <a href="{{ route('pengajuan.bantuan') }}" class="{{ request()->routeIs('pengajuan.bantuan') ? 'bg-cyan-50 text-cyan-600 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-lg text-[13px] transition-all">
+                    <a href="{{ route('pengajuan.bantuan') }}" class="{{ request()->routeIs('pengajuan.bantuan') ? 'bg-cyan-50 text-cyan-600 font-bold shadow-sm' : 'text-gray-500 hover:bg-gray-50 hover:text-[#071E3D] font-semibold' }} px-4 py-2.5 rounded-xl text-[13px] transition-all duration-300">
                         <i class="fa-solid fa-headset mr-1.5"></i> Bantuan
                     </a>
                 </div>
 
+                <!-- BAGIAN KANAN: NOTIF & PROFIL USER -->
                 <div class="flex items-center gap-4">
+                    
+                    <!-- Notifikasi -->
                     <div class="relative">
-                        <button id="notification-btn" class="w-10 h-10 rounded-xl bg-gray-50 hover:bg-cyan-50 text-gray-500 hover:text-cyan-600 border border-gray-200 flex items-center justify-center transition-colors relative">
+                        <button id="notification-btn" class="w-10 h-10 rounded-xl bg-gray-50 hover:bg-cyan-50 text-gray-500 hover:text-cyan-600 border border-gray-200 flex items-center justify-center transition-all duration-300 relative focus:outline-none focus:ring-2 focus:ring-cyan-100">
                             <i class="fa-regular fa-bell text-base"></i>
                             <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
                         </button>
 
-                        <div id="notification-dropdown" class="hidden absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 py-3 z-50 origin-top-right transition-all">
+                        <div id="notification-dropdown" class="invisible opacity-0 translate-y-2 absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100 py-3 z-50 origin-top-right transition-all duration-300">
                             <div class="px-4 pb-3 border-b border-gray-100 flex justify-between items-center">
                                 <h4 class="font-extrabold text-[#071E3D] text-[13px]">Notifikasi</h4>
                                 <span class="text-[10px] bg-cyan-50 text-cyan-600 font-bold px-2 py-0.5 rounded-md">1 Baru</span>
@@ -80,30 +89,33 @@
                         </div>
                     </div>
 
+                    <!-- Profil User (Dropdown Hover Super Smooth) -->
                     <div class="flex items-center relative group z-50">
-                        <button class="flex items-center gap-3 hover:opacity-80 transition-opacity py-2">
+                        <button class="flex items-center gap-3 hover:opacity-80 transition-opacity py-2 focus:outline-none">
                             <div class="text-right hidden sm:block">
                                 <p class="text-[13px] font-bold text-[#071E3D]">{{ Auth::user()->name }}</p>
                                 <p class="text-[11px] text-gray-500 font-medium">
-                                    @if(Auth::user()->role === 'instansi')
-                                        Instansi
+                                    <!-- Menampilkan NIP jika ada, jika tidak ada tampilkan status/role -->
+                                    @if(Auth::user()->nip)
+                                        NIP. {{ Auth::user()->nip }}
                                     @else
-                                        ASN / User
+                                        {{ Auth::user()->role === 'instansi' ? 'Akun Instansi' : 'ASN / User' }}
                                     @endif
                                 </p>
                             </div>
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=071E3D&color=fff" class="w-10 h-10 rounded-full border-2 border-gray-100 object-cover">
-                            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=071E3D&color=fff" class="w-10 h-10 rounded-xl shadow-sm border border-gray-200 object-cover transition-transform duration-300 group-hover:scale-105">
+                            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 group-hover:rotate-180 transition-transform duration-300"></i>
                         </button>
 
-                        <div class="dropdown-menu absolute right-0 top-[60px] w-52 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-50 py-2 origin-top-right transition-all">
-                            <a href="{{ route('user.riwayat') }}" class="w-full text-left px-5 py-2.5 text-[13px] font-bold text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-colors flex items-center gap-2 border-b border-gray-50">
-                                <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pengajuan
+                        <!-- Menu Dropdown dengan efek slide & fade in -->
+                        <div class="invisible opacity-0 translate-y-3 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 absolute right-0 top-[60px] w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100 py-2 origin-top-right transition-all duration-300 ease-out">
+                            <a href="{{ route('user.riwayat') }}" class="w-full text-left px-5 py-3 text-[13px] font-bold text-gray-600 hover:bg-cyan-50 hover:text-cyan-600 transition-colors flex items-center gap-3 border-b border-gray-50">
+                                <i class="fa-solid fa-clock-rotate-left text-lg"></i> Riwayat Pengajuan
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-5 py-2.5 text-[13px] font-bold text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors flex items-center gap-2">
-                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
+                                <button type="submit" class="w-full text-left px-5 py-3 text-[13px] font-bold text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors flex items-center gap-3 rounded-b-2xl">
+                                    <i class="fa-solid fa-arrow-right-from-bracket text-lg"></i> Keluar
                                 </button>
                             </form>
                         </div>
@@ -118,22 +130,25 @@
         @yield('content')
     </main>
 
-    <footer class="py-6 text-center text-gray-400 text-[12px] font-medium border-t border-gray-200 mt-auto">
+    <footer class="py-6 text-center text-gray-400 text-[12px] font-medium border-t border-gray-200 mt-auto bg-white/50">
         &copy; {{ date('Y') }} Diskominsa Kabupaten Aceh Barat.
     </footer>
 
     <script>
+        // Animasi klik untuk tombol notifikasi agar lebih smooth
         const notifBtn = document.getElementById('notification-btn');
         const notifDropdown = document.getElementById('notification-dropdown');
 
         notifBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            notifDropdown.classList.toggle('hidden');
+            notifDropdown.classList.toggle('invisible');
+            notifDropdown.classList.toggle('opacity-0');
+            notifDropdown.classList.toggle('translate-y-2');
         });
 
         window.addEventListener('click', () => {
-            if (!notifDropdown.classList.contains('hidden')) {
-                notifDropdown.classList.add('hidden');
+            if (!notifDropdown.classList.contains('invisible')) {
+                notifDropdown.classList.add('invisible', 'opacity-0', 'translate-y-2');
             }
         });
     </script>

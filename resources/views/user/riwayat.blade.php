@@ -52,7 +52,7 @@
                                 
                                 <td class="py-3 px-4 rounded-l-2xl border-y border-l border-gray-100 group-hover:border-cyan-300/60">
                                     <span class="font-mono text-[12px] font-bold text-[#1F4287] bg-blue-50/70 px-2.5 py-1 rounded-md border border-blue-100/80">
-                                        #REQ-{{ strtoupper(substr($item->id, -5)) }}
+                                        {{ $item->nomor_tiket }}
                                     </span>
                                 </td>
 
@@ -139,7 +139,7 @@
                   <!-- Info ID -->
                     <div class="bg-cyan-50/60 border border-cyan-100 p-3.5 rounded-2xl">
                         <p class="text-[11px] font-bold text-cyan-800 uppercase tracking-wider">Permohonan Aktif</p>
-                        <p class="text-[13px] font-extrabold text-[#071E3D]">#REQ-{{ strtoupper(substr($item->id, -5)) }} ({{ str_replace('_', ' ', $item->jenis_layanan) }})</p>
+                        <p class="text-[13px] font-extrabold text-[#071E3D]">{{ $item->nomor_tiket }} ({{ str_replace('_', ' ', $item->jenis_layanan) }})</p>
                     </div>
 
                     @php

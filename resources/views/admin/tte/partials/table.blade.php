@@ -57,7 +57,7 @@
                 @endphp
                 <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
                     <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
-                        #TTE-{{ strtoupper(substr($item->id, -5)) }}
+                        {{ $item->nomor_tiket }}
                     </td>
                     <td class="py-4 px-6 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center font-bold">
@@ -123,7 +123,7 @@
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Permohonan?</h3>
-                        <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">Yakin mau hapus pengajuan <b class="text-[#071E3D]">#TTE-{{ strtoupper(substr($item->id, -5)) }}</b> secara permanen?</p>
+                        <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">Yakin mau hapus pengajuan <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?</p>
                         <div class="flex gap-3">
                             <button type="button" onclick="tutupModalDelete('{{ $item->id }}')" class="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
                             <button type="button" onclick="document.getElementById('form-delete-{{ $item->id }}').submit()" class="flex-1 py-3 rounded-xl font-bold text-white bg-rose-500 hover:bg-rose-600 transition-colors">Ya, Hapus!</button>
