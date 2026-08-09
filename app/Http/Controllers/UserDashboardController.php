@@ -9,10 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 class UserDashboardController extends Controller
 {
-    /**
-     * Ambil semua data riwayat pengajuan khusus buat user yang lagi login.
-     * Sekalian ngecek saklar fitur chat dari admin lagi nyala atau dimatiin.
-     */
+
     public function riwayat()
     {
         $pengajuans = Pengajuan::where('user_id', Auth::id())->latest()->get();
@@ -21,10 +18,6 @@ class UserDashboardController extends Controller
         return view('user.riwayat', compact('pengajuans', 'chatAktif'));
     }
 
-    /**
-     * Nampilin halaman detail dan timeline dari satu pengajuan spesifik.
-     * Ada validasi otomatis biar user cuma bisa ngecek data miliknya sendiri.
-     */
     public function show($id)
     {
         $pengajuan = Pengajuan::where('user_id', Auth::id())->findOrFail($id);
@@ -32,10 +25,6 @@ class UserDashboardController extends Controller
         return view('user.detail', compact('pengajuan'));
     }
 
-    /**
-     * Proses pengiriman pesan dari user ke admin.
-     * Pesan barunya bakal ditimpa dan ditambahin ke dalam array JSON yang udah ada di database.
-     */
     public function kirimPesan(Request $request, $id)
     {
         $request->validate([
