@@ -91,7 +91,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('register') }}" method="POST" class="space-y-5">
+                <form action="{{ route('register.process') }}" method="POST" class="space-y-5">
                     @csrf
                     <input type="hidden" name="role" value="asn">
                     
@@ -153,7 +153,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Email (@acehbarat.go.id)</label>
+                            <label class="block text-[12px] font-bold text-gray-600 mb-1.5 ml-1">Email (@acehbaratkab.go.id)</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                                     <i class="fa-regular fa-envelope text-[13px]"></i>

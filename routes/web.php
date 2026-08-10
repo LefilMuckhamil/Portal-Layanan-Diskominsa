@@ -19,7 +19,10 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () { return view('auth.login'); })->name('login');
     Route::post('/login', [AuthController::class, 'authenticate']);
+    
     Route::get('/register', function () { return view('auth.register'); })->name('register');
+    // 👇 INI BARIS YANG DITAMBAHKAN UNTUK MENGATASI ERROR POST 👇
+    Route::post('/register', [AuthController::class, 'registerProcess'])->name('register.process');
     
     Route::get('/forgot-password', function () { return view('auth.forgot-password'); })->name('password.request');
     Route::post('/forgot-password', function () {
@@ -66,7 +69,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     
     // 1. Dashboard Utama Admin
     Route::get('/admin/dashboard', function () {
-        $countWeb     = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Website')->count(); // Diubah ke 'Pembuatan Website'
+        $countWeb     = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Website')->count(); 
         $countEmail   = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
         $countTTE     = \App\Models\Pengajuan::where('jenis_layanan', 'Layanan TTE')->count();
         $countCloud   = \App\Models\Pengajuan::where('jenis_layanan', 'Cloud Government')->count();
@@ -94,7 +97,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     })->name('admin.toggleChat');
     
     // 3. Menu Manajemen Tiap Layanan (Tampilan Tabel)
-    Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index'); // Diubah jadi website
+    Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index'); 
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
     Route::get('/layanan-tte', [AdminPengajuanController::class, 'layananTte'])->name('admin.tte.index');
     Route::get('/layanan-cloud', [AdminPengajuanController::class, 'layananCloud'])->name('admin.cloud.index');
@@ -106,7 +109,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show');
         
         // Simpan Data Tambah Manual
-        Route::post('/store-website', [AdminPengajuanController::class, 'storeWebsite'])->name('admin.pengajuan.storeWebsite'); // Diubah jadi storeWebsite
+        Route::post('/store-website', [AdminPengajuanController::class, 'storeWebsite'])->name('admin.pengajuan.storeWebsite'); 
         Route::post('/store-email', [AdminPengajuanController::class, 'storeEmailResmi'])->name('admin.pengajuan.storeEmail');
         Route::post('/store-tte', [AdminPengajuanController::class, 'storeTte'])->name('admin.pengajuan.storeTte');
         Route::post('/store-cloud', [AdminPengajuanController::class, 'storeCloud'])->name('admin.pengajuan.storeCloud');

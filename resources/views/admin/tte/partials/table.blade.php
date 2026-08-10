@@ -131,39 +131,70 @@
                     </div>
                 </div>
 
-                <!-- modal liat info pemohon & DOWNLOAD DOKUMEN -->
+                @php
+                    $dataForm = is_array($item->data_pengajuan) 
+                        ? $item->data_pengajuan 
+                        : json_decode($item->data_pengajuan ?? '[]', true);
+                @endphp
+
                 <div id="modal-info-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
+                    <!-- Background Gelap -->
                     <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalInfo('{{ $item->id }}')"></div>
+                    
+                    <!-- Kotak Modal -->
                     <div class="relative bg-white rounded-[2rem] p-8 max-w-md w-full mx-4 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
+                        
+                        <!-- Tombol Close -->
                         <div class="absolute top-6 right-6">
-                            <button onclick="tutupModalInfo('{{ $item->id }}')" class="text-gray-400 hover:text-rose-500 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
-                        </div>
-                        <div class="flex flex-col items-center text-center mb-6">
-                            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-4 border-4 border-white shadow-md"><i class="fa-regular fa-user"></i></div>
-                            <h3 class="text-xl font-extrabold text-[#071E3D]">{{ $dataForm['nama_lengkap'] ?? '-' }}</h3>
-                            <p class="text-[12px] text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full mt-2">NIP: {{ $dataForm['nip'] ?? '-' }}</p>
-                        </div>
-                        <div class="space-y-4 bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                            <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">NIK (KTP)</p><p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['nik'] ?? '-' }}</p></div>
-                            <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Instansi</p><p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['instansi'] ?? '-' }}</p></div>
-                            <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Jabatan Pejabat</p><p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['jabatan'] ?? '-' }}</p></div>
-                            <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Nomor HP / WhatsApp</p><p class="text-[13px] font-bold text-[#071E3D]"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $dataForm['nomor_hp'] ?? '-' }}</p></div>
-                            <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email Aktif</p><p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['email'] ?? '-' }}</p></div>
-                            <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Alamat</p><p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['alamat'] ?? '-' }}</p></div>
+                            <button onclick="tutupModalInfo('{{ $item->id }}')" class="text-gray-400 hover:text-rose-500 transition-colors">
+                                <i class="fa-solid fa-xmark text-xl"></i>
+                            </button>
                         </div>
 
-                        <!-- TOMBOL DOWNLOAD DOKUMEN DARI USER -->
-                        @if(!empty($item->file_pendukung))
+                        <!-- Header Profil -->
+                        <div class="flex flex-col items-center text-center mb-6">
+                            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-4 border-4 border-white shadow-md">
+                                <i class="fa-regular fa-user"></i>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-[#071E3D]">{{ $dataForm['nama'] ?? '-' }}</h3>
+                            <p class="text-[12px] text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full mt-2">NIP: {{ $dataForm['nip'] ?? '-' }}</p>
+                        </div>
+
+                        <!-- Rincian Data Form -->
+                        <div class="space-y-4 bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Instansi / Unit Kerja</p>
+                                <p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['instansi'] ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Nomor HP / WhatsApp</p>
+                                <p class="text-[13px] font-bold text-[#071E3D]">
+                                    <i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $dataForm['no_hp'] ?? '-' }}
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email Aktif</p>
+                                <p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['email'] ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Alamat Domisili</p>
+                                <p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['alamat'] ?? '-' }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Download Dokumen PDF (Cukup 1 kali di sini) -->
                         <div class="mt-6">
-                            <a href="{{ asset('storage/' . $item->file_pendukung) }}" target="_blank" class="w-full block text-center bg-[#071E3D] hover:bg-[#1F4287] text-white py-3 rounded-xl font-bold text-[13px] transition-all shadow-md">
-                                <i class="fa-solid fa-file-pdf mr-2"></i> Download Dokumen Pengajuan
-                            </a>
+                            @if(!empty($item->file_pendukung))
+                                <a href="{{ asset('storage/' . $item->file_pendukung) }}" target="_blank" class="w-full block text-center bg-[#071E3D] hover:bg-[#1F4287] text-white py-3 rounded-xl font-bold text-[13px] transition-all shadow-md">
+                                    <i class="fa-solid fa-file-pdf mr-2"></i> Download Dokumen Pengajuan
+                                </a>
+                            @else
+                                <div class="text-center text-[12px] text-gray-400 italic bg-gray-100 py-3 rounded-xl border border-dashed border-gray-200">
+                                    Tidak ada dokumen yang dilampirkan.
+                                </div>
+                            @endif
                         </div>
-                        @else
-                        <div class="mt-6 text-center text-[12px] text-gray-400 italic bg-gray-100 py-3 rounded-xl border border-dashed border-gray-200">
-                            Tidak ada dokumen yang dilampirkan.
-                        </div>
-                        @endif
+
                     </div>
                 </div>
 
@@ -207,8 +238,8 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-[12px] font-bold text-gray-600 mb-2">Catatan Buat E-Tracking (Opsional)</label>
-                                    <textarea name="catatan" rows="2" placeholder="Tulis update ke user di sini..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
+                                    <label class="block text-[12px] font-bold text-gray-600 mb-2">Catatan Buat E-Tracking</label>
+                                    <textarea name="catatan" rows="2" placeholder="Tulis update ke pemohon di sini..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
                                 </div>
                             </div>
                             <div class="bg-blue-50/30 border border-blue-100 p-5 rounded-2xl mb-8">

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // 1. login
+    // 1. Proses Login
     public function authenticate(Request $request)
     {
         $request->validate([
@@ -32,8 +32,8 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    // 2. proses register
-    public function register(Request $request)
+    // 2. Proses Pendaftaran / Register (Sudah digabung & dibersihkan dari duplikat)
+    public function registerProcess(Request $request)
     {
         $request->validate([
             'name'       => ['required', 'string', 'max:255'],
@@ -55,7 +55,7 @@ class AuthController extends Controller
                 'email', 
                 'max:255', 
                 'unique:users,email', 
-                'ends_with:@acehbaratkab.go.id'
+                'regex:/@acehbaratkab\.go\.id$/'
             ],
         ], [
             'email.ends_with'    => 'Pendaftaran wajib menggunakan email resmi @acehbaratkab.go.id.',
@@ -65,6 +65,7 @@ class AuthController extends Controller
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.'
         ]);
 
+        // Simpan data ke database dengan role 'asn'
         User::create([
             'name'       => $request->name,
             'nip'        => $request->nip,
@@ -73,11 +74,13 @@ class AuthController extends Controller
             'phone'      => $request->phone,
             'email'      => $request->email,
             'password'   => Hash::make($request->password),
-            'role'       => 'asn', 
+            'role'       => 'user', // Set role menjadi 'user' untuk pendaftaran
         ]);
+
         return redirect()->route('login')->with('sukses', 'Akun berhasil didaftarkan! Silakan masuk menggunakan email dan kata sandi Anda.');
     }
 
+    // 3. Proses Logout
     public function logout(Request $request)
     {
         Auth::logout();

@@ -12,7 +12,17 @@ use Illuminate\Notifications\Notifiable;
 // PERUBAHAN PENTING: Gunakan Authenticatable milik MongoDB
 use MongoDB\Laravel\Auth\User as Authenticatable;
 
-#[Fillable(['name', 'email', 'password', 'role'])]
+// 👇 SEMUA KOLOM DARI FORM SUDAH DITAMBAHKAN DI SINI 👇
+#[Fillable([
+    'name', 
+    'email', 
+    'password', 
+    'role', 
+    'nip', 
+    'unit_kerja', 
+    'jabatan', 
+    'no_hp',
+])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

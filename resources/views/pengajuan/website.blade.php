@@ -22,94 +22,72 @@
             </div>
         </div>
 
-        <!-- Form Input -->
-        <form action="{{ route('user.pengajuan.store', 'website') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
-            @csrf
-            
+                <form action="{{ route('user.pengajuan.store', 'website') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
+    @csrf
+    
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
                 
-                <!-- Nama Pemohon -->
                 <div class="group">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Lengkap Pemohon</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <input type="text" name="nama" required placeholder="Nama lengkap beserta gelar" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-user"></i></div>
+                        <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap beserta gelar" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- NIP -->
                 <div class="group">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">NIP Pemohon</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-solid fa-id-badge"></i>
-                        </div>
-                        <input type="text" name="nip" required placeholder="Masukkan NIP" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-id-badge"></i></div>
+                        <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- Instansi / SKPK -->
                 <div class="group">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Asal Instansi / SKPK</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-solid fa-building-columns"></i>
-                        </div>
-                        <input type="text" name="instansi" required placeholder="Contoh: Dinas Kesehatan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-building-columns"></i></div>
+                        <input type="text" name="data_pengajuan[instansi]" required placeholder="Contoh: Dinas Kesehatan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- Nomor HP / WA -->
                 <div class="group">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor HP / WhatsApp</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-brands fa-whatsapp"></i>
-                        </div>
-                        <input type="text" name="no_hp" required placeholder="Contoh: 081234567890" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-brands fa-whatsapp"></i></div>
+                        <input type="number" name="data_pengajuan[no_hp]" required placeholder="Contoh: 081234567890" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- Nama Pimpinan -->
                 <div class="group">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Kepala Dinas / Pimpinan</label>
                     <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-solid fa-user-tie"></i>
-                        </div>
-                        <input type="text" name="pimpinan" required placeholder="Masukkan nama pimpinan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-user-tie"></i></div>
+                        <input type="text" name="data_pengajuan[nama_pimpinan]" required placeholder="Masukkan nama pimpinan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
-                <!-- Usulan Domain -->
                 <div class="group">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Usulan Nama Domain</label>
-                    <div class="flex shadow-sm rounded-2xl">
-                        <div class="relative flex-grow">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors z-20">
-                                <i class="fa-solid fa-link"></i>
-                            </div>
-                            <input type="text" name="domain" required placeholder="namainstansi" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 border-r-0 rounded-l-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all z-10">
-                        </div>
-                        <span class="bg-gray-100/80 backdrop-blur-sm border border-blue-100 text-gray-500 font-bold text-[14px] px-5 py-3.5 rounded-r-2xl flex items-center border-l-0">.go.id</span>
+                    <div class="flex relative rounded-2xl shadow-sm border border-blue-100 overflow-hidden focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-400/10 transition-all bg-white/80 backdrop-blur-sm">
+                        <span class="inline-flex items-center px-4 bg-gray-50 border-r border-gray-100 text-gray-400 text-[14px] font-medium"><i class="fa-solid fa-link mr-2"></i></span>
+                        <input type="text" name="data_pengajuan[domain]" required placeholder="namainstansi" class="flex-1 min-w-0 px-4 py-3.5 text-[14px] text-gray-700 font-medium focus:outline-none bg-transparent">
+                        <span class="inline-flex items-center px-4 bg-gray-50 border-l border-gray-100 text-[#071E3D] text-[14px] font-extrabold">.go.id</span>
                     </div>
                 </div>
 
-                <!-- Upload Surat (Desain Drag & Drop) -->
                 <div class="md:col-span-2">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Upload Surat Permohonan (PDF)</label>
                     <div class="relative flex justify-center px-6 pt-6 pb-7 border-2 border-blue-200 border-dashed rounded-2xl hover:border-cyan-400 hover:bg-cyan-50/50 transition-colors bg-white/50 group">
                         <div class="space-y-2 text-center">
-                            <!-- Ikon Upload -->
                             <div class="w-12 h-12 mx-auto bg-blue-50 text-blue-500 rounded-full flex items-center justify-center group-hover:bg-cyan-100 group-hover:text-cyan-600 transition-colors mb-3">
                                 <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                             </div>
                             <div class="flex flex-col sm:flex-row items-center text-sm text-gray-600 justify-center gap-1">
                                 <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-bold text-cyan-600 hover:text-cyan-500 focus-within:outline-none px-1">
                                     <span>Klik untuk memilih file</span>
-                                    <input id="file-upload" name="file_surat" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = this.files[0].name">
+                                    <!-- Pastikan ini file_pendukung -->
+                                    <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = this.files[0].name">
                                 </label>
                                 <p>atau drag and drop di sini</p>
                             </div>
@@ -118,11 +96,10 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Tombol Submit -->
-            <div class="pt-6 mt-8 border-t border-blue-900/10 flex justify-end">
-                <button type="submit" class="bg-gradient-to-r from-[#071E3D] to-[#1F4287] hover:from-[#1F4287] hover:to-[#278EA5] text-white px-10 py-4 rounded-2xl font-bold text-[15px] transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.2)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.3)] hover:-translate-y-0.5 w-full sm:w-auto flex items-center justify-center gap-3">
-                    Kirim Pengajuan <i class="fa-solid fa-paper-plane"></i>
+            
+            <div class="flex justify-end pt-4">
+                <button type="submit" class="bg-[#071E3D] hover:bg-[#1F4287] text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20 text-[14px]">
+                    Kirim Pengajuan <i class="fa-solid fa-paper-plane ml-2"></i>
                 </button>
             </div>
         </form>
