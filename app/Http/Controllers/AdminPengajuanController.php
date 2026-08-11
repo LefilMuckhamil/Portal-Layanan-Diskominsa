@@ -104,6 +104,7 @@ class AdminPengajuanController extends Controller
                 ->orWhereHas('user', function ($userQuery) use ($search) {
                     $userQuery->where('name', 'like', "%{$search}%")
                                 ->orWhere('unit_kerja', 'like', "%{$search}%");
+                                
                 });
             });
         }
@@ -132,7 +133,6 @@ class AdminPengajuanController extends Controller
     // Admin bikin tiket ajuan Website secara manual 
         public function storeWebsite(Request $request)
         {
-            // 1. Validasi Lengkap (Mencakup NIP, No HP, & Nama Pimpinan)
             $request->validate([
                 'user_id'                       => 'required|exists:users,id',
                 'jenis_layanan'                 => 'required|string',

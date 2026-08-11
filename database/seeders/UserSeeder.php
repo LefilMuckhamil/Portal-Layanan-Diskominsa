@@ -10,20 +10,16 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Akun Admin Diskominsa
+        // 1. Dibuat paling pertama -> Otomatis ID = 1
         User::create([
-            'name' => 'Admin Diskominsa',
-            'email' => 'admin@diskominsa.go.id',
-            'password' => Hash::make('password123'), // Passwordnya: password123
-            'role' => 'admin',
-        ]);
-
-        // 2. Akun User / ASN / Instansi
-        User::create([
-            'name' => 'ASN Instansi',
-            'email' => 'user@gmail.com',
-            'password' => Hash::make('password123'), // Passwordnya: password123
-            'role' => 'user',
+            'name'       => 'Administrator Layanan',
+            'nip'        => '199001012015011001',
+            'unit_kerja' => 'Diskominsa Aceh Barat',
+            'jabatan'    => 'Administrator Utama',
+            'no_hp'      => '081234567890',
+            'email'      => 'admin@acehbaratkab.go.id',
+            'password'   => Hash::make('password123'),
+            'role'       => 'admin',
         ]);
     }
 }

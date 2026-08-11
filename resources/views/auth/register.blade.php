@@ -147,7 +147,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                                     <i class="fa-solid fa-mobile-screen text-[13px]"></i>
                                 </div>
-                                <input type="text" name="phone" required value="{{ old('phone') }}" placeholder="Cth: 08xxxxxxxxx"
+                                <input type="text" name="no_hp" required value="{{ old('no_hp') }}" placeholder="Cth: 08xxxxxxxxx"
                                     class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3.5 text-[13px] text-[#071E3D] font-bold placeholder-gray-400 focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-50 outline-none transition-all">
                             </div>
                         </div>

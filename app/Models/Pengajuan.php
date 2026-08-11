@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model; 
 
 class Pengajuan extends Model
 {
     use HasFactory;
+
+    protected $table = 'pengajuan';
 
     protected $fillable = [
         'nomor_tiket',
@@ -20,36 +22,41 @@ class Pengajuan extends Model
         'pesan'
     ];
 
-    // Beritahu Laravel bahwa data_pengajuan adalah array/JSON
     protected $casts = [
         'data_pengajuan' => 'array',
         'logs'           => 'array',
         'pesan'          => 'array',
     ];
 
-    // Relasi ke User yang mengajukan
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Accessor untuk meng-generate nomor tiket cantik secara otomatis.
-     * Tidak disimpan di database, murni untuk tampilan visual.
-     */
-    public function getNomorTiketAttribute()
+    public function riwayatStatus()
     {
-        $kodeLayanan = match($this->jenis_layanan) {
-            'Pembuatan Website'     => 'WEB',
-            'Pembuatan Email Resmi' => 'EML',
-            'Layanan TTE'           => 'TTE',
-            'Cloud Government'      => 'CLD',
-            'Reset Password'        => 'HLP',
-            default                 => 'REQ'
-        };
-        $idUnik = strtoupper(substr($this->id, -5));
-
-        return '#' . $kodeLayanan . '-' . $idUnik;
+        return $this->hasMany(RiwayatStatus::class, 'pengajuan_id');
     }
 
+    public function pesanDiskusi()
+    {
+        return $this->hasMany(PesanDiskusi::class, 'pengajuan_id');
+    }
+
+    // PEMBUAT NOMOR TIKET OTOMATIS
+    protected static function booted()
+    {
+        static::creating(function ($pengajuan) {
+            $kode = match($pengajuan->jenis_layanan) {
+                'Pembuatan Website', 'pembuatan_website'   => 'WEB',
+                'Pembuatan Email Resmi', 'pembuatan_email' => 'EML',
+                'Layanan TTE', 'layanan_tte'               => 'TTE',
+                'Cloud Government', 'cloud_government'     => 'CLD',
+                'Reset Password'                           => 'HLP',
+                default                                    => 'REQ'
+            };
+
+            $pengajuan->nomor_tiket = '#' . $kode . '-' . strtoupper(substr(md5(uniqid()), 0, 5));
+        });
+    }
 }

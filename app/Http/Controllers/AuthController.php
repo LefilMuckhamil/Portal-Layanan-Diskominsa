@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // 1. Proses Login
+    // login
     public function authenticate(Request $request)
     {
         $request->validate([
@@ -32,14 +32,14 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    // 2. Proses Pendaftaran / Register (Sudah digabung & dibersihkan dari duplikat)
+    // register
     public function registerProcess(Request $request)
     {
         $request->validate([
             'name'       => ['required', 'string', 'max:255'],
             'unit_kerja' => ['required', 'string', 'max:255'],
             'jabatan'    => ['required', 'string', 'max:255'],
-            'phone'      => ['required', 'string', 'max:20'],
+            'no_hp'      => ['required', 'string', 'max:20'], 
             'password'   => ['required', 'string', 'min:8', 'confirmed'],
             
             'nip' => [
@@ -58,29 +58,30 @@ class AuthController extends Controller
                 'regex:/@acehbaratkab\.go\.id$/'
             ],
         ], [
-            'email.ends_with'    => 'Pendaftaran wajib menggunakan email resmi @acehbaratkab.go.id.',
+            'email.regex'        => 'Pendaftaran wajib menggunakan email resmi @acehbaratkab.go.id.',
             'email.unique'       => 'Email ini sudah terdaftar di sistem.',
             'nip.unique'         => 'NIP ini sudah terdaftar. Silakan gunakan NIP Anda yang sebenarnya.',
             'nip.size'           => 'NIP harus berjumlah tepat 18 digit.',
+            'no_hp.required'     => 'Nomor HP wajib diisi.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.'
         ]);
 
-        // Simpan data ke database dengan role 'asn'
+        // sve ke db
         User::create([
             'name'       => $request->name,
             'nip'        => $request->nip,
             'unit_kerja' => $request->unit_kerja,
             'jabatan'    => $request->jabatan,
-            'phone'      => $request->phone,
+            'no_hp'      => $request->no_hp,
             'email'      => $request->email,
             'password'   => Hash::make($request->password),
-            'role'       => 'user', // Set role menjadi 'user' untuk pendaftaran
+            'role'       => 'user',
         ]);
 
         return redirect()->route('login')->with('sukses', 'Akun berhasil didaftarkan! Silakan masuk menggunakan email dan kata sandi Anda.');
     }
 
-    // 3. Proses Logout
+    // logout
     public function logout(Request $request)
     {
         Auth::logout();

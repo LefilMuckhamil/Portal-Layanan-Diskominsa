@@ -22,16 +22,30 @@
             </div>
         </div>
 
-                <form action="{{ route('pengajuan.website.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
-    @csrf
-    
+        <!-- NOTIFIKASI JIKA FORM DITOLAK / VALIDASI ERROR -->
+        @if ($errors->any())
+            <div class="relative z-10 mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-sm">
+                <div class="flex items-center font-bold mb-1">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> Pengajuan Gagal Diproses:
+                </div>
+                <ul class="list-disc list-inside space-y-1 text-xs">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('pengajuan.website.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
+            @csrf
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
                 
                 <div class="group">
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-user"></i></div>
-                        <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap beserta gelar" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Nama lengkap beserta gelar" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
@@ -39,7 +53,7 @@
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">NIP</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-id-badge"></i></div>
-                        <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <input type="number" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
@@ -47,15 +61,15 @@
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Instansi</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-building-columns"></i></div>
-                        <input type="text" name="data_pengajuan[instansi]" required placeholder="Contoh: Dinas Kesehatan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Kesehatan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor WhatsApp</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-brands fa-whatsapp"></i></div>
-                        <input type="number" name="data_pengajuan[no_hp]" required placeholder="Contoh: 081234567890" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <input type="number" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="Contoh: 081234567890" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
@@ -63,7 +77,7 @@
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Pimpinan</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-user-tie"></i></div>
-                        <input type="text" name="data_pengajuan[nama_pimpinan]" required placeholder="Masukkan nama pimpinan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+                        <input type="text" name="data_pengajuan[nama_pimpinan]" value="{{ old('data_pengajuan.nama_pimpinan') }}" required placeholder="Masukkan nama pimpinan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
                     </div>
                 </div>
 
@@ -71,7 +85,7 @@
                     <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Domain</label>
                     <div class="flex relative rounded-2xl shadow-sm border border-blue-100 overflow-hidden focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-400/10 transition-all bg-white/80 backdrop-blur-sm">
                         <span class="inline-flex items-center px-4 bg-gray-50 border-r border-gray-100 text-gray-400 text-[14px] font-medium"><i class="fa-solid fa-link mr-2"></i></span>
-                        <input type="text" name="data_pengajuan[domain]" required placeholder="namainstansi" class="flex-1 min-w-0 px-4 py-3.5 text-[14px] text-gray-700 font-medium focus:outline-none bg-transparent">
+                        <input type="text" name="data_pengajuan[domain]" value="{{ old('data_pengajuan.domain') }}" required placeholder="namainstansi" class="flex-1 min-w-0 px-4 py-3.5 text-[14px] text-gray-700 font-medium focus:outline-none bg-transparent">
                         <span class="inline-flex items-center px-4 bg-gray-50 border-l border-gray-100 text-[#071E3D] text-[14px] font-extrabold">.go.id</span>
                     </div>
                 </div>
@@ -86,7 +100,6 @@
                             <div class="flex flex-col sm:flex-row items-center text-sm text-gray-600 justify-center gap-1">
                                 <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-bold text-cyan-600 hover:text-cyan-500 focus-within:outline-none px-1">
                                     <span>Klik untuk memilih file</span>
-                                    <!-- Pastikan ini file_pendukung -->
                                     <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = this.files[0].name">
                                 </label>
                                 <p>atau drag and drop di sini</p>
@@ -106,13 +119,27 @@
 
     </div>
 
-    <!-- Script Anti Double Submit -->
-    <script>
-        function disableSubmitButton(form) {
-            const btn = form.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.classList.add('opacity-70', 'cursor-not-allowed');
-            btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-2"></i>';
-        }
-    </script>
+    <!--
+
+        <script>
+            function closeSuccessModal() {
+                const modal = document.getElementById('successModal');
+                if(modal) {
+                    modal.classList.add('opacity-0', 'pointer-events-none');
+                    setTimeout(() => modal.remove(), 300);
+                }
+            }
+        </script>
+
+        <!-- Script Anti Double Submit Button -->
+        <script>
+            function disableSubmitButton(form) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-70', 'cursor-not-allowed');
+                    btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-2"></i>';
+                }
+            }
+        </script>
 @endsection

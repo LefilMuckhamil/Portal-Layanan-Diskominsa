@@ -10,9 +10,12 @@ class IsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Cek apakah user sudah login dan role-nya adalah 'admin'
         if (auth()->check() && auth()->user()->role === 'admin') {
             return $next($request);
         }
-        return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman Admin.');
+
+        // Jika bukan admin, tendang ke halaman beranda dengan pesan peringatan
+        return redirect('/')->with('error', 'Anda tidak memiliki hak akses administrator.');
     }
 }
