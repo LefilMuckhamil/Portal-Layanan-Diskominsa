@@ -23,7 +23,7 @@
 
         <!-- Form Input -->
         <!-- Pastikan route ini sudah didaftarkan di web.php -->
-       <form action="{{ route('user.pengajuan.store', 'cloud') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
+       <form action="{{ route('pengajuan.cloud.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">

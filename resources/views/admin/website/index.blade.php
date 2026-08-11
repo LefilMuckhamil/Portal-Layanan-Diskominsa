@@ -9,9 +9,6 @@
     @include('admin.website.partials.statistics')
 
     <!-- Memanggil bagian Tabel dan Modal -->
-    @include('admin.website.partials.table')
+    @include('admin.website.partials.table', ['users' => $users])
 
-    
-
-    
 @endsection

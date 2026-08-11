@@ -115,7 +115,7 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        $users = User::whereIn('role', ['asn', 'instansi'])->get();
+        $users = User::where('role', '!=', 'admin')->get();
                         
         return view('admin.website.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
@@ -125,16 +125,43 @@ class AdminPengajuanController extends Controller
     // Admin bikin tiket ajuan Website secara manual 
     public function storeWebsite(Request $request)
     {
-        $request->validate(['user_id' => 'required|exists:users,id']);
+        // 1. Validasi HARUS mengecek ke dalam array data_pengajuan
+        $request->validate([
+            'user_id'                 => 'required|exists:users,id',
+            'jenis_layanan'           => 'required|string',
+            'data_pengajuan'          => 'required|array',
+            'data_pengajuan.nama'     => 'required|string|max:255',
+            'data_pengajuan.instansi' => 'required|string|max:255',
+            'data_pengajuan.domain'   => 'required|string',
+            'file_pendukung'          => 'required|mimes:pdf|max:5120',
+        ], [
+            // Custom pesan error biar lebih enak dibaca (opsional)
+            'data_pengajuan.nama.required'     => 'Kolom Nama Pemohon wajib diisi.',
+            'data_pengajuan.instansi.required' => 'Kolom Instansi wajib diisi.',
+            'data_pengajuan.domain.required'   => 'Kolom Domain wajib diisi.',
+        ]);
 
-        Pengajuan::create([
-            'user_id'       => $request->user_id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'status'        => 'Pending',
+        // 2. Upload file PDF (jika ada)
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('pengajuan/website', $fileName, 'public');
+        }
+
+        // 3. Simpan ke database
+        \App\Models\Pengajuan::create([
+            'nomor_tiket'    => 'WEB-' . date('Ymd') . '-' . rand(1000, 9999), 
+            'user_id'        => $request->user_id, // ID user yang dipilih dari dropdown
+            'jenis_layanan'  => $request->jenis_layanan,
+            'data_pengajuan' => json_encode($request->data_pengajuan), // Otomatis simpan semua data form
+            'file_pendukung' => $filePath,
+            'status'         => 'Pending', 
         ]);
 
         return back()->with('sukses', 'Permohonan Website berhasil ditambahkan manual.');
     }
+
 
     // Nampilin halaman kelola daftar ajuan Email Resmi
     public function emailResmi(Request $request)
@@ -286,7 +313,7 @@ class AdminPengajuanController extends Controller
     // Nampilin halaman kelola tiket Pusat Bantuan atau Kendala
     public function layananBantuan(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Reset Password / OTP');
+        $query = Pengajuan::where('jenis_layanan', 'Reset Password');
         
         if ($request->filled('search')) {
             $query->where('data_pengajuan', 'like', '%' . $request->search . '%');
@@ -297,7 +324,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->get();
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Reset Password / OTP');
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Reset Password');
         
         $total   = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Menunggu', 'Menunggu Respons'])->count();
@@ -305,7 +332,7 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        $users = User::whereIn('role', ['asn', 'instansi'])->get();
+        $users = User::whereIn('role', ['asn'])->get();
                         
         return view('admin.bantuan.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
@@ -320,7 +347,7 @@ class AdminPengajuanController extends Controller
 
         Pengajuan::create([
             'user_id'        => $user->id,
-            'jenis_layanan'  => 'Reset Password / OTP',
+            'jenis_layanan'  => 'Reset Password',
             'status'         => 'Pending',
             'data_pengajuan' => json_encode([
                 'nama_pelapor' => $user->name,
@@ -332,4 +359,7 @@ class AdminPengajuanController extends Controller
 
         return back()->with('sukses', 'Tiket Bantuan berhasil dibuat manual!');
     }
+
+
+    
 }

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model; // <-- PENTING: Gunakan Model khusus MongoDB
+use MongoDB\Laravel\Eloquent\Model; 
 
 class Pengajuan extends Model
 {
@@ -41,8 +41,7 @@ class Pengajuan extends Model
             'Pembuatan Email Resmi' => 'EML',
             'Layanan TTE'           => 'TTE',
             'Cloud Government'      => 'CLD',
-            'Reset Password / OTP'  => 'HLP',
-            default                 => 'REQ'
+            'Reset Password'  => 'HLP'
         };
 
         // Ambil 5 karakter terakhir dari ID, ubah ke huruf besar

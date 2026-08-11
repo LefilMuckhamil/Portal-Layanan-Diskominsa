@@ -20,7 +20,7 @@ class UserPengajuanController extends Controller
             'no_hp'      => 'required|string',
             'pimpinan'   => 'required|string',
             'domain'     => 'required|string',
-            'file_surat' => 'required|mimes:pdf|max:2048', // Wajib PDF, max 2MB
+            'file_surat' => 'required|mimes:pdf|max:2048',
         ]);
 
         $filePath = $request->file('file_surat')->store('dokumen_pengajuan', 'public');
@@ -29,15 +29,15 @@ class UserPengajuanController extends Controller
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Pembuatan Website',
             'status'         => 'Pending',
-            'data_pengajuan' => json_encode([
-                'nama_pemohon'  => $request->nama,
+            'file_pendukung' => $filePath, // Simpan ke field utama
+            'data_pengajuan' => [          // Langsung Array Murni (Hapus json_encode)
+                'nama'          => $request->nama,
                 'nip'           => $request->nip,
-                'nama_instansi' => $request->instansi,
+                'instansi'      => $request->instansi,
                 'nomor_hp'      => $request->no_hp,
                 'nama_pimpinan' => $request->pimpinan,
-                'usulan_domain' => $request->domain . '.go.id',
-                'file_surat'    => $filePath,
-            ])
+                'domain'        => $request->domain . '.go.id',
+            ]
         ]);
 
         return back()->with('sukses', 'Pengajuan Website Instansi berhasil dikirim!');
@@ -63,14 +63,14 @@ class UserPengajuanController extends Controller
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Pembuatan Email Resmi',
             'status'         => 'Pending',
-            'data_pengajuan' => json_encode([
-                'nama_lengkap' => $request->nama,
+            'file_pendukung' => $filePath,
+            'data_pengajuan' => [
+                'nama'         => $request->nama,
                 'nip'          => $request->nip,
                 'instansi'     => $request->instansi,
                 'nomor_hp'     => $request->no_hp,
                 'usulan_email' => $request->usulan_email . '@acehbaratkab.go.id',
-                'file_surat'   => $filePath,
-            ])
+            ]
         ]);
 
         return back()->with('sukses', 'Pengajuan Email Resmi berhasil dikirim!');
@@ -97,15 +97,15 @@ class UserPengajuanController extends Controller
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Layanan TTE',
             'status'         => 'Pending',
-            'data_pengajuan' => json_encode([
-                'nama_lengkap' => $request->nama,
-                'nip'          => $request->nip,
-                'instansi'     => $request->instansi,
-                'nomor_hp'     => $request->no_hp,
-                'email'        => $request->email,
-                'alamat'       => $request->alamat,
-                'file_surat'   => $filePath,
-            ])
+            'file_pendukung' => $filePath,
+            'data_pengajuan' => [
+                'nama'     => $request->nama,
+                'nip'      => $request->nip,
+                'instansi' => $request->instansi,
+                'nomor_hp' => $request->no_hp,
+                'email'    => $request->email,
+                'alamat'   => $request->alamat,
+            ]
         ]);
 
         return back()->with('sukses', 'Pengajuan Layanan TTE berhasil dikirim!');
@@ -130,20 +130,21 @@ class UserPengajuanController extends Controller
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Cloud Government',
             'status'         => 'Pending',
-            'data_pengajuan' => json_encode([
+            'file_pendukung' => $filePath,
+            'data_pengajuan' => [
                 'nama_pemohon' => $request->nama,
                 'nip'          => $request->nip,
                 'email'        => $request->email,
                 'kapasitas'    => $request->kapasitas,
-                'file_surat'   => $filePath,
-            ])
+                'jenis_cloud'  => 'Personal',
+            ]
         ]);
 
         return back()->with('sukses', 'Pengajuan Cloud Gov berhasil dikirim!');
     }
 
     /**
-     * 5. Pengajuan Pusat Bantuan (Reset Password)
+     * 5. Pengajuan Pusat Bantuan Reset Password
      */
     public function storeBantuan(Request $request)
     {
@@ -159,16 +160,16 @@ class UserPengajuanController extends Controller
 
         Pengajuan::create([
             'user_id'        => Auth::id(),
-            'jenis_layanan'  => 'Reset Password / OTP',
+            'jenis_layanan'  => 'Reset Password',
             'status'         => 'Pending',
-            'data_pengajuan' => json_encode([
-                'kategori'      => $request->kategori,
+            'file_pendukung' => $filePath,
+            'data_pengajuan' => [
+                'kendala'       => $request->kategori,
                 'nama_pelapor'  => $request->nama,
                 'nip'           => $request->nip,
                 'email'         => $request->email,
                 'pesan_kendala' => 'Permohonan ' . $request->kategori,
-                'file_surat'    => $filePath,
-            ])
+            ]
         ]);
 
         return back()->with('sukses', 'Tiket Bantuan berhasil dikirim!');

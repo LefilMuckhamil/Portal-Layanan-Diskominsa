@@ -235,7 +235,7 @@
         <form method="POST" action="{{ route('admin.pengajuan.storeEmail') }}">
             @csrf
             <div class="mb-6">
-                <label class="block text-[12px] font-bold text-gray-600 mb-2">Pilih Nama Pegawai (ASN)</label>
+                <label class="block text-[12px] font-bold text-gray-600 mb-2">Pilih Nama Pegawai</label>
                 <select name="user_id" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-[13px] text-[#071E3D] font-bold focus:border-cyan-400 outline-none transition-colors">
                     <option value="">-- Pilih ASN Terdaftar --</option>
                     @foreach($users as $user)

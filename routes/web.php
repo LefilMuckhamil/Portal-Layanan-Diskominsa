@@ -6,8 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminPengajuanController;
-use App\Http\Controllers\UserPengajuanController; 
-use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\UserPengajuanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,7 +20,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'authenticate']);
     
     Route::get('/register', function () { return view('auth.register'); })->name('register');
-    // 👇 INI BARIS YANG DITAMBAHKAN UNTUK MENGATASI ERROR POST 👇
     Route::post('/register', [AuthController::class, 'registerProcess'])->name('register.process');
     
     Route::get('/forgot-password', function () { return view('auth.forgot-password'); })->name('password.request');
@@ -37,7 +35,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // 1. Halaman Form Pengajuan Layanan
+    // 1. Form View & Store Pengajuan Layanan
     Route::prefix('layanan')->group(function () {
         Route::get('/pengajuan-website', function () { return view('pengajuan.website'); })->name('pengajuan.website');
         Route::get('/pengajuan-email', function () { return view('pengajuan.email'); })->name('pengajuan.email');
@@ -45,20 +43,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengajuan-cloud', function () { return view('pengajuan.cloud'); })->name('pengajuan.cloud');
         Route::get('/pengajuan-bantuan', function () { return view('pengajuan.bantuan'); })->name('pengajuan.bantuan');
         
-        // Rute untuk Submit Form Pengajuan dari User
         Route::post('/pengajuan-website/store', [UserPengajuanController::class, 'storeWebsite'])->name('pengajuan.website.store');
         Route::post('/pengajuan/email/store', [UserPengajuanController::class, 'storeEmail'])->name('pengajuan.email.store');
         Route::post('/pengajuan/tte/store', [UserPengajuanController::class, 'storeTte'])->name('pengajuan.tte.store');
         Route::post('/pengajuan/cloud/store', [UserPengajuanController::class, 'storeCloud'])->name('pengajuan.cloud.store');
         Route::post('/pengajuan/bantuan/store', [UserPengajuanController::class, 'storeBantuan'])->name('pengajuan.bantuan.store');
-        Route::post('/layanan/{jenis}/store', [SubmissionController::class, 'store'])->name('user.pengajuan.store');
     });
 
-    // 2. Riwayat & Interaksi Chat User
+    // 2. Riwayat & Chat User
     Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan');
-    Route::post('/pengajuan/{id}/kirim-pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.kirim.pesan');
 });
 
 
@@ -73,7 +68,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         $countEmail   = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
         $countTTE     = \App\Models\Pengajuan::where('jenis_layanan', 'Layanan TTE')->count();
         $countCloud   = \App\Models\Pengajuan::where('jenis_layanan', 'Cloud Government')->count();
-        $countBantuan = \App\Models\Pengajuan::where('jenis_layanan', 'Reset Password / OTP')->count();
+        $countBantuan = \App\Models\Pengajuan::where('jenis_layanan', 'Reset Password')->count();
         $pengajuans   = \App\Models\Pengajuan::latest()->get();
         $chatAktif    = Cache::get('chat_global_aktif', true);
 
@@ -82,7 +77,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         )); 
     })->name('admin.dashboard');
 
-    // 2. Pengaturan Sistem & Saklar Chat
+    // 2. Pengaturan Saklar Chat
     Route::get('/admin/pengaturan', function () {
         $chatAktif = Cache::get('chat_global_aktif', true);
         return view('admin.pengaturan.index', compact('chatAktif'));
@@ -96,32 +91,28 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         return back()->with('sukses', "Fitur Global Chat berhasil $pesan!");
     })->name('admin.toggleChat');
     
-    // 3. Menu Manajemen Tiap Layanan (Tampilan Tabel)
+    // 3. Halaman Kelola Per Layanan
     Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index'); 
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
     Route::get('/layanan-tte', [AdminPengajuanController::class, 'layananTte'])->name('admin.tte.index');
     Route::get('/layanan-cloud', [AdminPengajuanController::class, 'layananCloud'])->name('admin.cloud.index');
     Route::get('/layanan-bantuan', [AdminPengajuanController::class, 'layananBantuan'])->name('admin.bantuan.index');
 
-    // 4. Aksi Kelola Pengajuan (CRUD Admin)
+    // 4. Aksi CRUD Admin
     Route::prefix('admin/pengajuan')->group(function () {
         Route::get('/', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan.index');
         Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show');
         
-        // Simpan Data Tambah Manual
+        // Simpan Data Manual dari Admin
         Route::post('/store-website', [AdminPengajuanController::class, 'storeWebsite'])->name('admin.pengajuan.storeWebsite'); 
         Route::post('/store-email', [AdminPengajuanController::class, 'storeEmailResmi'])->name('admin.pengajuan.storeEmail');
         Route::post('/store-tte', [AdminPengajuanController::class, 'storeTte'])->name('admin.pengajuan.storeTte');
         Route::post('/store-cloud', [AdminPengajuanController::class, 'storeCloud'])->name('admin.pengajuan.storeCloud');
         Route::post('/layanan-bantuan/store', [AdminPengajuanController::class, 'storeBantuan'])->name('admin.bantuan.store');
         
-        // Hapus & Update Data
+        // Update & Hapus
         Route::delete('/{id}/destroy', [AdminPengajuanController::class, 'destroy'])->name('admin.pengajuan.destroy');
         Route::put('/{id}/update', [AdminPengajuanController::class, 'updateProgres'])->name('admin.pengajuan.update');
-        
-        // (Opsional/Duplikat) Jika updateProgres sudah menghandle chat & status, 2 rute ini bisa dihapus nanti
-        Route::post('/{id}/pesan', [AdminPengajuanController::class, 'balasPesan'])->name('admin.pengajuan.pesan');
-        Route::post('/{id}/progress', [AdminPengajuanController::class, 'updateProgress'])->name('admin.pengajuan.progress');
     });
 
 });

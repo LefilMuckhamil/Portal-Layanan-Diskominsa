@@ -22,13 +22,13 @@
             </div>
         </div>
 
-                <form action="{{ route('user.pengajuan.store', 'website') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
+                <form action="{{ route('pengajuan.website.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
     @csrf
     
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
                 
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Lengkap Pemohon</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-user"></i></div>
                         <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap beserta gelar" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">NIP Pemohon</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">NIP</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-id-badge"></i></div>
                         <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Asal Instansi / SKPK</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Instansi</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-building-columns"></i></div>
                         <input type="text" name="data_pengajuan[instansi]" required placeholder="Contoh: Dinas Kesehatan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor HP / WhatsApp</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nomor</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-brands fa-whatsapp"></i></div>
                         <input type="number" name="data_pengajuan[no_hp]" required placeholder="Contoh: 081234567890" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Kepala Dinas / Pimpinan</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Pimpinan</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors"><i class="fa-solid fa-user-tie"></i></div>
                         <input type="text" name="data_pengajuan[nama_pimpinan]" required placeholder="Masukkan nama pimpinan" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Usulan Nama Domain</label>
+                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Domain</label>
                     <div class="flex relative rounded-2xl shadow-sm border border-blue-100 overflow-hidden focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-400/10 transition-all bg-white/80 backdrop-blur-sm">
                         <span class="inline-flex items-center px-4 bg-gray-50 border-r border-gray-100 text-gray-400 text-[14px] font-medium"><i class="fa-solid fa-link mr-2"></i></span>
                         <input type="text" name="data_pengajuan[domain]" required placeholder="namainstansi" class="flex-1 min-w-0 px-4 py-3.5 text-[14px] text-gray-700 font-medium focus:outline-none bg-transparent">
