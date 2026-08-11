@@ -10,6 +10,7 @@ class Pengajuan extends Model
     use HasFactory;
 
     protected $fillable = [
+        'nomor_tiket',
         'user_id',
         'jenis_layanan',
         'status',
@@ -22,6 +23,8 @@ class Pengajuan extends Model
     // Beritahu Laravel bahwa data_pengajuan adalah array/JSON
     protected $casts = [
         'data_pengajuan' => 'array',
+        'logs'           => 'array',
+        'pesan'          => 'array',
     ];
 
     // Relasi ke User yang mengajukan
@@ -44,8 +47,6 @@ class Pengajuan extends Model
             'Reset Password'        => 'HLP',
             default                 => 'REQ'
         };
-
-        // Ambil 5 karakter terakhir dari ID, ubah ke huruf besar
         $idUnik = strtoupper(substr($this->id, -5));
 
         return '#' . $kodeLayanan . '-' . $idUnik;

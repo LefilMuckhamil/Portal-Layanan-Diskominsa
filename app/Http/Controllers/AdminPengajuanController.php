@@ -93,12 +93,18 @@ class AdminPengajuanController extends Controller
     public function website(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->with('user');
-
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('user', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('unit_kerja', 'like', "%{$search}%");
+
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_tiket', 'like', "%{$search}%")
+                ->orWhere('data_pengajuan.nama', 'like', "%{$search}%")
+                ->orWhere('data_pengajuan.nip', 'like', "%{$search}%")
+                ->orWhere('data_pengajuan.instansi', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                                ->orWhere('unit_kerja', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -108,13 +114,14 @@ class AdminPengajuanController extends Controller
 
         $pengajuans = $query->latest()->get(); 
         $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Website');
-        
+    
         $total   = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
         $proses  = (clone $baseQuery)->where('status', 'Proses Development')->count();
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
+        // 6. Ambil data ASN untuk Modal Tambah Manual Admin
         $users = User::where('role', '!=', 'admin')->get();
                         
         return view('admin.website.index', compact(
@@ -123,44 +130,47 @@ class AdminPengajuanController extends Controller
     }
 
     // Admin bikin tiket ajuan Website secara manual 
-    public function storeWebsite(Request $request)
-    {
-        // 1. Validasi HARUS mengecek ke dalam array data_pengajuan
-        $request->validate([
-            'user_id'                 => 'required|exists:users,id',
-            'jenis_layanan'           => 'required|string',
-            'data_pengajuan'          => 'required|array',
-            'data_pengajuan.nama'     => 'required|string|max:255',
-            'data_pengajuan.instansi' => 'required|string|max:255',
-            'data_pengajuan.domain'   => 'required|string',
-            'file_pendukung'          => 'required|mimes:pdf|max:5120',
-        ], [
-            // Custom pesan error biar lebih enak dibaca (opsional)
-            'data_pengajuan.nama.required'     => 'Kolom Nama Pemohon wajib diisi.',
-            'data_pengajuan.instansi.required' => 'Kolom Instansi wajib diisi.',
-            'data_pengajuan.domain.required'   => 'Kolom Domain wajib diisi.',
-        ]);
+        public function storeWebsite(Request $request)
+        {
+            // 1. Validasi Lengkap (Mencakup NIP, No HP, & Nama Pimpinan)
+            $request->validate([
+                'user_id'                       => 'required|exists:users,id',
+                'jenis_layanan'                 => 'required|string',
+                'data_pengajuan'                => 'required|array',
+                'data_pengajuan.nama'           => 'required|string|max:255',
+                'data_pengajuan.nip'            => 'nullable|string',
+                'data_pengajuan.instansi'       => 'required|string|max:255',
+                'data_pengajuan.no_hp'          => 'required|string',
+                'data_pengajuan.nama_pimpinan'  => 'required|string|max:255',
+                'data_pengajuan.domain'         => 'required|string',
+                'file_pendukung'                => 'required|mimes:pdf|max:5120',
+            ], [
+                'data_pengajuan.nama.required'          => 'Kolom Nama Pemohon wajib diisi.',
+                'data_pengajuan.instansi.required'      => 'Kolom Instansi wajib diisi.',
+                'data_pengajuan.no_hp.required'         => 'Kolom Nomor HP/WhatsApp wajib diisi.',
+                'data_pengajuan.nama_pimpinan.required' => 'Kolom Nama Pimpinan wajib diisi.',
+                'data_pengajuan.domain.required'        => 'Kolom Domain wajib diisi.',
+            ]);
 
-        // 2. Upload file PDF (jika ada)
-        $filePath = null;
-        if ($request->hasFile('file_pendukung')) {
-            $file = $request->file('file_pendukung');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/website', $fileName, 'public');
+            // 2. Upload file PDF
+            $filePath = null;
+            if ($request->hasFile('file_pendukung')) {
+                $file = $request->file('file_pendukung');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('pengajuan/website', $fileName, 'public');
+            }
+
+            // 3. Simpan ke database (Tanpa json_encode & nomor_tiket dibuat otomatis oleh Model)
+            Pengajuan::create([
+                'user_id'        => $request->user_id,
+                'jenis_layanan'  => $request->jenis_layanan,
+                'data_pengajuan' => $request->data_pengajuan, // Array murni langsung disimpan sebagai BSON
+                'file_pendukung' => $filePath,
+                'status'         => 'Pending', 
+            ]);
+
+            return back()->with('sukses', 'Permohonan Website berhasil ditambahkan manual.');
         }
-
-        // 3. Simpan ke database
-        \App\Models\Pengajuan::create([
-            'nomor_tiket'    => 'WEB-' . date('Ymd') . '-' . rand(1000, 9999), 
-            'user_id'        => $request->user_id, // ID user yang dipilih dari dropdown
-            'jenis_layanan'  => $request->jenis_layanan,
-            'data_pengajuan' => json_encode($request->data_pengajuan), // Otomatis simpan semua data form
-            'file_pendukung' => $filePath,
-            'status'         => 'Pending', 
-        ]);
-
-        return back()->with('sukses', 'Permohonan Website berhasil ditambahkan manual.');
-    }
 
 
     // Nampilin halaman kelola daftar ajuan Email Resmi

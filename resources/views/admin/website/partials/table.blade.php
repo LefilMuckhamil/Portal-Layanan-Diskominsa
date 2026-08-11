@@ -346,9 +346,9 @@
                 
                 <!-- Pilih ASN Pemohon -->
                 <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Pilih Nama / Instansi Pemohon (Akun ASN) <span class="text-rose-500">*</span></label>
+                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">ASN Pemohon<span class="text-rose-500">*</span></label>
                     <select name="user_id" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="">-- Silakan Pilih ASN Terdaftar --</option>
+                        <option value="">Silakan Pilih ASN Terdaftar</option>
                         @foreach($users ?? [] as $user)
                             <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->unit_kerja }}</option>
                         @endforeach
@@ -357,31 +357,31 @@
 
                 <!-- Input Nama Form -->
                 <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Pemohon (Detail Form) <span class="text-rose-500">*</span></label>
-                    <input type="text" name="data_pengajuan[nama]" required placeholder="Masukkan nama lengkap..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
+                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Pemohon<span class="text-rose-500">*</span></label>
+                    <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
                 </div>
 
                 <!-- Input NIP -->
                 <div>
                     <label class="block text-[12px] font-bold text-[#071E3D] mb-2">NIP Pemohon</label>
-                    <input type="text" name="data_pengajuan[nip]" placeholder="Masukkan NIP (Opsional)..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
+                    <input type="text" name="data_pengajuan[nip]" placeholder="Masukkan NIP..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
                 </div>
 
                 <!-- Input Instansi -->
                 <div>
                     <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Instansi<span class="text-rose-500">*</span></label>
-                    <input type="text" name="data_pengajuan[instansi]" required placeholder="Contoh: Dinas Kominfo..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
+                    <input type="text" name="data_pengajuan[instansi]" required placeholder="Dinasxxxxx" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
                 </div>
 
                 <!-- Input Nomor HP -->
                 <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nomor HP / WhatsApp <span class="text-rose-500">*</span></label>
-                    <input type="number" name="data_pengajuan[no_hp]" required placeholder="Contoh: 0812345678..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
+                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nomor HP<span class="text-rose-500">*</span></label>
+                    <input type="number" name="data_pengajuan[no_hp]" required placeholder="0812xxxxxxxx" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
                 </div>
 
                 <!-- Input Nama Pimpinan -->
                 <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Kepala Dinas / Pimpinan <span class="text-rose-500">*</span></label>
+                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Pimpinan <span class="text-rose-500">*</span></label>
                     <input type="text" name="data_pengajuan[nama_pimpinan]" required placeholder="Masukkan nama pimpinan..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
                 </div>
 
@@ -389,13 +389,13 @@
                 <div class="col-span-1 md:col-span-2">
                     <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Pilih Jenis Layanan <span class="text-rose-500">*</span></label>
                     <select name="jenis_layanan" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="Pembuatan Website" selected>Pembuatan Website (.go.id)</option>
+                        <option value="Pembuatan Website" selected>Pembuatan Website</option>
                     </select>
                 </div>
 
                 <!-- Usulan Nama Domain -->
                 <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Usulan Nama Domain <span class="text-rose-500">*</span></label>
+                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Domain <span class="text-rose-500">*</span></label>
                     <div class="flex items-center">
                         <input type="text" name="data_pengajuan[domain]" required placeholder="contohnamadinas" class="w-full bg-white border-y border-l border-gray-200 rounded-l-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
                         <span class="bg-gray-50 border-y border-r border-gray-200 rounded-r-xl px-4 py-3 text-[13px] font-extrabold text-blue-500">.go.id</span>
@@ -415,7 +415,7 @@
             <div class="flex gap-3">
                 <button type="button" onclick="tutupModalCreate()" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
                 <button type="submit" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-[#071E3D] hover:bg-[#1F4287] transition-colors shadow-lg shadow-blue-900/20">
-                    <i class="fa-solid fa-paper-plane mr-1"></i> Simpan & Ajukan
+                    <i class="fa-solid fa-paper-plane mr-1"></i> Simpan
                 </button>
             </div>
         </form>
