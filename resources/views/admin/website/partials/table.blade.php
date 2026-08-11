@@ -369,7 +369,7 @@
 
                 <!-- Input Instansi -->
                 <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Instansi / OPD <span class="text-rose-500">*</span></label>
+                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Instansi<span class="text-rose-500">*</span></label>
                     <input type="text" name="data_pengajuan[instansi]" required placeholder="Contoh: Dinas Kominfo..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
                 </div>
 
@@ -390,8 +390,6 @@
                     <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Pilih Jenis Layanan <span class="text-rose-500">*</span></label>
                     <select name="jenis_layanan" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
                         <option value="Pembuatan Website" selected>Pembuatan Website (.go.id)</option>
-                        <option value="Pembuatan Aplikasi Sistem">Pembuatan Aplikasi Sistem</option>
-                        <option value="Lainnya">Lainnya</option>
                     </select>
                 </div>
 

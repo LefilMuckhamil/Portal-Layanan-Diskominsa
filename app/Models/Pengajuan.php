@@ -41,7 +41,8 @@ class Pengajuan extends Model
             'Pembuatan Email Resmi' => 'EML',
             'Layanan TTE'           => 'TTE',
             'Cloud Government'      => 'CLD',
-            'Reset Password'  => 'HLP'
+            'Reset Password'        => 'HLP',
+            default                 => 'REQ'
         };
 
         // Ambil 5 karakter terakhir dari ID, ubah ke huruf besar
