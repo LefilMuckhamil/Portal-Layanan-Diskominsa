@@ -3,122 +3,165 @@
 @section('title', 'Pengajuan Cloud Gov')
 
 @section('content')
-    <!-- KONTENER UTAMA DENGAN GRADASI & SHADOW -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-white via-[#f4f8fc] to-[#e0f0ff] rounded-[2.5rem] shadow-[0_15px_40px_-15px_rgba(7,30,61,0.15)] border border-white/60 p-8 md:p-12">
-        
-        <!-- Ornamen Background (Cahaya Blur) -->
-        <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-gradient-to-br from-cyan-300/20 to-blue-400/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-gradient-to-tr from-cyan-300/20 to-transparent rounded-full blur-2xl pointer-events-none"></div>
 
-        <!-- Header Form -->
-        <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-5 mb-10 pb-8 border-b border-blue-900/10">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-[#1F4287] text-white flex items-center justify-center text-3xl shadow-lg shadow-cyan-500/30 shrink-0 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                <i class="fa-solid fa-cloud"></i>
+    <style>
+        .dk-input, label, button, a, div {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dk-input {
+            border: 1.5px solid #DCE1E8;
+            border-radius: 12px;
+            background: #FFFFFF;
+        }
+
+        .dk-input:focus-within, .dk-input:focus {
+            outline: none;
+            border-color: #0284C7 !important;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12) !important;
+        }
+
+        .dk-rail::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 36px;
+            bottom: -28px;
+            width: 2px;
+            background: #E2E8F0;
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-down {
+            animation: fadeInDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+
+    <div class="bg-white border border-[#E4E7EC] rounded-2xl shadow-[0_2px_8px_rgba(16,24,40,0.04)] overflow-hidden animate-fade-in-down">
+
+        <div class="flex items-center justify-between gap-4 px-7 md:px-10 py-6 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9]">
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-[#16324F] text-cyan-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
+                    <i class="fa-solid fa-cloud"></i>
+                </div>
+                <div>
+                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominfo &middot; Layanan Digital</p>
+                    <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pengajuan Cloud Gov</h2>
+                </div>
             </div>
-            <div>
-                <h2 class="text-2xl font-extrabold text-[#071E3D] tracking-tight mb-1">Pengajuan Cloud Gov</h2>
-                <p class="text-[14px] text-gray-600 font-medium">Penyimpanan & berbagi file aman khusus ASN dan Instansi.</p>
-            </div>
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-cyan-50 border border-cyan-200 rounded-full px-3.5 py-1.5 shrink-0 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span> Storage ASN
+            </span>
         </div>
 
-        <!-- Form Input -->
-        <!-- Pastikan route ini sudah didaftarkan di web.php -->
-       <form action="{{ route('pengajuan.cloud.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10 space-y-6" onsubmit="disableSubmitButton(this)">
-            @csrf
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
-                
-                <!-- Nama Lengkap -->
-                <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Nama Penanggung Jawab</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <input type="text" name="nama" required placeholder="Masukkan nama lengkap" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
-                    </div>
-                </div>
+        <div class="px-7 md:px-10 py-9">
 
-                <!-- NIP -->
-                <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">NIP (18 Digit)</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-solid fa-id-badge"></i>
-                        </div>
-                        <input type="text" name="nip" required placeholder="Masukkan NIP" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+            @if ($errors->any())
+                <div class="mb-8 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-4 text-[#B42318] animate-fade-in-down">
+                    <div class="flex items-center text-[13.5px] font-bold mb-1.5">
+                        <i class="fa-solid fa-circle-exclamation mr-2 text-lg"></i> Pengajuan Gagal Diproses:
                     </div>
+                    <ul class="list-disc list-inside space-y-1 text-[12.5px] text-[#912018] font-medium pl-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
+            @endif
 
-                <!-- Email Resmi -->
-                <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Email Resmi (Untuk Aktivasi)</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors">
-                            <i class="fa-solid fa-envelope"></i>
-                        </div>
-                        <input type="email" name="email" required placeholder="email@acehbaratkab.go.id" class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm">
+            <form action="{{ route('pengajuan.cloud.store') }}" method="POST" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
+                @csrf
+
+                <div class="relative dk-rail pl-11">
+                    <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <h3 class="text-[15px] font-extrabold text-[#101828]">Data Penanggung Jawab</h3>
+                        <span class="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-md font-bold">Terisi Otomatis</span>
                     </div>
-                </div>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang bertanggung jawab atas akun cloud.</p>
 
-                <!-- Kapasitas -->
-                <div class="group">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Kapasitas Penyimpanan</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-cyan-500 transition-colors z-10">
-                            <i class="fa-solid fa-server"></i>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Penanggung Jawab</label>
+                            <input type="text" name="nama" value="{{ old('nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
-                        <select name="kapasitas" required class="w-full bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl pl-11 pr-4 py-3.5 text-[14px] text-gray-700 font-medium focus:bg-white focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/10 outline-none transition-all shadow-sm appearance-none cursor-pointer">
-                            <option value="" disabled selected>-- Pilih Kapasitas --</option>
-                            <option value="10GB">10 GB (Standar Personal)</option>
-                            <option value="50GB">50 GB (Menengah / Bidang)</option>
-                            <option value="100GB">100 GB (Kapasitas Instansi Besar)</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
+                            <input type="text" name="nip" value="{{ old('nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
 
-                <!-- Upload Surat (Desain Drag & Drop) -->
-                <div class="md:col-span-2">
-                    <label class="block text-[13px] font-bold text-[#071E3D] mb-2 ml-1">Upload Surat Permohonan Akun Cloud (PDF)</label>
-                    <div class="relative flex justify-center px-6 pt-6 pb-7 border-2 border-blue-200 border-dashed rounded-2xl hover:border-cyan-400 hover:bg-cyan-50/50 transition-colors bg-white/50 group">
-                        <div class="space-y-2 text-center">
-                            <!-- Ikon Upload -->
-                            <div class="w-12 h-12 mx-auto bg-blue-50 text-blue-500 rounded-full flex items-center justify-center group-hover:bg-cyan-100 group-hover:text-cyan-600 transition-colors mb-3">
-                                <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                <div class="relative pl-11">
+                    <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
+                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Spesifikasi Cloud &amp; Dokumen</h3>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Konfigurasi kapasitas penyimpanan cloud dan berkas permohonan.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Email Resmi (Untuk Aktivasi)</label>
+                            <div class="dk-input flex items-center px-3.5">
+                                <i class="fa-solid fa-envelope text-sky-600 text-[14px] mr-2.5"></i>
+                                <input type="email" name="email" value="{{ old('email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
-                            <div class="flex flex-col sm:flex-row items-center text-sm text-gray-600 justify-center gap-1">
-                                <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-bold text-cyan-600 hover:text-cyan-500 focus-within:outline-none px-1">
-                                    <span>Klik untuk memilih file</span>
-                                    <input id="file-upload" name="file_surat" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = this.files[0].name">
-                                </label>
-                                <p>atau drag and drop di sini</p>
+                        </div>
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Kapasitas Penyimpanan</label>
+                            <div class="dk-input flex items-center px-3.5 relative">
+                                <i class="fa-solid fa-server text-cyan-700 text-[14px] mr-2.5"></i>
+                                <select name="kapasitas" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                    <option value="" disabled {{ old('kapasitas') ? '' : 'selected' }}>-- Pilih Kapasitas --</option>
+                                    <option value="10GB" {{ old('kapasitas') == '10GB' ? 'selected' : '' }}>10 GB (Standar Personal)</option>
+                                    <option value="50GB" {{ old('kapasitas') == '50GB' ? 'selected' : '' }}>50 GB (Menengah / Bidang)</option>
+                                    <option value="100GB" {{ old('kapasitas') == '100GB' ? 'selected' : '' }}>100 GB (Kapasitas Instansi Besar)</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                             </div>
-                            <p id="file-name" class="text-xs text-gray-400 font-medium mt-1">Hanya format PDF. Maksimal 2MB.</p>
                         </div>
                     </div>
+
+                    <div class="mb-2">
+                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Surat Permohonan Akun Cloud (PDF)</label>
+                        <label for="file-upload" class="group flex items-center gap-4 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-5 py-4 cursor-pointer shadow-sm">
+                            <div class="w-10 h-10 shrink-0 rounded-xl bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
+                                <i class="fa-solid fa-cloud-arrow-up text-[16px]"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[13.5px] text-[#101828] font-bold group-hover:text-sky-900">Klik untuk memilih berkas <span class="font-medium text-[#667085]">atau tarik file ke sini</span></p>
+                                <p id="file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format PDF &middot; Maksimal 2MB</p>
+                            </div>
+                            <input id="file-upload" name="file_surat" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
+                        </label>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Tombol Submit -->
-            <div class="pt-6 mt-8 border-t border-blue-900/10 flex justify-end">
-                <button type="submit" class="bg-gradient-to-r from-[#071E3D] to-[#1F4287] hover:from-[#1F4287] hover:to-[#278EA5] text-white px-10 py-4 rounded-2xl font-bold text-[15px] transition-all duration-300 shadow-[0_8px_20px_rgba(7,30,61,0.2)] hover:shadow-[0_8px_25px_rgba(7,30,61,0.3)] hover:-translate-y-0.5 w-full sm:w-auto flex items-center justify-center gap-3">
-                    Kirim Pengajuan Cloud <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-        </form>
-
+                <div class="flex items-center justify-end gap-3 mt-10 pt-6 border-t border-[#E4E7EC]">
+                    <button type="submit" class="inline-flex items-center gap-2.5 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-7 py-3 rounded-xl font-bold text-[14px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg">
+                        Kirim Pengajuan Cloud <i class="fa-solid fa-paper-plane text-[12px]"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Script Anti Double Submit -->
     <script>
         function disableSubmitButton(form) {
             const btn = form.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.classList.add('opacity-70', 'cursor-not-allowed');
-            btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-2"></i>';
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+                btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-1.5"></i>';
+            }
         }
     </script>
 @endsection
