@@ -93,20 +93,10 @@ class AdminPengajuanController extends Controller
     public function website(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->with('user');
-        if ($request->filled('search')) {
-            $search = $request->search;
 
-            $query->where(function ($q) use ($search) {
-                $q->where('nomor_tiket', 'like', "%{$search}%")
-                ->orWhere('data_pengajuan.nama', 'like', "%{$search}%")
-                ->orWhere('data_pengajuan.nip', 'like', "%{$search}%")
-                ->orWhere('data_pengajuan.instansi', 'like', "%{$search}%")
-                ->orWhereHas('user', function ($userQuery) use ($search) {
-                    $userQuery->where('name', 'like', "%{$search}%")
-                                ->orWhere('unit_kerja', 'like', "%{$search}%");
-                                
-                });
-            });
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where('nomor_tiket', 'like', "%{$search}%");
         }
 
         if ($request->filled('status')) {
@@ -175,47 +165,72 @@ class AdminPengajuanController extends Controller
 
     // Nampilin halaman kelola daftar ajuan Email Resmi
     public function emailResmi(Request $request)
-    {
-        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->with('user');
+{
+    $query = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->with('user');
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('user', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('nip', 'like', "%{$search}%")
-                  ->orWhere('unit_kerja', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $pengajuans = $query->latest()->get(); 
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi');
-        
-        $total   = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
-        $proses  = (clone $baseQuery)->where('status', 'Proses Development')->count();
-        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
-        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
-        
-        $users = User::where('role', 'asn')->get();
-                        
-        return view('admin.email.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
-        ));
+    if ($request->filled('search')) {
+        $search = trim($request->search);
+        $query->where('nomor_tiket', 'like', "%{$search}%");
     }
 
-    // Admin bikin tiket ajuan Email secara manual
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $pengajuans = $query->latest()->get(); 
+    $baseQuery  = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi');
+    
+    $total   = (clone $baseQuery)->count();
+    $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
+    $proses  = (clone $baseQuery)->where('status', 'Proses Development')->count();
+    $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+    $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+    
+   
+    $users = User::where('role', '!=', 'admin')->get();
+                    
+    return view('admin.email.index', compact(
+        'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+    ));
+}
+
+    // admin bikin tiker email mandiri wok
     public function storeEmailResmi(Request $request)
     {
-        $request->validate(['user_id' => 'required|exists:users,id']);
+        // PERBAIKAN: Validasi data sesuai form modal create Email Resmi
+        $request->validate([
+            'user_id'                      => 'required|exists:users,id',
+            'data_pengajuan'               => 'required|array',
+            'data_pengajuan.nama'          => 'required|string|max:255',
+            'data_pengajuan.nip'           => 'required|string',
+            'data_pengajuan.instansi'      => 'required|string|max:255',
+            'data_pengajuan.no_hp'         => 'required|string',
+            'data_pengajuan.usulan_email'  => 'required|string',
+            'file_pendukung'               => 'required|mimes:pdf|max:2048',
+        ], [
+            'data_pengajuan.nama.required'         => 'Kolom Nama Pemohon wajib diisi.',
+            'data_pengajuan.nip.required'          => 'Kolom NIP wajib diisi.',
+            'data_pengajuan.instansi.required'     => 'Kolom Instansi wajib diisi.',
+            'data_pengajuan.no_hp.required'        => 'Kolom Nomor HP/WhatsApp wajib diisi.',
+            'data_pengajuan.usulan_email.required' => 'Kolom Usulan Email wajib diisi.',
+            'file_pendukung.required'              => 'Surat Permohonan (PDF) wajib diunggah.',
+        ]);
 
+        // Upload berkas PDF
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('pengajuan/email', $fileName, 'public');
+        }
+
+        // Simpan data permohonan ke database
         Pengajuan::create([
-            'user_id'       => $request->user_id,
-            'jenis_layanan' => 'Pembuatan Email Resmi',
-            'status'        => 'Pending',
+            'user_id'        => $request->user_id,
+            'jenis_layanan'  => 'Pembuatan Email Resmi',
+            'data_pengajuan' => $request->data_pengajuan,
+            'file_pendukung' => $filePath,
+            'status'         => 'Pending',
         ]);
 
         return back()->with('sukses', 'Permohonan Email Resmi berhasil ditambahkan manual.');
@@ -226,30 +241,28 @@ class AdminPengajuanController extends Controller
     {
         $query = Pengajuan::where('jenis_layanan', 'Layanan TTE')->with('user');
 
+        // Filter pencarian khusus berdasarkan Nomor Tiket saja
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('user', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('nip', 'like', "%{$search}%")
-                  ->orWhere('unit_kerja', 'like', "%{$search}%");
-            });
+            $search = trim($request->search);
+            $query->where('nomor_tiket', 'like', "%{$search}%");
         }
 
+        // Filter berdasarkan status (jika ada)
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
         $pengajuans = $query->latest()->get(); 
         $baseQuery = Pengajuan::where('jenis_layanan', 'Layanan TTE');
-        
+    
         $total   = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
         $proses  = (clone $baseQuery)->where('status', 'Proses BSSN')->count();
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
-        
-        $users = User::where('role', 'asn')->get();
-                        
+    
+        $users = User::where('role', '!=', 'admin')->get();
+                    
         return view('admin.tte.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
         ));
@@ -258,95 +271,115 @@ class AdminPengajuanController extends Controller
     // Admin bikin tiket ajuan TTE secara manual
     public function storeTte(Request $request)
     {
-        $request->validate(['user_id' => 'required|exists:users,id']);
+       $request->validate([
+        'user_id'                 => 'required|exists:users,id',
+        'data_pengajuan'          => 'required|array',
+        'data_pengajuan.nama'     => 'required|string|max:255',
+        'data_pengajuan.nip'      => 'required|string',
+        'data_pengajuan.instansi' => 'required|string|max:255',
+        'data_pengajuan.no_hp'    => 'required|string',
+        'data_pengajuan.email'    => 'required|email',
+        'data_pengajuan.alamat'   => 'required|string',
+        'file_pendukung'          => 'required|mimes:pdf|max:2048',
+    ], [
+        'data_pengajuan.nama.required'     => 'Kolom Nama Pemohon wajib diisi.',
+        'data_pengajuan.nip.required'      => 'Kolom NIP wajib diisi.',
+        'data_pengajuan.instansi.required' => 'Kolom Instansi wajib diisi.',
+        'data_pengajuan.no_hp.required'    => 'Kolom Nomor HP/WhatsApp wajib diisi.',
+        'data_pengajuan.email.required'    => 'Kolom Email wajib diisi.',
+        'data_pengajuan.alamat.required'   => 'Kolom Alamat wajib diisi.',
+        'file_pendukung.required'          => 'Dokumen Persyaratan (PDF) wajib diunggah.',
+    ]);
 
+        // Upload file PDF persyaratan TTE
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('pengajuan/tte', $fileName, 'public');
+        }
+
+    // Simpan ke database
         Pengajuan::create([
-            'user_id'       => $request->user_id,
-            'jenis_layanan' => 'Layanan TTE',
-            'status'        => 'Pending',
+            'user_id'        => $request->user_id,
+            'jenis_layanan'  => 'Layanan TTE',
+            'data_pengajuan' => $request->data_pengajuan,
+            'file_pendukung' => $filePath,
+            'status'         => 'Pending',
         ]);
 
         return back()->with('sukses', 'Permohonan TTE berhasil ditambahkan manual.');
     }
 
-    // Nampilin halaman kelola daftar ajuan Cloud Gov
+    // Admin bikin tiket ajuan Cloud secara manual dan langsung ngisi format bawaan
     public function layananCloud(Request $request)
-    {
-        $query = Pengajuan::where('jenis_layanan', 'Cloud Government');
-        
-        if ($request->filled('search')) {
-            $query->where('data_pengajuan', 'like', '%' . $request->search . '%');
-        }
+{
+    $query = Pengajuan::where('jenis_layanan', 'Cloud Government')->with('user');
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $pengajuans = $query->latest()->get();
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Cloud Government');
-        
-        $total   = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Menunggu Validasi'])->count();
-        $proses  = (clone $baseQuery)->whereIn('status', ['Proses', 'Sedang Diproses'])->count();
-        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
-        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
-        
-        $users = User::whereIn('role', ['asn'])->get();
-                        
-        return view('admin.cloud.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
-        ));
+    // Filter pencarian berdasarkan Nomor Tiket
+    if ($request->filled('search')) {
+        $search = trim($request->search);
+        $query->where('nomor_tiket', 'like', "%{$search}%");
     }
 
-    // Admin bikin tiket ajuan Cloud secara manual dan langsung ngisi format bawaan
+    // Filter berdasarkan status
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    $pengajuans = $query->latest()->get(); 
+    $baseQuery  = Pengajuan::where('jenis_layanan', 'Cloud Government');
+    
+    $total   = (clone $baseQuery)->count();
+    $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
+    $proses  = (clone $baseQuery)->where('status', 'Proses Development')->count();
+    $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+    $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+    
+    $users = User::where('role', '!=', 'admin')->get();
+                    
+    return view('admin.cloud.index', compact(
+        'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+    ));
+}
+
+    // admin guweh bikin tiket cloud manual wok
     public function storeCloud(Request $request)
     {
-        $request->validate(['user_id' => 'required|exists:users,id']);
-        $user = User::findOrFail($request->user_id);
-
-        Pengajuan::create([
-            'user_id'        => $user->id,
-            'jenis_layanan'  => 'Cloud Government',
-            'status'         => 'Pending',
-            'data_pengajuan' => json_encode([
-                'nama_pemohon'  => $user->name,
-                'nip'           => $user->nip ?? '-',
-                'jenis_cloud'   => 'Personal',
-                'kapasitas'     => '15 GB',
-                'alasan'        => 'Dibuat manual oleh Admin'
-            ])
+        $request->validate([
+            'user_id'                   => 'required|exists:users,id',
+            'data_pengajuan'            => 'required|array',
+            'data_pengajuan.nama'       => 'required|string|max:255',
+            'data_pengajuan.nip'        => 'required|string',
+            'data_pengajuan.instansi'   => 'required|string|max:255',
+            'data_pengajuan.email'      => 'required|email',
+            'data_pengajuan.kapasitas'  => 'required|string',
+            'file_pendukung'            => 'required|mimes:pdf|max:2048',
+        ], [
+            'data_pengajuan.nama.required'      => 'Kolom Nama Penanggung Jawab wajib diisi.',
+            'data_pengajuan.nip.required'       => 'Kolom NIP wajib diisi.',
+            'data_pengajuan.instansi.required'  => 'Kolom Instansi wajib diisi.',
+            'data_pengajuan.email.required'     => 'Kolom Email Aktif wajib diisi.',
+            'data_pengajuan.kapasitas.required'  => 'Kolom Kapasitas Penyimpanan wajib dipilih.',
+            'file_pendukung.required'           => 'Surat Permohonan Cloud (PDF) wajib diunggah.',
         ]);
 
-        return back()->with('sukses', 'Ajuan Cloud Government berhasil dibuat manual!');
-    }
-
-    // Nampilin halaman kelola tiket Pusat Bantuan atau Kendala
-    public function layananBantuan(Request $request)
-    {
-        $query = Pengajuan::where('jenis_layanan', 'Reset Password');
-        
-        if ($request->filled('search')) {
-            $query->where('data_pengajuan', 'like', '%' . $request->search . '%');
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('pengajuan/cloud', $fileName, 'public');
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+        Pengajuan::create([
+            'user_id'        => $request->user_id,
+            'jenis_layanan'  => 'Cloud Government',
+            'data_pengajuan' => $request->data_pengajuan,
+            'file_pendukung' => $filePath,
+            'status'         => 'Pending',
+        ]);
 
-        $pengajuans = $query->latest()->get();
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Reset Password');
-        
-        $total   = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Menunggu', 'Menunggu Respons'])->count();
-        $proses  = (clone $baseQuery)->whereIn('status', ['Proses', 'Sedang Ditangani'])->count();
-        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
-        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
-        
-        $users = User::whereIn('role', ['asn'])->get();
-                        
-        return view('admin.bantuan.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
-        ));
+        return back()->with('sukses', 'Permohonan Cloud Government berhasil ditambahkan manual.');
     }
 
     // Admin bikin tiket kendala bantuan secara manual buat bantu user
