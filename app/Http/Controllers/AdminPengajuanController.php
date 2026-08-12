@@ -23,8 +23,7 @@ class AdminPengajuanController extends Controller
         $pengajuan = Pengajuan::findOrFail($id);
         return view('admin.pengajuan.detail', compact('pengajuan'));
     }
-
-    // Handle segala update dari admin (status, catatan log, chat balas ke user, dan upload file hasil TTE)
+    
     public function updateProgres(Request $request, $id)
     {
         $request->validate([
