@@ -17,6 +17,37 @@
         input:-webkit-autofill:active {
             -webkit-box-shadow: 0 0 0 30px #f9fafb inset !important;
         }
+
+        /* Animasi Slide Down & Fade In Smooth */
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-16px) scale(0.99);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes contentDropIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-card-down {
+            animation: fadeInDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-form-down {
+            animation: contentDropIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+        }
     </style>
 </head>
 <body class="min-h-screen md:h-screen w-screen overflow-y-auto md:overflow-hidden bg-gradient-to-br from-[#071E3D] via-[#0D2B52] to-[#1F4287] flex items-center justify-center p-4 lg:p-8 relative selection:bg-cyan-300 selection:text-[#071E3D]">
@@ -24,7 +55,7 @@
     <div class="fixed -top-32 -left-32 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-cyan-400/20 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none animate-pulse"></div>
     <div class="fixed -bottom-32 -right-32 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-blue-500/20 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none animate-pulse" style="animation-delay: 2s;"></div>
 
-    <div class="bg-white w-full max-w-7xl md:h-full md:max-h-[780px] rounded-[2rem] lg:rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.5)] p-3 lg:p-4 flex flex-col md:flex-row gap-4 lg:gap-6 overflow-hidden relative z-10 my-auto">
+    <div class="animate-card-down bg-white w-full max-w-7xl md:h-full md:max-h-[780px] rounded-[2rem] lg:rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.5)] p-3 lg:p-4 flex flex-col md:flex-row gap-4 lg:gap-6 overflow-hidden relative z-10 my-auto transition-all">
 
         <div class="w-full md:w-1/2 rounded-[1.5rem] lg:rounded-[2rem] p-6 sm:p-8 lg:p-14 flex flex-col justify-between relative overflow-hidden group shrink-0 min-h-[250px] sm:min-h-[300px] md:min-h-0">
             <img src="{{ asset('image/diskominsa.jpeg') }}" alt="Gedung Diskominsa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
@@ -45,7 +76,7 @@
             </div>
         </div>
 
-        <div class="w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-12 py-4 sm:py-6 lg:py-8 bg-white rounded-[1.5rem] lg:rounded-[2rem]">
+        <div class="animate-form-down w-full md:w-1/2 flex flex-col justify-center px-4 sm:px-12 py-4 sm:py-6 lg:py-8 bg-white rounded-[1.5rem] lg:rounded-[2rem]">
             <div class="w-full max-w-md mx-auto flex flex-col justify-between h-full md:max-h-[620px]">
                 
                 <div class="flex flex-col items-center mt-1 sm:mt-2 mb-3 sm:mb-4">
