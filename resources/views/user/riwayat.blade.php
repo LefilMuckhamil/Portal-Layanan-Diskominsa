@@ -51,7 +51,7 @@
                 <table class="w-full text-left border-separate border-spacing-y-3 whitespace-nowrap">
                     <thead class="sticky top-0 bg-white z-20 shadow-sm">
                         <tr class="text-[11px] uppercase tracking-wider text-[#667085] font-black">
-                            <th class="py-2.5 px-4 bg-white">ID Permohonan</th>
+                            <th class="py-2.5 px-4 bg-white">Tiket</th>
                             <th class="py-2.5 px-4 bg-white">Layanan</th>
                             <th class="py-2.5 px-4 bg-white">Tanggal</th>
                             <th class="py-2.5 px-4 bg-white">Status</th>

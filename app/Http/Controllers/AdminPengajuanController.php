@@ -11,18 +11,27 @@ use Illuminate\Support\Facades\Storage;
 class AdminPengajuanController extends Controller
 {
     // Nampilin semua daftar permohonan masuk secara global
-    public function index()
-    {
-        $pengajuans = Pengajuan::latest()->get(); 
-        return view('admin.pengajuan.index', compact('pengajuans'));
+    public function index(Request $request)
+{
+    $query = Pengajuan::with('user');
+
+    if ($request->filled('search')) {
+        $search = trim($request->search);
+        $query->where('nomor_tiket', 'like', "%{$search}%");
     }
 
-    // Nampilin halaman detail buat satu pengajuan spesifik
-    public function show($id)
-    {
-        $pengajuan = Pengajuan::findOrFail($id);
-        return view('admin.pengajuan.detail', compact('pengajuan'));
+    if ($request->filled('status')) {
+        if ($request->status == 'Proses') {
+            $query->whereIn('status', ['Proses Development', 'Proses BSSN', 'Proses']);
+        } else {
+            $query->where('status', $request->status);
+        }
     }
+
+    $pengajuans = $query->latest()->paginate(10);
+
+    return view('admin.dashboard', compact('pengajuans'));
+}
     
     public function updateProgres(Request $request, $id)
     {

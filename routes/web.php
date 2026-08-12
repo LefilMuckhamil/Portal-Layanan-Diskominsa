@@ -8,12 +8,10 @@ use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminPengajuanController;
 use App\Http\Controllers\UserPengajuanController;
 
-// Landing page publik
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Halaman guest (khusus yang belum login)
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () { return view('auth.login'); })->name('login');
     Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:10,1');
@@ -27,11 +25,9 @@ Route::middleware('guest')->group(function () {
     })->name('password.email')->middleware('throttle:3,1');
 });
 
-// Area khusus user / pemohon
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Akses form & eksekusi simpan pengajuan
     Route::prefix('layanan')->group(function () {
         Route::get('/pengajuan-website', function () { return view('pengajuan.website'); })->name('pengajuan.website');
         Route::get('/pengajuan-email', function () { return view('pengajuan.email'); })->name('pengajuan.email');
@@ -39,7 +35,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengajuan-cloud', function () { return view('pengajuan.cloud'); })->name('pengajuan.cloud');
         Route::get('/pengajuan-bantuan', function () { return view('pengajuan.bantuan'); })->name('pengajuan.bantuan');
         
-        // Rate limit submit form user biar ga kena spamming (max 10 submit per menit)
         Route::middleware('throttle:10,1')->group(function () {
             Route::post('/pengajuan-website/store', [UserPengajuanController::class, 'storeWebsite'])->name('pengajuan.website.store');
             Route::post('/pengajuan/email/store', [UserPengajuanController::class, 'storeEmail'])->name('pengajuan.email.store');
@@ -49,31 +44,43 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    // Monitoring riwayat & kirim pesan obrolan
     Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan')->middleware('throttle:20,1');
 });
 
-// Area khusus admin
 Route::middleware(['auth', IsAdmin::class])->group(function () {
     
-    // Overview statistik dashboard admin
-    Route::get('/admin/dashboard', function () {
+    Route::get('/admin/dashboard', function (\Illuminate\Http\Request $request) {
         $countWeb     = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Website')->count(); 
         $countEmail   = \App\Models\Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
         $countTTE     = \App\Models\Pengajuan::where('jenis_layanan', 'Layanan TTE')->count();
         $countCloud   = \App\Models\Pengajuan::where('jenis_layanan', 'Cloud Government')->count();
         $countBantuan = \App\Models\Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->count();
-        $pengajuans   = \App\Models\Pengajuan::latest()->get();
-        $chatAktif    = Cache::get('chat_global_aktif', true);
+        
+        $query = \App\Models\Pengajuan::with('user');
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where('nomor_tiket', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status == 'Proses') {
+                $query->whereIn('status', ['Proses Development', 'Proses BSSN', 'Proses']);
+            } else {
+                $query->where('status', $request->status);
+            }
+        }
+
+        $pengajuans = $query->latest()->paginate(10);
+        $chatAktif  = Cache::get('chat_global_aktif', true);
 
         return view('admin.dashboard', compact(
             'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan', 'pengajuans', 'chatAktif'
         )); 
     })->name('admin.dashboard');
 
-    // Control panel saklar fitur chat global
     Route::get('/admin/pengaturan', function () {
         $chatAktif = Cache::get('chat_global_aktif', true);
         return view('admin.pengaturan.index', compact('chatAktif'));
@@ -87,19 +94,16 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
         return back()->with('sukses', "Fitur Global Chat berhasil $pesan!");
     })->name('admin.toggleChat');
     
-    // View tabel manajemen per kategori layanan
     Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index'); 
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
     Route::get('/layanan-tte', [AdminPengajuanController::class, 'layananTte'])->name('admin.tte.index');
     Route::get('/layanan-cloud', [AdminPengajuanController::class, 'layananCloud'])->name('admin.cloud.index');
     Route::get('/layanan-bantuan', [AdminPengajuanController::class, 'layananBantuan'])->name('admin.bantuan.index');
 
-    // Modul eksekusi aksi admin
     Route::prefix('admin/pengajuan')->group(function () {
         Route::get('/', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan.index');
         Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show');
         
-        // Rate limit aksi simpan manual & update admin
         Route::middleware('throttle:20,1')->group(function () {
             Route::post('/store-website', [AdminPengajuanController::class, 'storeWebsite'])->name('admin.pengajuan.storeWebsite'); 
             Route::post('/store-email', [AdminPengajuanController::class, 'storeEmailResmi'])->name('admin.pengajuan.storeEmail');
