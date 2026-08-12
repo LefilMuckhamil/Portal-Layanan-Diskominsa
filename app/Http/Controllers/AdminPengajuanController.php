@@ -103,7 +103,8 @@ class AdminPengajuanController extends Controller
             $query->where('status', $request->status);
         }
 
-        $pengajuans = $query->latest()->get(); 
+        // Contoh pada method website:
+        $pengajuans = $query->latest()->paginate(10); 
         $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Website');
     
         $total   = (clone $baseQuery)->count();
@@ -177,7 +178,7 @@ class AdminPengajuanController extends Controller
         $query->where('status', $request->status);
     }
 
-    $pengajuans = $query->latest()->get(); 
+    $pengajuans = $query->latest()->paginate(10);
     $baseQuery  = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi');
     
     $total   = (clone $baseQuery)->count();
@@ -252,7 +253,7 @@ class AdminPengajuanController extends Controller
             $query->where('status', $request->status);
         }
 
-        $pengajuans = $query->latest()->get(); 
+        $pengajuans = $query->latest()->paginate(10);
         $baseQuery = Pengajuan::where('jenis_layanan', 'Layanan TTE');
     
         $total   = (clone $baseQuery)->count();
@@ -327,7 +328,7 @@ class AdminPengajuanController extends Controller
         $query->where('status', $request->status);
     }
 
-    $pengajuans = $query->latest()->get(); 
+    $pengajuans = $query->latest()->paginate(10);
     $baseQuery  = Pengajuan::where('jenis_layanan', 'Cloud Government');
     
     $total   = (clone $baseQuery)->count();
@@ -383,26 +384,71 @@ class AdminPengajuanController extends Controller
     }
 
     // Admin bikin tiket kendala bantuan secara manual buat bantu user
-    public function storeBantuan(Request $request)
+    public function layananBantuan(Request $request)
     {
-        $request->validate(['user_id' => 'required|exists:users,id']);
-        $user = User::findOrFail($request->user_id);
+        $query = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->with('user');
 
-        Pengajuan::create([
-            'user_id'        => $user->id,
-            'jenis_layanan'  => 'Reset Password',
-            'status'         => 'Pending',
-            'data_pengajuan' => json_encode([
-                'nama_pelapor' => $user->name,
-                'email'        => $user->email,
-                'kendala'      => 'Reset Sandi Email / OTP',
-                'pesan_kendala'=> 'Tiket bantuan dibuat manual oleh Admin'
-            ])
-        ]);
+        // Filter pencarian berdasarkan Nomor Tiket
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where('nomor_tiket', 'like', "%{$search}%");
+        }
 
-        return back()->with('sukses', 'Tiket Bantuan berhasil dibuat manual!');
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->paginate(10);
+        $baseQuery  = Pengajuan::where('jenis_layanan', 'Pusat Bantuan');
+        
+        $total   = (clone $baseQuery)->count();
+        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
+        $proses  = (clone $baseQuery)->where('status', 'Proses Development')->count();
+        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+        
+        $users = User::where('role', '!=', 'admin')->get();
+                        
+        return view('admin.bantuan.index', compact(
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+        ));
     }
 
+    public function storeBantuan(Request $request)
+    {
+        $request->validate([
+            'user_id'                   => 'required|exists:users,id',
+            'data_pengajuan'            => 'required|array',
+            'data_pengajuan.kategori'   => 'required|string',
+            'data_pengajuan.nama'       => 'required|string|max:255',
+            'data_pengajuan.nip'        => 'required|string',
+            'data_pengajuan.email'      => 'required|email',
+            'file_pendukung'            => 'required|mimes:pdf|max:2048',
+        ], [
+            'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',
+            'data_pengajuan.nama.required'     => 'Kolom Nama Pemohon wajib diisi.',
+            'data_pengajuan.nip.required'      => 'Kolom NIP wajib diisi.',
+            'data_pengajuan.email.required'    => 'Kolom Email Resmi wajib diisi.',
+            'file_pendukung.required'          => 'Surat Permohonan / Bukti (PDF) wajib diunggah.',
+        ]);
 
-    
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('pengajuan/bantuan', $fileName, 'public');
+        }
+
+        Pengajuan::create([
+            'user_id'        => $request->user_id,
+            'jenis_layanan'  => 'Pusat Bantuan',
+            'data_pengajuan' => $request->data_pengajuan,
+            'file_pendukung' => $filePath,
+            'status'         => 'Pending',
+        ]);
+
+        return back()->with('sukses', 'Tiket Pusat Bantuan berhasil ditambahkan manual.');
+    }
+
 }
