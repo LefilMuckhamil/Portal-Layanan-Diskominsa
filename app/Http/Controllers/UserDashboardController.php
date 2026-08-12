@@ -26,26 +26,35 @@ class UserDashboardController extends Controller
     }
 
     public function kirimPesan(Request $request, $id)
-    {
-        $request->validate([
-            'pesan' => ['required', 'string']
+{
+    $request->validate([
+        'pesan' => 'required|string',
+    ]);
+
+    $pengajuan = Pengajuan::findOrFail($id);
+    
+    $pesanBaru = [
+        'role' => 'user',
+        'pengirim' => auth()->user()->name,
+        'isi' => $request->pesan,
+        'waktu' => now()->format('d M Y, H:i'),
+    ];
+
+    $pesanLama = is_string($pengajuan->pesan) ? json_decode($pengajuan->pesan, true) : ($pengajuan->pesan ?? []);
+    $pesanLama[] = $pesanBaru;
+
+    $pengajuan->update([
+        'pesan' => $pesanLama
+    ]);
+
+    // Jika request dikirim via AJAX / Fetch
+    if ($request->ajax() || $request->wantsJson()) {
+        return response()->json([
+            'status' => 'success',
+            'pesan' => $pesanBaru
         ]);
-
-        $pengajuan = Pengajuan::where('user_id', Auth::id())->findOrFail($id);
-
-        $semuaPesan = $pengajuan->pesan ?? [];
-        
-        $semuaPesan[] = [
-            'pengirim' => Auth::user()->name,
-            'role'     => 'user',
-            'isi'      => $request->pesan,
-            'waktu'    => now()->format('d M Y, H:i')
-        ];
-
-        $pengajuan->update([
-            'pesan' => $semuaPesan
-        ]);
-
-        return back()->with('sukses', 'Pesan kamu berhasil terkirim!');
     }
+
+    return redirect()->back();
+}
 }

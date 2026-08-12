@@ -93,11 +93,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Penanggung Jawab</label>
-                            <input type="text" name="nama" value="{{ old('nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
-                            <input type="text" name="nip" value="{{ old('nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Instansi / Unit Kerja</label>
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Komunikasi dan Informatika" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
@@ -112,18 +116,18 @@
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Email Resmi (Untuk Aktivasi)</label>
                             <div class="dk-input flex items-center px-3.5">
                                 <i class="fa-solid fa-envelope text-sky-600 text-[14px] mr-2.5"></i>
-                                <input type="email" name="email" value="{{ old('email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Kapasitas Penyimpanan</label>
                             <div class="dk-input flex items-center px-3.5 relative">
                                 <i class="fa-solid fa-server text-cyan-700 text-[14px] mr-2.5"></i>
-                                <select name="kapasitas" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                    <option value="" disabled {{ old('kapasitas') ? '' : 'selected' }}>-- Pilih Kapasitas --</option>
-                                    <option value="10GB" {{ old('kapasitas') == '10GB' ? 'selected' : '' }}>10 GB (Standar Personal)</option>
-                                    <option value="50GB" {{ old('kapasitas') == '50GB' ? 'selected' : '' }}>50 GB (Menengah / Bidang)</option>
-                                    <option value="100GB" {{ old('kapasitas') == '100GB' ? 'selected' : '' }}>100 GB (Kapasitas Instansi Besar)</option>
+                                <select name="data_pengajuan[kapasitas]" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                    <option value="" disabled {{ old('data_pengajuan.kapasitas') ? '' : 'selected' }}>-- Pilih Kapasitas --</option>
+                                    <option value="10GB" {{ old('data_pengajuan.kapasitas') == '10GB' ? 'selected' : '' }}>10 GB (Standar Personal)</option>
+                                    <option value="50GB" {{ old('data_pengajuan.kapasitas') == '50GB' ? 'selected' : '' }}>50 GB (Menengah / Bidang)</option>
+                                    <option value="100GB" {{ old('data_pengajuan.kapasitas') == '100GB' ? 'selected' : '' }}>100 GB (Kapasitas Instansi Besar)</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                             </div>
@@ -140,7 +144,7 @@
                                 <p class="text-[13.5px] text-[#101828] font-bold group-hover:text-sky-900">Klik untuk memilih berkas <span class="font-medium text-[#667085]">atau tarik file ke sini</span></p>
                                 <p id="file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format PDF &middot; Maksimal 2MB</p>
                             </div>
-                            <input id="file-upload" name="file_surat" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
+                            <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
                         </label>
                     </div>
                 </div>

@@ -94,8 +94,8 @@
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Kategori Kendala</label>
                         <div class="dk-input flex items-center px-3.5 relative">
                             <i class="fa-solid fa-layer-group text-rose-500 text-[14px] mr-2.5"></i>
-                            <select name="kategori" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                <option value="Reset Password" {{ old('kategori', 'Reset Password') == 'Reset Password' ? 'selected' : '' }}>Reset Password</option>
+                            <select name="data_pengajuan[kategori]" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                <option value="Reset Password" {{ old('data_pengajuan.kategori', 'Reset Password') == 'Reset Password' ? 'selected' : '' }}>Reset Password</option>
                             </select>
                             <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                         </div>
@@ -104,11 +104,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Lengkap Pemohon</label>
-                            <input type="text" name="nama" value="{{ old('nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
-                            <input type="text" name="nip" value="{{ old('nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Email Resmi yang Ingin Direset</label>
                         <div class="dk-input flex items-center px-3.5">
                             <i class="fa-solid fa-envelope-open-text text-sky-600 text-[14px] mr-2.5"></i>
-                            <input type="email" name="email" value="{{ old('email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <p class="text-[11px] text-[#667085] font-medium mt-1.5 ml-1"><i class="fa-solid fa-circle-info text-sky-600 mr-1"></i> Pastikan alamat email resmi yang dimasukkan sudah benar.</p>
                     </div>
@@ -137,7 +137,7 @@
                                 <p class="text-[13.5px] text-[#101828] font-bold group-hover:text-sky-900">Klik untuk memilih berkas <span class="font-medium text-[#667085]">atau tarik file ke sini</span></p>
                                 <p id="file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format PDF &middot; Maksimal 2MB</p>
                             </div>
-                            <input id="file-upload" name="file_surat" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
+                            <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
                         </label>
                     </div>
                 </div>

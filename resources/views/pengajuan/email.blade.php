@@ -5,26 +5,22 @@
 @section('content')
 
     <style>
-        /* Smooth transition untuk semua elemen interaktif */
         .dk-input, label, button, a, div {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Default border & background input */
         .dk-input {
             border: 1.5px solid #DCE1E8;
             border-radius: 12px;
             background: #FFFFFF;
         }
 
-        /* Focus state modern dengan aksen Sky/Cyan */
         .dk-input:focus-within, .dk-input:focus {
             outline: none;
             border-color: #0284C7 !important;
             box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12) !important;
         }
 
-        /* Rail Stepper */
         .dk-rail::before {
             content: '';
             position: absolute;
@@ -35,7 +31,6 @@
             background: #E2E8F0;
         }
 
-        /* Animasi Fade In Down */
         @keyframes fadeInDown {
             0% {
                 opacity: 0;
@@ -52,10 +47,8 @@
         }
     </style>
 
-    <!-- KARTU LAYANAN -->
     <div class="bg-white border border-[#E4E7EC] rounded-2xl shadow-[0_2px_8px_rgba(16,24,40,0.04)] overflow-hidden animate-fade-in-down">
 
-        <!-- Header Strip -->
         <div class="flex items-center justify-between gap-4 px-7 md:px-10 py-6 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9]">
             <div class="flex items-center gap-3.5">
                 <div class="w-11 h-11 rounded-xl bg-[#16324F] text-cyan-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
@@ -73,7 +66,6 @@
 
         <div class="px-7 md:px-10 py-9">
 
-            <!-- NOTIFIKASI VALIDASI EROR -->
             @if ($errors->any())
                 <div class="mb-8 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-4 text-[#B42318] animate-fade-in-down">
                     <div class="flex items-center text-[13.5px] font-bold mb-1.5">
@@ -90,7 +82,6 @@
             <form action="{{ route('pengajuan.email.store') }}" method="POST" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
                 @csrf
 
-                <!-- SEKSI 1: DATA PEMOHON -->
                 <div class="relative dk-rail pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
                     <div class="flex items-center gap-2 mb-0.5">
@@ -102,27 +93,26 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Lengkap (beserta Gelar)</label>
-                            <input type="text" name="nama" value="{{ old('nama') }}" required placeholder="Contoh: Budi Santoso, S.Kom" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Contoh: Budi Santoso, S.Kom" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
-                            <input type="number" name="nip" value="{{ old('nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="number" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Asal Instansi / SKPK</label>
-                            <input type="text" name="instansi" value="{{ old('instansi') }}" required placeholder="Contoh: Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP / WhatsApp</label>
                             <div class="dk-input flex items-center px-3.5">
                                 <i class="fa-brands fa-whatsapp text-emerald-600 text-[15px] mr-2.5"></i>
-                                <input type="text" name="no_hp" value="{{ old('no_hp') }}" required placeholder="081234567890" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <input type="text" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="081234567890" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SEKSI 2: DETAIL USULAN EMAIL & BERKAS -->
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
                     <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Detail Usulan Email</h3>
@@ -132,7 +122,7 @@
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Usulan Alamat Email</label>
                         <div class="dk-input flex items-center pl-3.5 pr-1.5 py-1.5">
                             <span class="text-sky-600 text-[14px] mr-2.5"><i class="fa-solid fa-at"></i></span>
-                            <input type="text" name="usulan_email" value="{{ old('usulan_email') }}" required placeholder="namasaya" class="flex-1 min-w-0 bg-transparent outline-none py-1 text-[13.5px] text-[#101828] font-bold placeholder:font-normal placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[usulan_email]" value="{{ old('data_pengajuan.usulan_email') }}" required placeholder="namasaya" class="flex-1 min-w-0 bg-transparent outline-none py-1 text-[13.5px] text-[#101828] font-bold placeholder:font-normal placeholder:text-[#98A2B3]">
                             <span class="text-[12px] text-[#16324F] bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 ml-1 font-extrabold">@acehbaratkab.go.id</span>
                         </div>
                     </div>
@@ -147,12 +137,11 @@
                                 <p class="text-[13.5px] text-[#101828] font-bold group-hover:text-sky-900">Klik untuk memilih berkas <span class="font-medium text-[#667085]">atau tarik file ke sini</span></p>
                                 <p id="file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format PDF &middot; Maksimal 2MB</p>
                             </div>
-                            <input id="file-upload" name="file_surat" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
+                            <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
                         </label>
                     </div>
                 </div>
 
-                <!-- TOMBOL SUBMIT -->
                 <div class="flex items-center justify-end gap-3 mt-10 pt-6 border-t border-[#E4E7EC]">
                     <button type="submit" class="inline-flex items-center gap-2.5 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-7 py-3 rounded-xl font-bold text-[14px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg">
                         Kirim Pengajuan <i class="fa-solid fa-paper-plane text-[12px]"></i>
@@ -162,7 +151,6 @@
         </div>
     </div>
 
-    <!-- Script Anti Double Submit Button -->
     <script>
         function disableSubmitButton(form) {
             const btn = form.querySelector('button[type="submit"]');
