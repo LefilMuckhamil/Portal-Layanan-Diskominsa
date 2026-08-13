@@ -52,7 +52,7 @@ class Pengajuan extends Model
                 'Pembuatan Email Resmi', 'pembuatan_email' => 'EML',
                 'Layanan TTE', 'layanan_tte'               => 'TTE',
                 'Cloud Government', 'cloud_government'     => 'CLD',
-                'Reset Password'                           => 'HLP',
+                'Reset Password', 'Pusat Bantuan'        => 'HLP',
                 default                                    => 'REQ'
             };
 

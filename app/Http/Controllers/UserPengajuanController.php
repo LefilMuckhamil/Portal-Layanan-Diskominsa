@@ -8,18 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class UserPengajuanController extends Controller
 {
-    /**
-     * Helper privat untuk membuat nomor tiket unik singkat (Contoh: #WEB-FB8D3)
-     */
     private function generateTicketNumber(string $prefix): string
     {
         $randomCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 5));
         return '#' . $prefix . '-' . $randomCode;
     }
 
-    /**
-     * 1. Pengajuan Pembuatan Website
-     */
     public function storeWebsite(Request $request)
     {
         $request->validate([
@@ -69,9 +63,6 @@ class UserPengajuanController extends Controller
                      ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
 
-    /**
-     * 2. Pengajuan Email Resmi
-     */
     public function storeEmail(Request $request)
     {
         $request->validate([
@@ -119,9 +110,6 @@ class UserPengajuanController extends Controller
                      ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
 
-    /**
-     * 3. Pengajuan Layanan TTE
-     */
     public function storeTte(Request $request)
     {
         $request->validate([
@@ -163,9 +151,6 @@ class UserPengajuanController extends Controller
                      ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
 
-    /**
-     * 4. Pengajuan Cloud Government
-     */
     public function storeCloud(Request $request)
     {
         $request->validate([
@@ -205,9 +190,6 @@ class UserPengajuanController extends Controller
                      ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
 
-    /**
-     * 5. Pengajuan Pusat Bantuan Reset Password
-     */
     public function storeBantuan(Request $request)
     {
         $request->validate([
@@ -235,7 +217,7 @@ class UserPengajuanController extends Controller
         $pengajuan = Pengajuan::create([
             'nomor_tiket'    => $this->generateTicketNumber('HLP'),
             'user_id'        => Auth::id(),
-            'jenis_layanan'  => 'Reset Password',
+            'jenis_layanan'  => 'Pusat Bantuan',
             'status'         => 'Pending',
             'file_pendukung' => $filePath,
             'data_pengajuan' => $request->data_pengajuan,

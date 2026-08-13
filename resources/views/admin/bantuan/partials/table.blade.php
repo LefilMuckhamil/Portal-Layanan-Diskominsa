@@ -16,12 +16,12 @@
             <form method="GET" action="{{ route('admin.bantuan.index') }}" class="flex gap-3">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket/Pemohon..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket #HLP-..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
                 </div>
                 <div class="relative">
                     <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
                     <select name="status" onchange="this.form.submit()" class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none cursor-pointer">
-                        <option value="">Semua Status</option>
+                        <option value="">Status</option>
                         <option value="Pending" @selected(request('status') == 'Pending')>Pending</option>
                         <option value="Proses" @selected(request('status') == 'Proses')>Proses</option>
                         <option value="Selesai" @selected(request('status') == 'Selesai')>Selesai</option>
@@ -31,7 +31,7 @@
             </form>
 
             <button type="button" onclick="bukaModalCreate()" class="px-4 py-2 bg-[#071E3D] hover:bg-[#1F4287] text-white text-[12px] font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Tambah Ajuan
+                <i class="fa-solid fa-plus"></i> Tambah Permohonan
             </button>
         </div>
     </div>
@@ -73,9 +73,14 @@
                             <span class="text-[13px] font-bold text-[#071E3D] capitalize">
                                 {{ str_replace('_', ' ', $item->jenis_layanan) }}
                             </span>
+                            @if(!empty($dataForm['email']))
+                                <p class="text-[11px] text-cyan-700 font-bold mt-0.5">
+                                    {{ $dataForm['email'] }}
+                                </p>
+                            @endif
                             @if(!empty($dataForm['kategori']))
                                 <p class="text-[11px] text-rose-600 font-bold mt-0.5">
-                                     Kendala: {{ $dataForm['kategori'] }}
+                                      {{ $dataForm['kategori'] }}
                                 </p>
                             @endif
                         </td>
@@ -273,102 +278,171 @@
     </div>
 </div>
 
+<style>
+    /* Styling khusus disesuaikan agar rapi di dalam Modal */
+    .dk-input-modal, label, button, a, div {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dk-input-modal {
+        border: 1.5px solid #DCE1E8;
+        border-radius: 10px;
+        background: #FFFFFF;
+    }
+
+    .dk-input-modal:focus-within, .dk-input-modal:focus {
+        outline: none;
+        border-color: #0284C7 !important;
+        box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12) !important;
+    }
+
+    .dk-rail-modal::before {
+        content: '';
+        position: absolute;
+        left: 14px;
+        top: 32px;
+        bottom: -15px;
+        width: 2px;
+        background: #E2E8F0;
+    }
+</style>
+
 <div id="modal-create" class="fixed inset-0 z-[150] hidden items-center justify-center">
-    <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalCreate()"></div>
+    <div class="absolute inset-0 bg-[#101828]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalCreate()"></div>
     
-    <div class="relative bg-white rounded-[2rem] p-8 max-w-2xl w-full mx-4 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
+    <div class="relative bg-white rounded-[1.5rem] w-full max-w-3xl mx-4 shadow-2xl overflow-hidden max-h-[95vh] flex flex-col animate-fade-in-down">
         
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-solid fa-plus"></i>
+        <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-4 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] shrink-0">
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-[#16324F] text-rose-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
+                    <i class="fa-solid fa-headset"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-extrabold text-[#071E3D]">Buat Tiket Bantuan</h3>
-                    <p class="text-[12px] text-gray-500">Input tiket permohonan bantuan / reset password secara manual.</p>
+                    <p class="text-[10px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Admin Panel</p>
+                    <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Buat Tiket Bantuan</h2>
                 </div>
             </div>
-            <button type="button" onclick="tutupModalCreate()" class="text-gray-400 hover:text-rose-500 transition-colors">
-                <i class="fa-solid fa-xmark text-2xl"></i>
+            <button type="button" onclick="tutupModalCreate()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-500 hover:text-rose-500 hover:bg-rose-50 transition-colors shadow-sm">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
         
-        <form method="POST" action="{{ route('admin.bantuan.store') }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
-            @csrf
+        <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar">
             
-            @if ($errors->any())
-                <div class="mb-5 bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl text-[12px] font-bold">
-                    <p class="mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Gagal menyimpan data, silakan perbaiki:</p>
-                    <ul class="list-disc pl-5 font-medium">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+            <form method="POST" action="{{ route('admin.bantuan.store') }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
+                @csrf
                 
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Pilih Pegawai / Akun Terdaftar<span class="text-rose-500">*</span></label>
-                    <select name="user_id" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="">Silakan Pilih Akun Terdaftar</option>
-                        @php
-                            $listUsers = $users ?? \App\Models\User::where('role', '!=', 'admin')->get();
-                        @endphp
-                        @forelse($listUsers as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->nip ?? $user->email }}</option>
-                        @empty
-                            <option value="" disabled>Belum ada data pegawai terdaftar</option>
-                        @endforelse
-                    </select>
+                @if ($errors->any())
+                    <div class="mb-5 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3.5 text-[#B42318]">
+                        <div class="flex items-center text-[12.5px] font-bold mb-1">
+                            <i class="fa-solid fa-circle-exclamation mr-2"></i> Gagal menyimpan data:
+                        </div>
+                        <ul class="list-disc list-inside space-y-0.5 text-[11.5px] text-[#912018] font-medium pl-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
+                <div class="relative dk-rail-modal pl-10 mb-5">
+                    <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <h3 class="text-[14px] font-extrabold text-[#101828]">Data Pemohon</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3 mb-2">
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih Pegawai ASN<span class="text-rose-500">*</span></label>
+                            <div class="dk-input-modal flex items-center px-3 relative">
+                                <i class="fa-solid fa-user text-sky-600 text-[13px] mr-2"></i>
+                                <select name="user_id" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                    <option value="">Silakan Pilih Akun Terdaftar</option>
+                                    @php
+                                        $listUsers = $users ?? \App\Models\User::where('role', '!=', 'admin')->get();
+                                    @endphp
+                                    @forelse($listUsers as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->nip ?? $user->email }}</option>
+                                    @empty
+                                        <option value="" disabled>Belum ada data pegawai</option>
+                                    @endforelse
+                                </select>
+                                <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Kategori Kendala <span class="text-rose-500">*</span></label>
+                            <div class="dk-input-modal flex items-center px-3 relative">
+                                <i class="fa-solid fa-layer-group text-rose-500 text-[13px] mr-2"></i>
+                                <select name="data_pengajuan[kategori]" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                    <option value="" disabled selected>Pilih Kategori</option>
+                                    <option value="Reset Password Email">Reset Password Email</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Jenis Layanan</label>
+                            <div class="dk-input-modal flex items-center px-3 bg-gray-50 border-gray-200">
+                                <i class="fa-solid fa-server text-gray-400 text-[13px] mr-2"></i>
+                                <input type="text" value="Pusat Bantuan" readonly class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-gray-500 font-bold cursor-not-allowed">
+                                <input type="hidden" name="jenis_layanan" value="Pusat Bantuan">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pemohon<span class="text-rose-500">*</span></label>
+                            <input type="text" name="data_pengajuan[nama]" required placeholder="Masukkan nama" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP Pemohon <span class="text-rose-500">*</span></label>
+                            <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Kategori Kendala<span class="text-rose-500">*</span></label>
-                    <select name="data_pengajuan[kategori]" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="" disabled selected>Pilih Kategori</option>
-                        <option value="Reset Password Email">Reset Password</option>
-                    </select>
+                <div class="relative pl-10 mb-2">
+                    <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
+                    <h3 class="text-[14px] font-extrabold text-[#101828] mb-3">Berkas Lampiran</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Email Resmi Kendala <span class="text-rose-500">*</span></label>
+                            <div class="dk-input-modal flex items-center px-3">
+                                <i class="fa-solid fa-envelope-open-text text-sky-600 text-[13px] mr-2"></i>
+                                <input type="email" name="data_pengajuan[email]" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            </div>
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Bukti Kendala (PDF) <span class="text-rose-500">*</span></label>
+                            <label for="admin-file-upload" class="group flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-4 py-2 cursor-pointer shadow-sm">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
+                                        <i class="fa-solid fa-cloud-arrow-up text-[14px]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[12.5px] text-[#101828] font-bold group-hover:text-sky-900 truncate">Klik pilih berkas .pdf</p>
+                                        <p id="admin-file-name" class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Maksimal ukuran 2MB</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">
+                    <button type="button" onclick="tutupModalCreate()" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
+                    <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg">
+                        Simpan Tiket <i class="fa-solid fa-paper-plane text-[11px]"></i>
+                    </button>
                 </div>
 
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Pemohon<span class="text-rose-500">*</span></label>
-                    <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap pemohon" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
-
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">NIP<span class="text-rose-500">*</span></label>
-                    <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
-
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Email Resmi<span class="text-rose-500">*</span></label>
-                    <input type="email" name="data_pengajuan[email]" required placeholder="email@acehbaratkab.go.id" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
-
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Pilih Jenis Layanan<span class="text-rose-500">*</span></label>
-                    <select name="jenis_layanan" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="Pusat Bantuan" selected>Pusat Bantuan</option>
-                    </select>
-                </div>
-
-                <div class="col-span-1 md:col-span-2 bg-cyan-50/50 border border-cyan-100 rounded-xl p-4">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Upload Surat Permohonan / Bukti Kendala (PDF)<span class="text-rose-500">*</span></label>
-                    <input type="file" name="file_pendukung" accept=".pdf" required class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[12px] file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-[#071E3D] file:text-white cursor-pointer hover:file:bg-[#1F4287] transition-all">
-                    <p class="text-[10px] text-gray-500 mt-2 font-medium">Format wajib <b>.pdf</b>. Ukuran maksimal 2MB.</p>
-                </div>
-
-            </div>
-
-            <div class="flex gap-3">
-                <button type="button" onclick="tutupModalCreate()" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
-                <button type="submit" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-[#071E3D] hover:bg-[#1F4287] transition-colors shadow-lg shadow-blue-900/20">
-                    <i class="fa-solid fa-paper-plane mr-1"></i> Simpan Tiket
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 

@@ -1,21 +1,17 @@
-<!-- TABEL DAFTAR PERMOHONAN -->
 <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
-    
-    <!-- Notifikasi Sukses -->
+
     @if(session('sukses'))
         <div class="bg-green-50 text-green-600 px-6 py-3 border-b border-green-100 text-[13px] font-bold flex items-center gap-2">
             <i class="fa-solid fa-check-circle"></i> {{ session('sukses') }}
         </div>
     @endif
 
-    <!-- Header Tabel & Filter -->
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Ajuan Website</h3>
             <p class="text-[12px] text-gray-400 font-medium mt-1">Kelola data dan perbarui status progres pembuatan website.</p>
         </div>
         
-        <!-- Form Pencarian, Filter & Tombol Create -->
         <div class="flex gap-3 items-center">
             <form method="GET" action="{{ route('admin.website.index') }}" class="flex gap-3">
                 <div class="relative">
@@ -26,7 +22,7 @@
                     <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
                     <select name="status" onchange="this.form.submit()" class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none cursor-pointer">
                         <option value="">Semua Status</option>
-                        @foreach(['Pending' => 'Pending', 'Verifikasi Doc' => 'Verifikasi Dokumen', 'Proses Development' => 'Proses Development', 'Selesai' => 'Selesai', 'Ditolak' => 'Ditolak'] as $val => $label)
+                        @foreach(['Pending' => 'Pending', 'Proses' => 'Proses', 'Selesai' => 'Selesai', 'Ditolak' => 'Ditolak'] as $val => $label)
                             <option value="{{ $val }}" @selected(request('status') == $val)>{{ $label }}</option>
                         @endforeach
                     </select>
@@ -39,7 +35,6 @@
         </div>
     </div>
 
-    <!-- Isi Tabel -->
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse min-w-[900px]">
             <thead class="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
@@ -60,12 +55,10 @@
                     @endphp
                     <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
                         
-                        <!-- 1. Tiket -->
                         <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
                             {{ $item->nomor_tiket }}
                         </td>
-                        
-                        <!-- 2. Nama Pemohon & NIP -->
+
                         <td class="py-4 px-6">
                             <p class="text-[13px] font-bold text-[#071E3D]">
                                 {{ $dataForm['nama'] ?? $item->user->name ?? 'Pemohon' }}
@@ -75,7 +68,6 @@
                             </p>
                         </td>
                         
-                        <!-- 3. Layanan -->
                         <td class="py-4 px-6">
                             <span class="text-[13px] font-bold text-[#071E3D] capitalize">
                                 {{ str_replace('_', ' ', $item->jenis_layanan) }}
@@ -87,17 +79,16 @@
                             @endif
                         </td>
                         
-                        <!-- 4. Tanggal Masuk -->
                         <td class="py-4 px-6 text-[12px] text-gray-500 font-bold">
                             {{ $item->created_at->format('d M Y') }}
                         </td>
                         
-                        <!-- 5. Status -->
+                       
                         <td class="py-4 px-6">
                             @php
                                 $badgeColor = match($item->status) {
-                                    'Pending', 'Menunggu Validasi' => 'bg-amber-50 text-amber-600 border-amber-100',
-                                    'Verifikasi Doc', 'Proses Development' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                    'Pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                    'Proses'  => 'bg-blue-50 text-blue-600 border-blue-100',
                                     'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
                                     'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
                                     default   => 'bg-gray-50 text-gray-600 border-gray-100'
@@ -108,17 +99,13 @@
                             </span>
                         </td>
                         
-                        <!-- 6. Aksi -->
                         <td class="py-4 px-6 text-center space-x-1 whitespace-nowrap">
-                            <!-- Info -->
                             <button type="button" onclick="bukaModalInfo('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Lihat Detail Ajuan">
                                 <i class="fa-regular fa-id-card text-xs"></i>
                             </button>
-                            <!-- Edit -->
                             <button type="button" onclick="bukaModalAdmin('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-cyan-50 hover:text-cyan-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Kelola Progres & Pesan">
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </button>
-                            <!-- Hapus -->
                             <form id="form-delete-{{ $item->id }}" action="{{ route('admin.pengajuan.destroy', $item->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
@@ -129,9 +116,6 @@
                         </td>
                     </tr>
 
-                    <!-- ======================================================= -->
-                    <!-- MODAL 1: HAPUS PERMANEN -->
-                    <!-- ======================================================= -->
                     <div id="modal-delete-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
                         <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalDelete('{{ $item->id }}')"></div>
                         <div class="relative bg-white rounded-[2rem] p-8 max-w-sm w-full mx-4 shadow-2xl text-center">
@@ -149,9 +133,6 @@
                         </div>
                     </div>
 
-                    <!-- ======================================================= -->
-                    <!-- MODAL 2: INFO DETAIL PEMOHON -->
-                    <!-- ======================================================= -->
                     <div id="modal-info-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
                         <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalInfo('{{ $item->id }}')"></div>
                         <div class="relative bg-white rounded-[2rem] p-8 max-w-md w-full mx-4 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
@@ -199,9 +180,6 @@
                         </div>
                     </div>
 
-                    <!-- ======================================================= -->
-                    <!-- MODAL 3: KELOLA STATUS, PESAN & UPLOAD BERKAS HASIL -->
-                    <!-- ======================================================= -->
                     <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
                         <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalAdmin('{{ $item->id }}')"></div>
                         <div class="relative bg-white rounded-[2rem] p-8 max-w-xl w-full mx-4 shadow-2xl overflow-y-auto max-h-[95vh] custom-scrollbar">
@@ -301,130 +279,180 @@
         </table>
     </div>
 </div>
-<!-- AKHIR DARI KOTAK TABEL -->
 
-<!-- ======================================================= -->
-<!-- MODAL CREATE (TAMBAH AJUAN MANUAL OLEH ADMIN) -->
-<!-- ======================================================= -->
+<style>
+    .dk-input-modal, label, button, a, div {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dk-input-modal {
+        border: 1.5px solid #DCE1E8;
+        border-radius: 10px;
+        background: #FFFFFF;
+    }
+
+    .dk-input-modal:focus-within, .dk-input-modal:focus {
+        outline: none;
+        border-color: #0284C7 !important;
+        box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12) !important;
+    }
+
+    .dk-rail-modal::before {
+        content: '';
+        position: absolute;
+        left: 14px;
+        top: 32px;
+        bottom: -10px;
+        width: 2px;
+        background: #E2E8F0;
+    }
+</style>
+
 <div id="modal-create" class="fixed inset-0 z-[150] hidden items-center justify-center">
-    <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalCreate()"></div>
-    
-    <div class="relative bg-white rounded-[2rem] p-8 max-w-2xl w-full mx-4 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
-        
-        <!-- Header Modal -->
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl shrink-0">
-                    <i class="fa-solid fa-plus"></i>
+    <div class="absolute inset-0 bg-[#101828]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalCreate()"></div>
+
+    <div class="relative bg-white rounded-[1.5rem] w-full max-w-3xl mx-4 shadow-2xl overflow-hidden max-h-[95vh] flex flex-col animate-fade-in-down">
+
+        <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-4 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] shrink-0">
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-[#16324F] text-indigo-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
+                    <i class="fa-solid fa-globe"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-extrabold text-[#071E3D]">Tambah Ajuan Website</h3>
-                    <p class="text-[12px] text-gray-500">Buat permohonan website baru secara manual untuk ASN.</p>
+                    <p class="text-[10px] font-bold tracking-[0.16em] text-indigo-700 uppercase mb-0.5">Admin Panel</p>
+                    <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Pengajuan Website</h2>
                 </div>
             </div>
-            <button type="button" onclick="tutupModalCreate()" class="text-gray-400 hover:text-rose-500 transition-colors">
-                <i class="fa-solid fa-xmark text-2xl"></i>
-            </button>
+
+            <div class="flex items-center gap-3">
+                <span class="hidden sm:inline-flex items-center gap-1.5 text-[10.5px] font-bold text-indigo-800 bg-indigo-50 border border-indigo-200 rounded-full px-3 py-1 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Layanan Website
+                </span>
+                <button type="button" onclick="tutupModalCreate()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-500 hover:text-rose-500 hover:bg-rose-50 transition-colors shadow-sm">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
         </div>
-        
-        <!-- Form Create -->
-        <form method="POST" action="{{ route('admin.pengajuan.storeWebsite') }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
-            @csrf
-            
-            @if ($errors->any())
-                <div class="mb-5 bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl text-[12px] font-bold">
-                    <p class="mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Gagal menyimpan data, silakan perbaiki:</p>
-                    <ul class="list-disc pl-5 font-medium">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-                
-                <!-- Pilih ASN Pemohon -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">ASN Pemohon<span class="text-rose-500">*</span></label>
-                    <select name="user_id" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="">Silakan Pilih ASN Terdaftar</option>
-                        @foreach($users ?? [] as $user)
-                            <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->unit_kerja }}</option>
-                        @endforeach
-                    </select>
-                </div>
 
-                <!-- Input Nama Form -->
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Pemohon<span class="text-rose-500">*</span></label>
-                    <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
+        <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar">
 
-                <!-- Input NIP -->
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">NIP Pemohon</label>
-                    <input type="text" name="data_pengajuan[nip]" placeholder="Masukkan NIP..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
+            <form method="POST" action="{{ route('admin.pengajuan.storeWebsite') }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
+                @csrf
 
-                <!-- Input Instansi -->
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Instansi<span class="text-rose-500">*</span></label>
-                    <input type="text" name="data_pengajuan[instansi]" required placeholder="Dinasxxxxx" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
+                @if ($errors->any())
+                    <div class="mb-5 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3.5 text-[#B42318]">
+                        <div class="flex items-center text-[12.5px] font-bold mb-1">
+                            <i class="fa-solid fa-circle-exclamation mr-2"></i> Gagal menyimpan data:
+                        </div>
+                        <ul class="list-disc list-inside space-y-0.5 text-[11.5px] text-[#912018] font-medium pl-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-                <!-- Input Nomor HP -->
-                <div>
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nomor HP<span class="text-rose-500">*</span></label>
-                    <input type="number" name="data_pengajuan[no_hp]" required placeholder="0812xxxxxxxx" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
+                <div class="relative dk-rail-modal pl-10 mb-4">
+                    <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <h3 class="text-[14px] font-extrabold text-[#101828]">Identitas Pemohon & Instansi</h3>
+                    </div>
 
-                <!-- Input Nama Pimpinan -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Pimpinan <span class="text-rose-500">*</span></label>
-                    <input type="text" name="data_pengajuan[nama_pimpinan]" required placeholder="Masukkan nama pimpinan..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3 mb-2">
 
-                <!-- Pilihan Layanan -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Pilih Jenis Layanan <span class="text-rose-500">*</span></label>
-                    <select name="jenis_layanan" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] font-bold text-gray-700 outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <option value="Pembuatan Website" selected>Pembuatan Website</option>
-                    </select>
-                </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih ASN Pemohon <span class="text-rose-500">*</span></label>
+                            <div class="dk-input-modal flex items-center px-3 relative">
+                                <i class="fa-solid fa-user-check text-indigo-600 text-[13px] mr-2"></i>
+                                <select name="user_id" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                    <option value="">Silakan Pilih ASN Terdaftar</option>
+                                    @foreach($users ?? [] as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->nip }}</option>
+                                    @endforeach
+                                </select>
+                                <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
+                            </div>
+                        </div>
 
-                <!-- Usulan Nama Domain -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Nama Domain <span class="text-rose-500">*</span></label>
-                    <div class="flex items-center">
-                        <input type="text" name="data_pengajuan[domain]" required placeholder="contohnamadinas" class="w-full bg-white border-y border-l border-gray-200 rounded-l-xl px-4 py-3 text-[13px] font-medium text-gray-700 outline-none focus:border-cyan-400 transition-colors">
-                        <span class="bg-gray-50 border-y border-r border-gray-200 rounded-r-xl px-4 py-3 text-[13px] font-extrabold text-blue-500">.go.id</span>
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pemohon <span class="text-rose-500">*</span></label>
+                            <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP Pemohon</label>
+                            <input type="text" name="data_pengajuan[nip]" placeholder="Masukkan NIP..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Instansi <span class="text-rose-500">*</span></label>
+                            <input type="text" name="data_pengajuan[instansi]" required placeholder="Dinasxxxxx" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP <span class="text-rose-500">*</span></label>
+                            <div class="dk-input-modal flex items-center px-3">
+                                <i class="fa-solid fa-phone text-emerald-600 text-[13px] mr-2"></i>
+                                <input type="number" name="data_pengajuan[no_hp]" required placeholder="0812xxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            </div>
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pimpinan <span class="text-rose-500">*</span></label>
+                            <input type="text" name="data_pengajuan[nama_pimpinan]" required placeholder="Masukkan nama pimpinan..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- Upload Surat Permohonan -->
-                <div class="col-span-1 md:col-span-2 bg-blue-50/50 border border-blue-100 rounded-xl p-4">
-                    <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Upload Surat Permohonan (PDF) <span class="text-rose-500">*</span></label>
-                    <input type="file" name="file_pendukung" accept=".pdf" required class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[12px] file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-[#071E3D] file:text-white cursor-pointer hover:file:bg-[#1F4287] transition-all">
-                    <p class="text-[10px] text-gray-500 mt-2 font-medium">Format wajib <b>.pdf</b>. Ukuran maksimal 5MB.</p>
+                <div class="relative pl-10 mb-2">
+                    <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
+                    <h3 class="text-[14px] font-extrabold text-[#101828] mb-3">Detail Domain & Dokumen Persyaratan</h3>
+
+                    <input type="hidden" name="jenis_layanan" value="Pembuatan Website">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Domain <span class="text-rose-500">*</span></label>
+                            <div class="dk-input-modal flex items-center overflow-hidden">
+                                <i class="fa-solid fa-link text-indigo-600 text-[13px] ml-3 mr-2"></i>
+                                <input type="text" name="data_pengajuan[domain]" required placeholder="contohnamadinas" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <span class="bg-gray-50 border-l border-[#DCE1E8] px-3 py-2 text-[11.5px] font-extrabold text-indigo-700 h-full flex items-center">.go.id</span>
+                            </div>
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Surat Permohonan (PDF) <span class="text-rose-500">*</span></label>
+                            <label for="admin-website-upload" class="group flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-indigo-500 hover:bg-indigo-50/40 transition-all px-4 py-2 cursor-pointer shadow-sm">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-100 group-hover:bg-indigo-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
+                                        <i class="fa-solid fa-file-pdf text-[14px]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[12.5px] text-[#101828] font-bold group-hover:text-indigo-900 truncate">Klik untuk memilih berkas</p>
+                                        <p id="admin-website-name" class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Format PDF &middot; Maksimal 5MB</p>
+                                    </div>
+                                </div>
+                                <div class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 group-hover:border-indigo-300 shrink-0">Browse</div>
+                                <input id="admin-website-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('admin-website-name').innerText = this.files[0].name; document.getElementById('admin-website-name').classList.add('text-emerald-700', 'font-bold')">
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
+                <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">
+                    <button type="button" onclick="tutupModalCreate()" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
+                    <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg">
+                        Simpan Permohonan <i class="fa-solid fa-paper-plane text-[11px]"></i>
+                    </button>
+                </div>
 
-            <!-- Tombol Aksi -->
-            <div class="flex gap-3">
-                <button type="button" onclick="tutupModalCreate()" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
-                <button type="submit" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-[#071E3D] hover:bg-[#1F4287] transition-colors shadow-lg shadow-blue-900/20">
-                    <i class="fa-solid fa-paper-plane mr-1"></i> Simpan
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- ======================================================= -->
-<!-- BAGIAN JAVASCRIPT & STYLE -->
-<!-- ======================================================= -->
 <script>
     function bukaModalCreate() {
         document.getElementById('modal-create').classList.remove('hidden');
