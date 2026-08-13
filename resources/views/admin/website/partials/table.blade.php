@@ -8,7 +8,7 @@
 
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Ajuan Website</h3>
+            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Permohonan Website</h3>
             <p class="text-[12px] text-gray-400 font-medium mt-1">Kelola data dan perbarui status progres pembuatan website.</p>
         </div>
         
@@ -16,12 +16,12 @@
             <form method="GET" action="{{ route('admin.website.index') }}" class="flex gap-3">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket/Pemohon..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket #WEB-..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
                 </div>
                 <div class="relative">
                     <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
                     <select name="status" onchange="this.form.submit()" class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none cursor-pointer">
-                        <option value="">Semua Status</option>
+                        <option value="">Status</option>
                         @foreach(['Pending' => 'Pending', 'Proses' => 'Proses', 'Selesai' => 'Selesai', 'Ditolak' => 'Ditolak'] as $val => $label)
                             <option value="{{ $val }}" @selected(request('status') == $val)>{{ $label }}</option>
                         @endforeach
@@ -30,7 +30,7 @@
             </form>
 
             <button type="button" onclick="bukaModalCreate()" class="px-4 py-2 bg-[#071E3D] hover:bg-[#1F4287] text-white text-[12px] font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Tambah Ajuan
+                <i class="fa-solid fa-plus"></i> Tambah Permohonan
             </button>
         </div>
     </div>

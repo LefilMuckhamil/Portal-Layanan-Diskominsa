@@ -1,10 +1,9 @@
-<!-- Konfigurasi Data Statistik -->
 @php
     $statistik = [
         ['title' => 'Total Permohonan', 'count' => $total ?? 0, 'label' => 'Unit Web', 'icon' => 'fa-laptop-code', 'theme' => 'indigo'],
-        ['title' => 'Menunggu Verif', 'count' => $pending ?? 0, 'label' => 'Permohonan', 'icon' => 'fa-file-circle-exclamation', 'theme' => 'amber'],
-        ['title' => 'Proses Development', 'count' => $proses ?? 0, 'label' => 'Dikerjakan', 'icon' => 'fa-code', 'theme' => 'blue'],
-        ['title' => 'Selesai', 'count' => $selesai ?? 0, 'label' => 'Web Aktif', 'icon' => 'fa-check-circle', 'theme' => 'green'],
+        ['title' => 'Pending', 'count' => $pending ?? 0, 'label' => 'Antrian', 'icon' => 'fa-hourglass-half', 'theme' => 'amber'],
+        ['title' => 'Proses', 'count' => $proses ?? 0, 'label' => 'Dikerjakan', 'icon' => 'fa-code', 'theme' => 'blue'],
+        ['title' => 'Selesai', 'count' => $selesai ?? 0, 'label' => 'Selesai', 'icon' => 'fa-check-circle', 'theme' => 'green'],
         ['title' => 'Ditolak', 'count' => $ditolak ?? 0, 'label' => 'Dibatalkan', 'icon' => 'fa-circle-xmark', 'theme' => 'rose'],
     ];
 
@@ -17,7 +16,6 @@
     ];
 @endphp
 
-<!-- Deretan Kartu Statistik Dinamis -->
 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
     @foreach ($statistik as $stat)
         @php $c = $colors[$stat['theme']]; @endphp
