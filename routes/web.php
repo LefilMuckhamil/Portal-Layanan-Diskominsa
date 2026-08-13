@@ -11,43 +11,40 @@ use App\Http\Controllers\UserPengajuanController;
 use App\Http\Controllers\AdminPengajuanController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordAdminController;
+use App\Http\Controllers\TrackingController;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes
+| 1. Public & Tracking Routes (Bebas Akses Tanpa Login)
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', function () { return view('welcome'); })->name('home');
+Route::get('/track-tiket/{nomor_tiket}', [TrackingController::class, 'track'])->name('track.tiket');
 
 /*
 |--------------------------------------------------------------------------
-| Guest Routes (Belum Login / Autentikasi & Reset Sandi)
+| 2. Guest Routes (Hanya Sebelum Login)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-    // Login & Register
     Route::get('/login', function () { return view('auth.login'); })->name('login');
     Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:10,1');
     
     Route::get('/register', function () { return view('auth.register'); })->name('register');
     Route::post('/register', [AuthController::class, 'registerProcess'])->name('register.process')->middleware('throttle:5,1');
     
-    // Reset Password via WA
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
     Route::post('/forgot-password', [ForgotPasswordController::class, 'submitRequest'])->name('password.email')->middleware('throttle:3,1');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated User Routes (Akses ASN)
+| 3. Authenticated User Routes (Khusus ASN / User Login)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Layanan Pengajuan ASN
     Route::prefix('layanan')->group(function () {
         Route::get('/pengajuan-website', function () { return view('pengajuan.website'); })->name('pengajuan.website');
         Route::get('/pengajuan-email', function () { return view('pengajuan.email'); })->name('pengajuan.email');
@@ -64,7 +61,6 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    // Dashboard & Riwayat ASN
     Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan')->middleware('throttle:20,1');
@@ -72,12 +68,11 @@ Route::middleware(['auth'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes (Khusus Administrator Diskominsa)
+| 4. Admin Routes (Khusus Administrator Diskominsa)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
     
-    // Dashboard Utama Admin
     Route::get('/dashboard', function (Request $request) {
         $countWeb     = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->count(); 
         $countEmail   = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
@@ -107,7 +102,6 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         )); 
     })->name('admin.dashboard');
 
-    // Pengaturan System & Toggle Chat
     Route::get('/pengaturan', function () {
         $chatAktif = Cache::get('chat_global_aktif', true);
         return view('admin.pengaturan.index', compact('chatAktif'));
@@ -116,23 +110,19 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
     Route::post('/toggle-chat', function () {
         $statusSekarang = Cache::get('chat_global_aktif', true);
         Cache::put('chat_global_aktif', !$statusSekarang);
-        
         $pesan = !$statusSekarang ? 'diaktifkan' : 'dinonaktifkan';
         return back()->with('sukses', "Fitur Global Chat berhasil $pesan!");
     })->name('admin.toggleChat');
 
-    // Kelola Permohonan Reset Password WA
     Route::get('/reset-password-requests', [ResetPasswordAdminController::class, 'index'])->name('admin.reset-password.index');
     Route::post('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'process'])->name('admin.reset-password.process');
 
-    // Halaman Menu Spesifik Layanan
     Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index'); 
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
     Route::get('/layanan-tte', [AdminPengajuanController::class, 'layananTte'])->name('admin.tte.index');
     Route::get('/layanan-cloud', [AdminPengajuanController::class, 'layananCloud'])->name('admin.cloud.index');
     Route::get('/layanan-bantuan', [AdminPengajuanController::class, 'layananBantuan'])->name('admin.bantuan.index');
 
-    // Kelola Pengajuan Global oleh Admin
     Route::prefix('pengajuan')->group(function () {
         Route::get('/', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan.index');
         Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show');

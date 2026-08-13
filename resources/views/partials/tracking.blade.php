@@ -1,40 +1,139 @@
-<section id="tracking" class="py-16 container mx-auto px-6 mb-10">
-        <div class="bg-primary-dark rounded-[2.5rem] p-10 md:p-14 shadow-2xl flex flex-col md:flex-row items-center text-white relative overflow-hidden">
-            <div class="absolute top-1/2 right-1/4 w-96 h-96 bg-primary-light rounded-full mix-blend-screen filter blur-[80px] opacity-40 transform -translate-y-1/2"></div>
+<section id="tracking" class="py-20 bg-[#040914] text-white border-t border-white/10">
+    <div class="container mx-auto px-6 max-w-4xl">
+        
+        <div class="bg-[#0B1528] border border-white/10 rounded-2xl p-6 md:p-10 shadow-xl">
             
-            <div class="w-full md:w-[40%] mb-12 md:mb-0 z-10 pr-0 md:pr-10">
-                <h3 class="text-3xl font-extrabold mb-4 leading-tight">E-Tracking Pengajuan</h3>
-                <p class="text-sm opacity-80 mb-10 leading-relaxed font-light">Cek status pengajuan layanan Anda secara real-time.</p>
-                <div class="w-48 h-85 bg-white rounded-4xl border-8 border-gray-900 mx-auto md:mx-0 overflow-hidden relative shadow-2xl transform -rotate-6">
-                    <div class="absolute top-0 inset-x-0 h-4 bg-gray-900 w-1/2 mx-auto rounded-b-xl z-20"></div>
-                    <div class="bg-gray-50 w-full h-full p-4 pt-8 flex flex-col relative z-10">
-                        <div class="w-full h-3 bg-gray-200 rounded mb-4"></div>
-                        <div class="w-3/4 h-3 bg-gray-200 rounded mb-6"></div>
-                        <div class="grow flex items-center justify-center">
-                            <div class="w-16 h-16 bg-teal-400 rounded-full flex items-center justify-center shadow-lg shadow-teal-400/50">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            <div class="text-center mb-8">
+                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Lacak Tiket</span>
+                <h2 class="text-2xl font-bold text-white mt-1">E-Tracking Pengajuan Layanan</h2>
+            </div>
+
+            <!-- Form Cari Tiket -->
+            <div class="max-w-xl mx-auto mb-8">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input 
+                        type="text" 
+                        id="input-tiket" 
+                        placeholder="Masukkan ID / Nomor Tiket..." 
+                        class="flex-1 bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                        onkeypress="if(event.key === 'Enter') lacakTiketCard()"
+                    >
+                    <button 
+                        type="button" 
+                        onclick="lacakTiketCard()" 
+                        class="bg-cyan-400 hover:bg-cyan-300 text-[#040914] px-6 py-3 rounded-xl font-bold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                    >
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        <span>Cari Tiket</span>
+                    </button>
+                </div>
+                <p id="error-tracking" class="text-rose-400 text-xs mt-2 hidden text-center font-medium"></p>
+            </div>
+
+            <!-- HASIL TRACKING (DESAIN HALUS & MINIMALIS) -->
+            <div id="hasil-tracking-card" class="hidden max-w-xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl transition-all duration-300">
+                
+                <!-- Header Info Tiket -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+                    <div>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Permohonan</span>
+                        <h3 id="card-id-tiket" class="text-lg md:text-xl font-bold text-white mt-0.5">-</h3>
+                        <p id="card-nama-layanan" class="text-xs text-cyan-400 font-medium mt-0.5">-</p>
+                    </div>
+                    <div>
+                        <span id="card-status-terakhir" class="inline-block bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 px-3.5 py-1.5 rounded-full text-xs font-semibold">
+                            Sedang Diproses
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Timeline Progress Minimalis -->
+                <div class="pt-6">
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-6">Riwayat Progress</h4>
+                    <div id="card-timeline-list" class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<script>
+    async function lacakTiketCard() {
+        let inputTiket = document.getElementById('input-tiket').value.trim();
+        const errorMsg = document.getElementById('error-tracking');
+        const cardContainer = document.getElementById('hasil-tracking-card');
+        const timelineList = document.getElementById('card-timeline-list');
+
+        if (!inputTiket) {
+            errorMsg.textContent = 'Silakan masukkan nomor tiket.';
+            errorMsg.classList.remove('hidden');
+            return;
+        }
+
+        // Hapus karakter '#' dari input JS agar tidak merusak URL parameter
+        const cleanSearchKey = inputTiket.replace(/#/g, '');
+        errorMsg.classList.add('hidden');
+
+        try {
+            const response = await fetch(`/track-tiket/${encodeURIComponent(cleanSearchKey)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                errorMsg.textContent = result.message || 'Nomor tiket tidak ditemukan.';
+                errorMsg.classList.remove('hidden');
+                cardContainer.classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('card-nama-layanan').textContent = result.data.layanan;
+            document.getElementById('card-id-tiket').textContent = result.data.nomor_tiket.startsWith('#') ? result.data.nomor_tiket : `#${result.data.nomor_tiket}`;
+            document.getElementById('card-status-terakhir').textContent = result.data.status || 'Sedang Diproses';
+
+            timelineList.innerHTML = '';
+            
+            if (result.data.riwayat && result.data.riwayat.length > 0) {
+                result.data.riwayat.forEach((item, index) => {
+                    const isLatest = index === 0;
+                    
+                    const itemHTML = `
+                        <div class="relative">
+                            <span class="absolute -left-[23.5px] top-1.5 w-2.5 h-2.5 rounded-full ${isLatest ? 'bg-cyan-400 ring-4 ring-cyan-400/20' : 'bg-slate-600'}"></span>
+                            <div>
+                                <div class="flex items-baseline justify-between gap-2">
+                                    <p class="text-sm font-semibold ${isLatest ? 'text-white' : 'text-slate-400'}">${item.judul}</p>
+                                    <span class="text-[11px] text-slate-500 shrink-0">${item.waktu}</span>
+                                </div>
+                                ${item.pesan_admin ? `
+                                    <div class="bg-white/5 border border-white/5 rounded-xl p-3 mt-2">
+                                        <p class="text-xs text-slate-300 font-normal leading-relaxed font-sans">${item.pesan_admin}</p>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    `;
+                    timelineList.insertAdjacentHTML('beforeend', itemHTML);
+                });
+            }
 
-            <div class="w-full md:w-[60%] z-10 md:pl-10 border-t md:border-t-0 md:border-l border-white/10 pt-10 md:pt-0">
-                <label class="block text-sm font-semibold mb-4 text-white/90">Masukkan Nomor Tiket / ID Pengajuan</label>
-                <div class="flex flex-col sm:flex-row gap-4 mb-16">
-                    <input type="text" placeholder="Contoh: TKT-2024-0001" class="grow bg-white/5 border border-white/20 rounded-xl px-5 py-4 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition">
-                    <button class="bg-cyan-500 hover:bg-cyan-400 text-primary-dark px-8 py-4 rounded-xl font-bold shadow-lg transition">Cek Status</button>
-                </div>
+            cardContainer.classList.remove('hidden');
+            cardContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-                <p class="text-sm font-semibold mb-8 text-white/90">Status Pengajuan</p>
-                <div class="relative max-w-xl">
-                    <div class="absolute top-5 left-8 right-8 h-0.5 bg-white/20 -z-10"></div>
-                    <div class="flex justify-between">
-                        <div class="flex flex-col items-center gap-4"><div class="w-10 h-10 rounded-full border-2 border-white/30 flex items-center justify-center text-white/50 bg-primary-dark z-10"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><span class="text-xs text-white/50">Menunggu</span></div>
-                        <div class="flex flex-col items-center gap-4"><div class="w-10 h-10 rounded-full bg-primary-light border-4 border-primary-dark ring-2 ring-primary-light flex items-center justify-center z-10"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></div><span class="text-xs font-bold text-white">Diproses</span></div>
-                        <div class="flex flex-col items-center gap-4"><div class="w-10 h-10 rounded-full border-2 border-white/30 flex items-center justify-center text-white/50 bg-primary-dark z-10"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><span class="text-xs text-white/50">Selesai</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        } catch (error) {
+            console.error('Tracking Error:', error);
+            errorMsg.textContent = 'Gagal terhubung ke server.';
+            errorMsg.classList.remove('hidden');
+        }
+    }
+</script>
