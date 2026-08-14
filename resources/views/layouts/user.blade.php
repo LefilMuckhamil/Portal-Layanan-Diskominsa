@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Layanan Digital') - Diskominsa</title>
-    
+    <link rel="icon" type="image/png" href="{{ asset('image/icon.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@
 
                 <div class="hidden md:flex items-center space-x-2">
                     <a href="{{ route('pengajuan.website') }}" class="{{ request()->routeIs('pengajuan.website') ? 'bg-[#071E3D] text-white font-extrabold shadow-md' : 'text-slate-700 hover:bg-slate-100 hover:text-[#071E3D] font-bold' }} px-4 py-2.5 rounded-xl text-[14px] transition-all duration-200 flex items-center gap-2">
-                        <i class="fa-solid fa-globe text-base"></i> Web Desa
+                        <i class="fa-solid fa-globe text-base"></i> Website
                     </a>
                     <a href="{{ route('pengajuan.email') }}" class="{{ request()->routeIs('pengajuan.email') ? 'bg-[#071E3D] text-white font-extrabold shadow-md' : 'text-slate-700 hover:bg-slate-100 hover:text-[#071E3D] font-bold' }} px-4 py-2.5 rounded-xl text-[14px] transition-all duration-200 flex items-center gap-2">
                         <i class="fa-solid fa-envelope text-base"></i> Email

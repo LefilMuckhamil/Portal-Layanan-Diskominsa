@@ -55,12 +55,12 @@
                     <i class="fa-solid fa-envelope"></i>
                 </div>
                 <div>
-                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominfo &middot; Layanan Digital</p>
+                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominsa &middot; Layanan Digital</p>
                     <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pengajuan Email Resmi</h2>
                 </div>
             </div>
-            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-cyan-50 border border-cyan-200 rounded-full px-3.5 py-1.5 shrink-0 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span> Akun ASN
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-white rounded-xl px-3.5 py-1.5 shrink-0 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>Akun Asn
             </span>
         </div>
 
@@ -86,27 +86,25 @@
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
                     <div class="flex items-center gap-2 mb-0.5">
                         <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
-                        <span class="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-md font-bold">Terisi Otomatis</span>
                     </div>
                     <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang mengajukan pembuatan akun email.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Lengkap (beserta Gelar)</label>
-                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Contoh: Budi Santoso, S.Kom" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Lengkap</label>
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan Nama Lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP</label>
                             <input type="number" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Asal Instansi / SKPK</label>
-                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Asal Instansi</label>
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP / WhatsApp</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP</label>
                             <div class="dk-input flex items-center px-3.5">
-                                <i class="fa-brands fa-whatsapp text-emerald-600 text-[15px] mr-2.5"></i>
                                 <input type="text" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="081234567890" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
@@ -115,7 +113,7 @@
 
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
-                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Detail Usulan Email</h3>
+                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Detail Pengajuan Email</h3>
                     <p class="text-[12.5px] text-[#667085] font-medium mb-6">Detail usulan alamat email resmi dan kelengkapan dokumen.</p>
 
                     <div class="mb-6">
@@ -128,7 +126,7 @@
                     </div>
 
                     <div class="mb-2">
-                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Surat Permohonan (PDF)</label>
+                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Surat Permohonan Pembuatan Email (PDF)</label>
                         <label for="file-upload" class="group flex items-center gap-4 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-5 py-4 cursor-pointer shadow-sm">
                             <div class="w-10 h-10 shrink-0 rounded-xl bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
                                 <i class="fa-solid fa-cloud-arrow-up text-[16px]"></i>
