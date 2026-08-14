@@ -1,5 +1,4 @@
 <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
-    
     @if(session('sukses'))
         <div class="bg-green-50 text-green-600 px-6 py-3 border-b border-green-100 text-[13px] font-bold flex items-center gap-2">
             <i class="fa-solid fa-check-circle"></i> {{ session('sukses') }}
@@ -49,17 +48,21 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
-                
                 @forelse ($pengajuans as $item)
                     @php
                         $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
+                        $badgeColor = match($item->status) {
+                            'Pending', 'Menunggu' => 'bg-amber-50 text-amber-600 border-amber-100',
+                            'Proses', 'Sedang Ditangani' => 'bg-blue-50 text-blue-600 border-blue-100',
+                            'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                            'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
+                            default   => 'bg-gray-50 text-gray-600 border-gray-100'
+                        };
                     @endphp
                     <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
-                        
                         <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
                             {{ $item->nomor_tiket }}
                         </td>
-                        
                         <td class="py-4 px-6">
                             <p class="text-[13px] font-bold text-[#071E3D]">
                                 {{ $dataForm['nama'] ?? $item->user->name ?? 'Pemohon' }}
@@ -68,7 +71,6 @@
                                 NIP: {{ $dataForm['nip'] ?? $item->user->nip ?? '-' }}
                             </p>
                         </td>
-                        
                         <td class="py-4 px-6">
                             <span class="text-[13px] font-bold text-[#071E3D] capitalize">
                                 {{ str_replace('_', ' ', $item->jenis_layanan) }}
@@ -80,30 +82,18 @@
                             @endif
                             @if(!empty($dataForm['kategori']))
                                 <p class="text-[11px] text-rose-600 font-bold mt-0.5">
-                                      {{ $dataForm['kategori'] }}
+                                    {{ $dataForm['kategori'] }}
                                 </p>
                             @endif
                         </td>
-                        
                         <td class="py-4 px-6 text-[12px] text-gray-500 font-bold">
                             {{ $item->created_at->format('d M Y') }}
                         </td>
-                        
                         <td class="py-4 px-6">
-                            @php
-                                $badgeColor = match($item->status) {
-                                    'Pending', 'Menunggu' => 'bg-amber-50 text-amber-600 border-amber-100',
-                                    'Proses', 'Sedang Ditangani' => 'bg-blue-50 text-blue-600 border-blue-100',
-                                    'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                    'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
-                                    default   => 'bg-gray-50 text-gray-600 border-gray-100'
-                                };
-                            @endphp
                             <span class="px-3 py-1.5 rounded-lg border text-[10px] font-extrabold uppercase tracking-wider {{ $badgeColor }}">
                                 {{ $item->status }}
                             </span>
                         </td>
-                        
                         <td class="py-4 px-6 text-center space-x-1 whitespace-nowrap">
                             <button type="button" onclick="bukaModalInfo('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Lihat Detail Tiket">
                                 <i class="fa-regular fa-id-card text-xs"></i>
@@ -120,6 +110,135 @@
                             </form>
                         </td>
                     </tr>
+
+                    <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[150] hidden items-center justify-center">
+                        <div class="absolute inset-0 bg-[#101828]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalAdmin('{{ $item->id }}')"></div>
+                        <div class="relative bg-white rounded-[1.5rem] w-full max-w-3xl mx-4 shadow-2xl overflow-hidden max-h-[95vh] flex flex-col animate-fade-in-down">
+                            <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-4 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] shrink-0">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-10 h-10 rounded-xl bg-[#16324F] text-blue-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold tracking-[0.16em] text-blue-700 uppercase mb-0.5">Admin Panel</p>
+                                        <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Kelola Tiket Bantuan</h2>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 shrink-0">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> {{ $item->nomor_tiket }}
+                                    </span>
+                                    <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-500 hover:text-rose-500 hover:bg-rose-50 transition-colors shadow-sm cursor-pointer">
+                                        <i class="fa-solid fa-xmark text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar flex-1 flex flex-col">
+                                <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)" class="flex-1 flex flex-col justify-between">
+                                    @csrf
+                                    @method('PUT')
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-1">
+                                        <div class="relative dk-rail-modal pl-10 flex flex-col h-full">
+                                            <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
+                                            <div class="flex items-center gap-2 mb-3 shrink-0">
+                                                <h3 class="text-[14px] font-extrabold text-[#101828]">Status & Penanganan</h3>
+                                                <span class="text-[9px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded font-bold">Wajib Diupdate</span>
+                                            </div>
+                                            
+                                            <div class="space-y-3 flex-1 flex flex-col justify-between">
+                                                <div>
+                                                    <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih Status Baru <span class="text-rose-500">*</span></label>
+                                                    <div class="dk-input-modal flex items-center px-3 relative">
+                                                        <i class="fa-solid fa-bars-progress text-blue-600 text-[13px] mr-2"></i>
+                                                        <select name="status" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                                            @foreach(['Pending' => 'PENDING', 'Proses' => 'SEDANG DITANGANI', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
+                                                                <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Bukti Penanganan (PDF)</label>
+                                                    <label for="admin-hasil-upload-{{ $item->id }}" class="group flex items-center justify-between gap-2 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-blue-500 hover:bg-blue-50/40 transition-all px-3 py-1.5 cursor-pointer shadow-sm">
+                                                        <div class="flex items-center gap-2 min-w-0">
+                                                            <div class="w-7 h-7 shrink-0 rounded-lg bg-slate-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
+                                                                <i class="fa-solid fa-file-pdf text-[13px]"></i>
+                                                            </div>
+                                                            <div class="min-w-0">
+                                                                <p id="admin-hasil-name-{{ $item->id }}" class="text-[11.5px] text-[#101828] font-bold group-hover:text-blue-900 truncate">
+                                                                    {{ isset($dataForm['file_hasil']) ? 'File Hasil Tersedia' : 'Pilih Berkas PDF Bukti' }}
+                                                                </p>
+                                                                <p class="text-[10px] text-[#667085] truncate">Dokumen hasil penanganan</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="px-2.5 py-1 bg-white border border-gray-200 rounded-lg text-[10.5px] font-bold text-gray-600 group-hover:border-blue-300 shrink-0">Browse</div>
+                                                        <input id="admin-hasil-upload-{{ $item->id }}" name="file_hasil" type="file" class="sr-only" accept=".pdf" onchange="document.getElementById('admin-hasil-name-{{ $item->id }}').innerText = this.files[0].name; document.getElementById('admin-hasil-name-{{ $item->id }}').classList.add('text-emerald-700')">
+                                                    </label>
+                                                </div>
+
+                                                <div class="flex-1 flex flex-col">
+                                                    <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Catatan Penanganan</label>
+                                                    <textarea name="catatan" placeholder="Tuliskan catatan solusi/tindakan perbaikan..." class="dk-input-modal w-full p-3 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none flex-1 min-h-[90px]"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="relative pl-10 flex flex-col h-full">
+                                            <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
+                                            <div class="flex items-center gap-2 mb-3 shrink-0">
+                                                <h3 class="text-[14px] font-extrabold text-[#101828]">Diskusi & Balas Pesan</h3>
+                                            </div>
+                                            
+                                            <div class="space-y-3 flex-1 flex flex-col justify-between">
+                                                <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex-1 min-h-[175px] max-h-[195px] overflow-y-auto space-y-2.5 custom-scrollbar">
+                                                    @if(!empty($item->pesan) && is_array($item->pesan))
+                                                        @foreach($item->pesan as $chat)
+                                                            <div class="flex flex-col {{ $chat['role'] === 'admin' ? 'items-end' : 'items-start' }}">
+                                                                <div class="max-w-[85%] px-3 py-1.5 rounded-xl text-[11.5px] {{ $chat['role'] === 'admin' ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-white border border-slate-200 text-[#101828] rounded-bl-none shadow-sm' }}">
+                                                                    <p class="font-bold text-[9.5px] opacity-80 mb-0.5">{{ $chat['pengirim'] }}</p>
+                                                                    <p class="leading-relaxed">{{ $chat['isi'] }}</p>
+                                                                </div>
+                                                                <span class="text-[9px] text-[#667085] mt-0.5">{{ $chat['waktu'] }}</span>
+                                                            </div>
+                                                        @endforeach
+                                                    @else
+                                                        <div class="flex flex-col items-center justify-center h-full text-slate-400 py-6">
+                                                            <i class="fa-regular fa-comments text-2xl mb-1 opacity-40"></i>
+                                                            <p class="text-[11.5px] italic">Belum ada obrolan.</p>
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                @if($chatAktif ?? true)
+                                                    <div class="dk-input-modal flex items-center px-3 shrink-0">
+                                                        <i class="fa-regular fa-paper-plane text-blue-600 text-[13px] mr-2"></i>
+                                                        <input type="text" name="pesan" placeholder="Ketik balasan atau arahan..." class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                                    </div>
+                                                @else
+                                                    <div class="bg-rose-50 border border-rose-100 p-2 rounded-xl text-center shrink-0">
+                                                        <p class="text-[11px] font-bold text-rose-500"><i class="fa-solid fa-lock mr-1"></i> Fitur obrolan dinonaktifkan.</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC] shrink-0">
+                                        <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer">
+                                            Batal
+                                        </button>
+                                        <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg cursor-pointer">
+                                            Simpan Perubahan <i class="fa-solid fa-floppy-disk text-[11px]"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
                     <div id="modal-delete-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
                         <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalDelete('{{ $item->id }}')"></div>
@@ -180,88 +299,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[100] hidden items-center justify-center">
-                        <div class="absolute inset-0 bg-[#071E3D]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalAdmin('{{ $item->id }}')"></div>
-                        <div class="relative bg-white rounded-[2rem] p-8 max-w-xl w-full mx-4 shadow-2xl overflow-y-auto max-h-[95vh] custom-scrollbar">
-                            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-                                <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center text-xl shrink-0">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-xl font-extrabold text-[#071E3D]">Kelola Tiket Bantuan</h3>
-                                    <p class="text-[12px] text-gray-500">Update status penanganan dan balas pesan pengguna.</p>
-                                </div>
-                            </div>
-                            
-                            <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data">
-                                @csrf
-                                @method('PUT')
-                                
-                                <div class="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl mb-5">
-                                    <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2">
-                                        <i class="fa-solid fa-bars-progress text-cyan-500"></i> 1. Update Status & Catatan
-                                    </h4>
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Pilih Status Baru</label>
-                                            <select name="status" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] text-[#071E3D] font-bold focus:border-cyan-400 outline-none transition-colors">
-                                                @foreach(['Pending' => 'PENDING', 'Proses' => 'SEDANG DITANGANI', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
-                                                    <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="mb-4">
-                                            <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Upload Lampiran Penanganan / File Bukti (Opsional)</label>
-                                            <input type="file" name="file_hasil" accept=".pdf" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-[12px] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-blue-50 file:text-blue-600 cursor-pointer">
-                                        </div>
-                                        <div>
-                                            <label class="block text-[12px] font-bold text-[#071E3D] mb-2">Catatan Penanganan</label>
-                                            <textarea name="catatan" rows="2" placeholder="Tuliskan catatan solusi/tindakan perbaikan..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-cyan-400 resize-none"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="bg-blue-50/30 border border-blue-100 p-5 rounded-2xl mb-8">
-                                    <h4 class="text-[13px] font-extrabold text-[#071E3D] mb-4 uppercase tracking-wider flex items-center gap-2">
-                                        <i class="fa-regular fa-comments text-blue-500"></i> 2. Riwayat Diskusi / Chat
-                                    </h4>
-                                    <div class="bg-white border border-blue-100 rounded-xl p-4 mb-4 h-48 overflow-y-auto space-y-3 custom-scrollbar">
-                                        @if(!empty($item->pesan) && is_array($item->pesan))
-                                            @foreach($item->pesan as $chat)
-                                                <div class="flex flex-col {{ $chat['role'] === 'admin' ? 'items-end' : 'items-start' }}">
-                                                    <div class="max-w-[85%] p-3 rounded-2xl text-[12px] {{ $chat['role'] === 'admin' ? 'bg-[#071E3D] text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none' }}">
-                                                        <p class="font-bold text-[10px] opacity-80 mb-0.5">{{ $chat['pengirim'] }}</p>
-                                                        <p>{{ $chat['isi'] }}</p>
-                                                    </div>
-                                                    <span class="text-[9px] text-gray-400 mt-1">{{ $chat['waktu'] }}</span>
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <div class="flex items-center justify-center h-full">
-                                                <p class="text-[12px] text-gray-400 italic">Belum ada obrolan.</p>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    @if($chatAktif ?? true)
-                                        <div>
-                                            <textarea name="pesan" rows="2" placeholder="Ketik balasan atau arahan untuk pelapor..." class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-blue-400 resize-none"></textarea>
-                                        </div>
-                                    @else
-                                        <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl text-center">
-                                            <p class="text-[12px] font-bold text-rose-500"><i class="fa-solid fa-lock mr-1"></i> Fitur obrolan sedang dinonaktifkan sementara oleh Admin.</p>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <div class="flex gap-3">
-                                    <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="flex-1 py-3.5 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
-                                    <button type="submit" class="flex-1 py-3.5 rounded-xl font-bold text-white bg-[#071E3D] hover:bg-[#1F4287] transition-colors shadow-lg shadow-blue-900/20">Simpan Perubahan</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
                 @empty
                     <tr>
                         <td colspan="6" class="py-12 text-center">
@@ -272,46 +309,14 @@
                         </td>
                     </tr>
                 @endforelse
-
             </tbody>
         </table>
     </div>
 </div>
 
-<style>
-    /* Styling khusus disesuaikan agar rapi di dalam Modal */
-    .dk-input-modal, label, button, a, div {
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .dk-input-modal {
-        border: 1.5px solid #DCE1E8;
-        border-radius: 10px;
-        background: #FFFFFF;
-    }
-
-    .dk-input-modal:focus-within, .dk-input-modal:focus {
-        outline: none;
-        border-color: #0284C7 !important;
-        box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12) !important;
-    }
-
-    .dk-rail-modal::before {
-        content: '';
-        position: absolute;
-        left: 14px;
-        top: 32px;
-        bottom: -15px;
-        width: 2px;
-        background: #E2E8F0;
-    }
-</style>
-
 <div id="modal-create" class="fixed inset-0 z-[150] hidden items-center justify-center">
     <div class="absolute inset-0 bg-[#101828]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalCreate()"></div>
-    
     <div class="relative bg-white rounded-[1.5rem] w-full max-w-3xl mx-4 shadow-2xl overflow-hidden max-h-[95vh] flex flex-col animate-fade-in-down">
-        
         <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-4 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] shrink-0">
             <div class="flex items-center gap-3.5">
                 <div class="w-10 h-10 rounded-xl bg-[#16324F] text-rose-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
@@ -326,12 +331,10 @@
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
-        
+
         <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar">
-            
             <form method="POST" action="{{ route('admin.bantuan.store') }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
                 @csrf
-                
                 @if ($errors->any())
                     <div class="mb-5 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3.5 text-[#B42318]">
                         <div class="flex items-center text-[12.5px] font-bold mb-1">
@@ -344,13 +347,12 @@
                         </ul>
                     </div>
                 @endif
-                
+
                 <div class="relative dk-rail-modal pl-10 mb-5">
                     <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
                     <div class="flex items-center gap-2 mb-3">
                         <h3 class="text-[14px] font-extrabold text-[#101828]">Data Pemohon</h3>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3 mb-2">
                         <div class="col-span-1 md:col-span-2">
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih Pegawai ASN<span class="text-rose-500">*</span></label>
@@ -370,7 +372,6 @@
                                 <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                             </div>
                         </div>
-
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Kategori Kendala <span class="text-rose-500">*</span></label>
                             <div class="dk-input-modal flex items-center px-3 relative">
@@ -382,7 +383,6 @@
                                 <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                             </div>
                         </div>
-
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Jenis Layanan</label>
                             <div class="dk-input-modal flex items-center px-3 bg-gray-50 border-gray-200">
@@ -391,12 +391,10 @@
                                 <input type="hidden" name="jenis_layanan" value="Pusat Bantuan">
                             </div>
                         </div>
-
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pemohon<span class="text-rose-500">*</span></label>
                             <input type="text" name="data_pengajuan[nama]" required placeholder="Masukkan nama" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
-                        
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP Pemohon <span class="text-rose-500">*</span></label>
                             <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
@@ -407,7 +405,6 @@
                 <div class="relative pl-10 mb-2">
                     <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
                     <h3 class="text-[14px] font-extrabold text-[#101828] mb-3">Berkas Lampiran</h3>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="col-span-1 md:col-span-2">
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Email Resmi Kendala <span class="text-rose-500">*</span></label>
@@ -416,7 +413,6 @@
                                 <input type="email" name="data_pengajuan[email]" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
-
                         <div class="col-span-1 md:col-span-2">
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Bukti Kendala (PDF) <span class="text-rose-500">*</span></label>
                             <label for="admin-file-upload" class="group flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-4 py-2 cursor-pointer shadow-sm">
@@ -433,18 +429,28 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">
                     <button type="button" onclick="tutupModalCreate()" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
                     <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg">
                         Simpan Tiket <i class="fa-solid fa-paper-plane text-[11px]"></i>
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .dk-input-modal, label, button, a, div { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .dk-input-modal { border: 1.5px solid #DCE1E8; border-radius: 10px; background: #FFFFFF; }
+    .dk-input-modal:focus-within, .dk-input-modal:focus { outline: none; border-color: #0284C7 !important; box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12) !important; }
+    .dk-rail-modal::before { content: ''; position: absolute; left: 14px; top: 32px; bottom: -15px; width: 2px; background: #E2E8F0; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
 
 <script>
     function bukaModalCreate() {
@@ -498,10 +504,3 @@
         }
     }
 </script>
-
-<style>
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-</style>
