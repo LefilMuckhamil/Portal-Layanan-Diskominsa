@@ -1,14 +1,15 @@
 <section id="tracking" class="py-20 bg-[#040914] text-white border-t border-white/10">
+
     <div class="container mx-auto px-6 max-w-4xl">
         
         <div class="bg-[#0B1528] border border-white/10 rounded-2xl p-6 md:p-10 shadow-xl">
+         
             
             <div class="text-center mb-8">
                 <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Lacak Tiket</span>
                 <h2 class="text-2xl font-bold text-white mt-1">E-Tracking Pengajuan Layanan</h2>
             </div>
 
-            <!-- Form Cari Tiket -->
             <div class="max-w-xl mx-auto mb-8">
                 <div class="flex flex-col sm:flex-row gap-3">
                     <input 
@@ -30,10 +31,9 @@
                 <p id="error-tracking" class="text-rose-400 text-xs mt-2 hidden text-center font-medium"></p>
             </div>
 
-            <!-- HASIL TRACKING (DESAIN HALUS & MINIMALIS) -->
+
             <div id="hasil-tracking-card" class="hidden max-w-xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl transition-all duration-300">
                 
-                <!-- Header Info Tiket -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
                     <div>
                         <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Permohonan</span>
@@ -47,7 +47,6 @@
                     </div>
                 </div>
 
-                <!-- Timeline Progress Minimalis -->
                 <div class="pt-6">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-6">Riwayat Progress</h4>
                     <div id="card-timeline-list" class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">

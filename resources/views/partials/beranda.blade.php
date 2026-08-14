@@ -74,20 +74,13 @@
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-3 mt-auto">
-                        {{-- TOMBOL MULAI PENGAJUAN DENGAN SMOOTH SCROLL PASTI --}}
                         <a href="#layanan" onclick="document.getElementById('layanan')?.scrollIntoView({ behavior: 'smooth' }); return false;" class="bg-cyan-400 text-[#040914] px-6 py-3.5 rounded-xl font-bold hover:bg-cyan-300 transition-colors text-center text-xs md:text-sm flex items-center justify-center gap-2 cursor-pointer">
                             Mulai Pengajuan
                         </a>
-                        
-                        @auth
-                            <a href="{{ route('user.riwayat') }}" class="bg-[#1A253A] text-white border border-[#2A3B5A] px-6 py-3.5 rounded-xl font-bold hover:bg-[#202D45] transition-colors text-center text-xs md:text-sm flex items-center justify-center gap-2">
-                                Lacak Tiket
-                            </a>
-                        @else
-                            <button type="button" onclick="openAuthModal()" class="bg-[#1A253A] text-white border border-[#2A3B5A] px-6 py-3.5 rounded-xl font-bold hover:bg-[#202D45] transition-colors text-center text-xs md:text-sm flex items-center justify-center gap-2 cursor-pointer">
-                                Lacak Tiket
-                            </button>
-                        @endauth
+
+                        <a href="#tracking" onclick="document.getElementById('tracking')?.scrollIntoView({ behavior: 'smooth' }); return false;" class="bg-[#1A253A] text-white border border-[#2A3B5A] px-6 py-3.5 rounded-xl font-bold hover:bg-[#202D45] transition-colors text-center text-xs md:text-sm flex items-center justify-center gap-2 cursor-pointer">
+                            Lacak Tiket
+                        </a>
                     </div>
                 </div>
             </div>

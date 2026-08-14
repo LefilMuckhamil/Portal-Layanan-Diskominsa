@@ -9,10 +9,16 @@ class PengajuanLog extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $table = 'pengajuan_logs';
+
+    protected $fillable = [
+        'pengajuan_id',
+        'status',
+        'catatan_admin'
+    ];
 
     public function pengajuan()
     {
-        return $this->belongsTo(Pengajuan::class);
+        return $this->belongsTo(Pengajuan::class, 'pengajuan_id');
     }
 }

@@ -28,14 +28,16 @@ class Pengajuan extends Model
         'pesan'          => 'array',
     ];
 
+    // Relasi ke User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // RELASI DISESUAIKAN DENGAN MODEL PengajuanLog
     public function riwayatStatus()
     {
-        return $this->hasMany(RiwayatStatus::class, 'pengajuan_id');
+        return $this->hasMany(PengajuanLog::class, 'pengajuan_id');
     }
 
     public function pesanDiskusi()
@@ -52,7 +54,7 @@ class Pengajuan extends Model
                 'Pembuatan Email Resmi', 'pembuatan_email' => 'EML',
                 'Layanan TTE', 'layanan_tte'               => 'TTE',
                 'Cloud Government', 'cloud_government'     => 'CLD',
-                'Reset Password', 'Pusat Bantuan'        => 'HLP',
+                'Reset Password', 'Pusat Bantuan'          => 'HLP',
                 default                                    => 'REQ'
             };
 
