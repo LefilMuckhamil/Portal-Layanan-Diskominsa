@@ -5,12 +5,10 @@
 @section('content')
 
     <style>
-        /* Smooth transition untuk semua elemen interaktif */
         .dk-input, label, button, a, div {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Default border & background input */
+        
         .dk-input {
             border: 1.5px solid #DCE1E8;
             border-radius: 12px;
@@ -52,28 +50,24 @@
         }
     </style>
 
-    <!-- KARTU LAYANAN -->
     <div class="bg-white border border-[#E4E7EC] rounded-2xl shadow-[0_2px_8px_rgba(16,24,40,0.04)] overflow-hidden animate-fade-in-down">
-
-        <!-- Header Strip -->
         <div class="flex items-center justify-between gap-4 px-7 md:px-10 py-6 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9]">
             <div class="flex items-center gap-3.5">
                 <div class="w-11 h-11 rounded-xl bg-[#16324F] text-cyan-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
                     <i class="fa-solid fa-pen-nib"></i>
                 </div>
                 <div>
-                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominfo &middot; Layanan Digital</p>
+                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominsa &middot; Layanan Digital</p>
                     <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pengajuan Tanda Tangan Elektronik (TTE)</h2>
                 </div>
             </div>
-            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-cyan-50 border border-cyan-200 rounded-full px-3.5 py-1.5 shrink-0 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span> Sertifikasi BSrE
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-white rounded-xl px-3.5 py-1.5 shrink-0 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> Sertifikasi Digital
             </span>
         </div>
 
         <div class="px-7 md:px-10 py-9">
 
-            <!-- NOTIFIKASI VALIDASI EROR -->
             @if ($errors->any())
                 <div class="mb-8 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-4 text-[#B42318] animate-fade-in-down">
                     <div class="flex items-center text-[13.5px] font-bold mb-1.5">
@@ -90,39 +84,35 @@
             <form action="{{ route('pengajuan.tte.store') }}" method="POST" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
                 @csrf
 
-                <!-- SEKSI 1: DATA PEMOHON -->
                 <div class="relative dk-rail pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
                     <div class="flex items-center gap-2 mb-0.5">
                         <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
-                        <span class="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-md font-bold">Terisi Otomatis</span>
                     </div>
                     <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi identitas ASN pemohon TTE.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Lengkap (beserta Gelar)</label>
-                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Contoh: Budi Santoso, S.Kom" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama</label>
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukan Nama Lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP</label>
                             <input type="number" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Instansi / Unit Kerja</label>
-                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Komunikasi dan Informatika" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Instansi</label>
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinas Komunikasi dan Informatika" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP / WhatsApp</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP</label>
                             <div class="dk-input flex items-center px-3.5">
-                                <i class="fa-brands fa-whatsapp text-emerald-600 text-[15px] mr-2.5"></i>
                                 <input type="number" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="081234567890" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SEKSI 2: KONTAK & ALAMAT PEMOHON -->
                 <div class="relative dk-rail pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
                     <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Kontak &amp; Alamat Domisili</h3>
@@ -146,11 +136,10 @@
                     </div>
                 </div>
 
-                <!-- SEKSI 3: UPLOAD DOKUMEN PERSYARATAN -->
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">3</div>
                     <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Kelengkapan Dokumen</h3>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Unggah berkas kelengkapan administrasi penerbitan TTE.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Unggah Berkas yang ingin di TTE</p>
 
                     <div class="mb-2">
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Dokumen Persyaratan TTE (PDF)</label>

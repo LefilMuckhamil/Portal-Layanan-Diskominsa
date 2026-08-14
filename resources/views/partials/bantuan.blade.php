@@ -1,10 +1,8 @@
-<!-- SECTION 5: BANTUAN & KONTAK (SIMPLE & CLEAN) -->
 <section id="bantuan-kontak" class="py-20 bg-[#040914] text-white border-t border-white/10">
     <div class="container mx-auto px-6 max-w-6xl">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-            
-            <!-- Sisi Kiri: Bantuan -->
+
             <div class="space-y-4">
                 <span class="text-xs font-semibold text-cyan-400 tracking-wider uppercase">Pusat Bantuan</span>
                 <h2 class="text-3xl font-bold text-white leading-snug">
@@ -20,8 +18,6 @@
                     </a>
                 </div>
             </div>
-
-            <!-- Sisi Kanan: Kontak -->
             <div class="bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8 space-y-5">
                 <h3 class="text-base font-bold text-white border-b border-white/10 pb-3">
                     Kontak Diskominsa

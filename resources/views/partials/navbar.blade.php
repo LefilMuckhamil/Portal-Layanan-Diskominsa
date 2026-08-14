@@ -1,7 +1,6 @@
 <nav class="sticky top-0 z-50 bg-[#040914]/90 backdrop-blur-md shadow-lg border-b border-white/10 transition-all duration-300">
     <div class="container mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center text-white relative">
-        
-        <!-- Logo & Instansi -->
+    
         <a href="#beranda" class="flex items-center gap-3 group">
             <img src="{{ asset('image/kominsa_biru.png') }}" alt="Logo Diskominsa" class="h-9 sm:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
             <div class="hidden sm:flex flex-col justify-center border-l border-white/10 pl-3">
@@ -11,7 +10,6 @@
             </div>
         </a>
         
-        <!-- Menu Navigasi Desktop -->
         <div class="hidden lg:flex items-center space-x-7 text-xs font-semibold uppercase tracking-wider text-slate-300">
             <a href="#beranda" class="hover:text-cyan-400 transition-colors">Beranda</a>
             <a href="#tentang" class="hover:text-cyan-400 transition-colors">Tentang</a>

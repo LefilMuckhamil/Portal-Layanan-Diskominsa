@@ -2,7 +2,7 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
     <title>Portal Layanan Diskominsa Aceh Barat</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,7 +28,6 @@
         }
     </script>
     <style>
-        /* Flat design style: hilangkan highlight biru bawaan browser saat diklik */
         * { -webkit-tap-highlight-color: transparent; }
         .delay-100 { animation-delay: 100ms; }
         .delay-200 { animation-delay: 200ms; }
@@ -36,8 +35,6 @@
     </style>
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased flex flex-col min-h-screen">
-
-    <!-- Navbar Minimalis -->
     <nav class="bg-white border-b-2 border-primary-dark sticky top-0 z-50 transition-all duration-300 hover:shadow-md">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-black text-primary-dark tracking-tighter">
@@ -47,8 +44,7 @@
             <div class="hidden md:flex items-center space-x-8 font-semibold text-primary-dark">
                 <a href="#layanan" class="hover:text-primary-light transition-colors duration-300">Layanan</a>
                 <a href="#tracking" class="hover:text-primary-light transition-colors duration-300">E-Tracking</a>
-                
-                <!-- Tombol Flat -->
+    
                 <a href="#" class="bg-primary-dark text-white hover:bg-primary-light px-6 py-2 rounded-none border-2 border-primary-dark hover:border-primary-light transition-all duration-300 transform hover:-translate-y-1">
                     Login Sistem
                 </a>
@@ -56,12 +52,10 @@
         </div>
     </nav>
 
-    <!-- Konten Utama -->
     <main class="grow">
         @yield('content')
     </main>
 
-    <!-- Footer Flat -->
     <footer class="bg-primary-dark text-white border-t-4 border-primary-light mt-auto">
         <div class="container mx-auto px-6 py-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center">
             <p class="font-bold text-lg mb-2 md:mb-0">Diskominsa Aceh Barat</p>

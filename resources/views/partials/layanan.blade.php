@@ -26,10 +26,7 @@
     <div class="container mx-auto px-6 max-w-7xl relative z-10">
         
         <div class="flex items-center gap-3 mb-8">
-            <span class="w-10 h-[2px] bg-cyan-400"></span>
-            <span class="text-cyan-400 text-xs font-mono font-bold tracking-[0.25em] uppercase">
-                [ 02 // KATALOG LAYANAN ]
-            </span>
+            <span class="w-10 h-[2px] bg-white"></span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-14">
@@ -56,13 +53,12 @@
                         <div class="w-11 h-11 rounded-xl bg-cyan-400/10 border border-cyan-400/20 text-cyan-300 flex items-center justify-center text-lg group-hover:bg-cyan-400 group-hover:text-[#040914] transition-all duration-300 shadow-sm">
                             <i class="fa-solid fa-globe"></i>
                         </div>
-                        <span class="text-xs font-mono font-bold text-gray-500 tracking-widest">[ 01 ]</span>
                     </div>
-                    <h3 class="font-extrabold text-white text-xl mb-3 tracking-tight group-hover:text-cyan-300 transition-colors">Website Desa</h3>
-                    <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Pengembangan dan pengelolaan portal website resmi profil desa, gampong, serta instansi daerah.</p>
+                    <h3 class="font-extrabold text-white text-xl mb-3 tracking-tight group-hover:text-cyan-300 transition-colors">Teknis & Digital</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Pengembangan dan pengelolaan website resmi profil desa, gampong, serta instansi daerah.</p>
                 </div>
-                <a href="{{ route('pengajuan.website') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-cyan-400 group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Layanan</span>
+                <a href="{{ route('pengajuan.website') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
+                    <span class="tracking-wide">Ajukan Permohonan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -73,13 +69,12 @@
                         <div class="w-11 h-11 rounded-xl bg-blue-400/10 border border-blue-400/20 text-blue-300 flex items-center justify-center text-lg group-hover:bg-cyan-400 group-hover:text-[#040914] transition-all duration-300 shadow-sm">
                             <i class="fa-regular fa-envelope"></i>
                         </div>
-                        <span class="text-xs font-mono font-bold text-gray-500 tracking-widest">[ 02 ]</span>
                     </div>
                     <h3 class="font-extrabold text-white text-xl mb-3 tracking-tight group-hover:text-cyan-300 transition-colors">Email Resmi</h3>
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Pembuatan dan aktivasi akun email resmi korporat berkategori go.id untuk seluruh ASN daerah.</p>
                 </div>
-                <a href="{{ route('pengajuan.email') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-cyan-400 group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Layanan</span>
+                <a href="{{ route('pengajuan.email') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
+                    <span class="tracking-wide">Ajukan Permohonan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -90,13 +85,12 @@
                         <div class="w-11 h-11 rounded-xl bg-sky-400/10 border border-sky-400/20 text-sky-300 flex items-center justify-center text-lg group-hover:bg-cyan-400 group-hover:text-[#040914] transition-all duration-300 shadow-sm">
                             <i class="fa-solid fa-file-signature"></i>
                         </div>
-                        <span class="text-xs font-mono font-bold text-gray-500 tracking-widest">[ 03 ]</span>
                     </div>
                     <h3 class="font-extrabold text-white text-xl mb-3 tracking-tight group-hover:text-cyan-300 transition-colors">Layanan TTE</h3>
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Fasilitasi penerbitan Tanda Tangan Elektronik tersertifikasi BSrE BSSN untuk pejabat instansi.</p>
                 </div>
-                <a href="{{ route('pengajuan.tte') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-cyan-400 group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Layanan</span>
+                <a href="{{ route('pengajuan.tte') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
+                    <span class="tracking-wide">Ajukan Permohonan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -107,13 +101,12 @@
                         <div class="w-11 h-11 rounded-xl bg-indigo-400/10 border border-indigo-400/20 text-indigo-300 flex items-center justify-center text-lg group-hover:bg-cyan-400 group-hover:text-[#040914] transition-all duration-300 shadow-sm">
                             <i class="fa-solid fa-cloud"></i>
                         </div>
-                        <span class="text-xs font-mono font-bold text-gray-500 tracking-widest">[ 04 ]</span>
                     </div>
                     <h3 class="font-extrabold text-white text-xl mb-3 tracking-tight group-hover:text-cyan-300 transition-colors">Cloud Gov</h3>
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Penyimpanan server cloud terdedikasi untuk manajemen dokumen dan kolaborasi file perangkat daerah.</p>
                 </div>
-                <a href="{{ route('pengajuan.cloud') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-cyan-400 group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Layanan</span>
+                <a href="{{ route('pengajuan.cloud') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
+                    <span class="tracking-wide">Ajukan Permohonan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -124,15 +117,12 @@
                         <div class="w-11 h-11 rounded-xl bg-emerald-400/10 border border-emerald-400/20 text-emerald-300 flex items-center justify-center text-lg group-hover:bg-cyan-400 group-hover:text-[#040914] transition-all duration-300 shadow-sm">
                             <i class="fa-solid fa-headset"></i>
                         </div>
-                        <span class="px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold uppercase tracking-wider">
-                            PUSAT BANTUAN
-                        </span>
                     </div>
-                    <h3 class="font-extrabold text-white text-xl mb-3 tracking-tight group-hover:text-cyan-300 transition-colors">Pusat Bantuan & Reset Password</h3>
+                    <h3 class="font-extrabold text-white text-xl mb-3 tracking-tight group-hover:text-cyan-300 transition-colors">Pusat Bantuan</h3>
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8 max-w-xl">Layanan pertolongan cepat untuk kendala sistem, reset sandi email resmi, bantuan kendala OTP, serta permasalahan teknis jaringan ASN.</p>
                 </div>
-                <a href="{{ route('pengajuan.bantuan') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-cyan-400 group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Pertolongan</span>
+                <a href="{{ route('pengajuan.bantuan') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
+                    <span class="tracking-wide">Ajukan Permohonan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -196,7 +186,7 @@
                             </div>
                             <div>
                                 <h4 class="text-white font-bold text-[11px] whitespace-nowrap">Bantuan</h4>
-                                <p class="text-gray-400 text-[9px] mt-0.5">Reset Sandi & OTP</p>
+                                <p class="text-gray-400 text-[9px] mt-0.5">Reset Sandi</p>
                             </div>
                         </div>
                     </div>
@@ -248,7 +238,7 @@
                             </div>
                             <div>
                                 <h4 class="text-white font-bold text-[11px] whitespace-nowrap">Bantuan</h4>
-                                <p class="text-gray-400 text-[9px] mt-0.5">Reset Sandi & OTP</p>
+                                <p class="text-gray-400 text-[9px] mt-0.5">Reset Sandi</p>
                             </div>
                         </div>
                     </div>

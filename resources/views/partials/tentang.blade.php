@@ -25,9 +25,6 @@
     <div class="container mx-auto px-6 max-w-7xl relative z-10">
         <div class="flex items-center gap-3 mb-8">
             <span class="w-10 h-[2px] bg-cyan-400"></span>
-            <span class="text-cyan-400 text-xs font-mono font-bold tracking-[0.25em] uppercase">
-                [ PROFIL INSTANSI ]
-            </span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -43,36 +40,36 @@
                 </h2>
 
                 <div class="space-y-5 text-gray-400 text-base sm:text-lg leading-relaxed font-normal max-w-2xl">
-                    <p class="border-l-2 border-cyan-400 pl-5 text-slate-200 font-medium">
-                        Dinas Komunikasi, Informatika dan Persandian (<span class="text-cyan-300 font-bold">Diskominsa</span>) Kabupaten Aceh Barat memegang peranan strategis sebagai fondasi teknologi, komunikasi publik, serta keamanan informasi pemerintah daerah.
+                    <p class="border-l-2 border-white pl-5 text-slate-200 font-medium">
+                        Dinas Komunikasi, Informatika dan Persandian, Diskominsa Kabupaten Aceh Barat memegang peranan strategis sebagai fondasi teknologi, komunikasi publik, serta keamanan informasi pemerintah daerah.
                     </p>
                     <p class="pl-5 text-gray-400">
-                        Melalui portal terpadu G2G ini, kami mengintegrasikan berbagai infrastruktur sistem untuk mewujudkan tata kelola birokrasi yang <strong class="text-white border-b border-cyan-400/50 pb-0.5">Cepat, Transparan, dan Terintegrasi</strong>.
+                        Melalui portal terpadu ini, kami mengintegrasikan berbagai infrastruktur sistem untuk mewujudkan tata kelola birokrasi yang Cepat, Transparan, dan Terintegrasi.
                     </p>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-white/10">
-                    <div class="bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-md hover:border-cyan-400/40 transition-colors">
+                    <div class="bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-md hover:border-white transition-colors">
                         <div class="text-2xl sm:text-3xl font-mono font-black text-white">
-                            05<span class="text-cyan-400 text-xl">+</span>
+                            5<span class="text-white text-xl tracking-wider"></span>
                         </div>
                         <div class="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase tracking-wider mt-1">
                             Layanan Utama
                         </div>
                     </div>
 
-                    <div class="bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-md hover:border-cyan-400/40 transition-colors">
+                    <div class="bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-md hover:border-white transition-colors">
                         <div class="text-2xl sm:text-3xl font-mono font-black text-white">
-                            100<span class="text-cyan-400 text-xl">%</span>
+                            100<span class="text-white text-xl">%</span>
                         </div>
                         <div class="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase tracking-wider mt-1">
                             Integrasi Digital
                         </div>
                     </div>
 
-                    <div class="col-span-2 sm:col-span-1 bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-md hover:border-cyan-400/40 transition-colors">
+                    <div class="col-span-2 sm:col-span-1 bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-md hover:border-white transition-colors">
                         <div class="text-2xl sm:text-3xl font-mono font-black text-white">
-                            24<span class="text-cyan-400 text-xl">/7</span>
+                            24<span class="text-white text-xl">/7</span>
                         </div>
                         <div class="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase tracking-wider mt-1">
                             Akses Sistem
@@ -96,7 +93,6 @@
                             
                             <div class="absolute bottom-4 left-5 right-5 flex items-center justify-between">
                                 <div>
-                                    <p class="text-[11px] font-mono text-cyan-300 uppercase tracking-wider">[ Gedung Utama ]</p>
                                     <p class="text-sm font-bold text-white">Diskominsa Aceh Barat</p>
                                 </div>
                                 <span class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white group-hover:bg-cyan-400 group-hover:text-[#040914] transition-all">

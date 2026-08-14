@@ -10,9 +10,6 @@
         
         <div class="flex items-center gap-3 mb-8">
             <span class="w-10 h-[1px] bg-cyan-500"></span>
-            <span class="text-cyan-400 text-xs font-mono font-medium tracking-[0.2em] uppercase">
-                Proses Pengajuan
-            </span>
         </div>
 
         <div class="max-w-3xl mb-16">

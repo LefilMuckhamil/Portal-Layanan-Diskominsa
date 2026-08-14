@@ -55,12 +55,12 @@
                     <i class="fa-solid fa-cloud"></i>
                 </div>
                 <div>
-                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominfo &middot; Layanan Digital</p>
-                    <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pengajuan Cloud Gov</h2>
+                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominsa &middot; Layanan Digital</p>
+                    <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pengajuan Cloud Government</h2>
                 </div>
             </div>
-            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-cyan-50 border border-cyan-200 rounded-full px-3.5 py-1.5 shrink-0 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span> Storage ASN
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-white rounded-xl px-3.5 py-1.5 shrink-0 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> Penyimpanan Cloud
             </span>
         </div>
 
@@ -85,23 +85,22 @@
                 <div class="relative dk-rail pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
                     <div class="flex items-center gap-2 mb-0.5">
-                        <h3 class="text-[15px] font-extrabold text-[#101828]">Data Penanggung Jawab</h3>
-                        <span class="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-md font-bold">Terisi Otomatis</span>
+                        <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
                     </div>
                     <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang bertanggung jawab atas akun cloud.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Penanggung Jawab</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama</label>
                             <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP</label>
                             <input type="text" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Instansi / Unit Kerja</label>
-                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Komunikasi dan Informatika" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Instansi</label>
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinas Komunikasi dan Informatika" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
@@ -124,10 +123,10 @@
                             <div class="dk-input flex items-center px-3.5 relative">
                                 <i class="fa-solid fa-server text-cyan-700 text-[14px] mr-2.5"></i>
                                 <select name="data_pengajuan[kapasitas]" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                    <option value="" disabled {{ old('data_pengajuan.kapasitas') ? '' : 'selected' }}>-- Pilih Kapasitas --</option>
-                                    <option value="10GB" {{ old('data_pengajuan.kapasitas') == '10GB' ? 'selected' : '' }}>10 GB (Standar Personal)</option>
-                                    <option value="50GB" {{ old('data_pengajuan.kapasitas') == '50GB' ? 'selected' : '' }}>50 GB (Menengah / Bidang)</option>
-                                    <option value="100GB" {{ old('data_pengajuan.kapasitas') == '100GB' ? 'selected' : '' }}>100 GB (Kapasitas Instansi Besar)</option>
+                                    <option value="" disabled {{ old('data_pengajuan.kapasitas') ? '' : 'selected' }}>Pilih Kapasitas</option>
+                                    <option value="10GB" {{ old('data_pengajuan.kapasitas') == '10GB' ? 'selected' : '' }}>10 GB (Standar)</option>
+                                    <option value="50GB" {{ old('data_pengajuan.kapasitas') == '50GB' ? 'selected' : '' }}>50 GB (Menengah)</option>
+                                    <option value="100GB" {{ old('data_pengajuan.kapasitas') == '100GB' ? 'selected' : '' }}>100 GB (Besar)</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                             </div>

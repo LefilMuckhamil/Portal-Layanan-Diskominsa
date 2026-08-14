@@ -7,6 +7,7 @@
     <title>Portal Layanan Diskominsa Aceh Barat</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230F172A'/><path d='M30 30H70V38H30V30Z' fill='%23D97706'/><path d='M30 46H70V70C70 72.2091 68.2091 74 66 74H34C31.7909 74 30 72.2091 30 70V46Z' fill='none' stroke='%23F59E0B' stroke-width='4'/><path d='M42 56H58' stroke='%23F59E0B' stroke-width='4' stroke-linecap='round'/><circle cx='50' cy='64' r='2.5' fill='%23F59E0B'/></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

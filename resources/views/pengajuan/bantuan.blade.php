@@ -55,12 +55,12 @@
                     <i class="fa-solid fa-headset"></i>
                 </div>
                 <div>
-                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominfo &middot; Layanan Digital</p>
-                    <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pusat Bantuan &amp; Tiket Kendala</h2>
+                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominsa &middot; Layanan Digital</p>
+                    <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pusat Bantuan</h2>
                 </div>
             </div>
-            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-rose-50 border border-rose-200 rounded-full px-3.5 py-1.5 shrink-0 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span> Bantuan Kendala
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-white rounded-xl px-3.5 py-1.5 shrink-0 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> Bantuan Kendala
             </span>
         </div>
 
@@ -85,8 +85,7 @@
                 <div class="relative dk-rail pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">1</div>
                     <div class="flex items-center gap-2 mb-0.5">
-                        <h3 class="text-[15px] font-extrabold text-[#101828]">Kategori Kendala &amp; Data Pemohon</h3>
-                        <span class="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-md font-bold">Terisi Otomatis</span>
+                        <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
                     </div>
                     <p class="text-[12.5px] text-[#667085] font-medium mb-6">Pilih jenis permohonan bantuan dan lengkapi identitas pemohon.</p>
 
@@ -103,11 +102,11 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Lengkap Pemohon</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama</label>
                             <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP (18 Digit)</label>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP</label>
                             <input type="text" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
@@ -115,7 +114,7 @@
 
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
-                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Detail Akun &amp; Lampiran Surat</h3>
+                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Data Permohonan</h3>
                     <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi akun resmi yang bermasalah dan unggah berkas permohonan.</p>
 
                     <div class="mb-6">
