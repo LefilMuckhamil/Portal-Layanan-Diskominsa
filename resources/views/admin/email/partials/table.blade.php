@@ -7,7 +7,7 @@
 
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Ajuan Email Resmi</h3>
+            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Permohonan Email Resmi</h3>
             <p class="text-[12px] text-gray-400 font-medium mt-1">Kelola pembuatan akun email resmi (@acehbaratkab.go.id).</p>
         </div>
         
@@ -15,13 +15,13 @@
             <form method="GET" action="{{ route('admin.email.index') }}" class="flex gap-3">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket/Pemohon..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Tiket #EML-..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
                 </div>
                 <div class="relative">
                     <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
                     <select name="status" onchange="this.form.submit()" class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none cursor-pointer">
                         <option value="">Semua Status</option>
-                        @foreach(['Pending' => 'Pending', 'Verifikasi Doc' => 'Verifikasi Dokumen', 'Proses Development' => 'Proses Pembuatan', 'Selesai' => 'Selesai', 'Ditolak' => 'Ditolak'] as $val => $label)
+                        @foreach(['Pending' => 'Pending', 'Proses' => 'Proses', 'Selesai' => 'Selesai', 'Ditolak' => 'Ditolak'] as $val => $label)
                             <option value="{{ $val }}" @selected(request('status') == $val)>{{ $label }}</option>
                         @endforeach
                     </select>
@@ -29,7 +29,7 @@
             </form>
 
             <button type="button" onclick="bukaModalCreate()" class="px-4 py-2 bg-[#071E3D] hover:bg-[#1F4287] text-white text-[12px] font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Tambah Ajuan
+                <i class="fa-solid fa-plus"></i> Tambah Permohonan
             </button>
         </div>
     </div>
@@ -51,8 +51,8 @@
                     @php
                         $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
                         $badgeColor = match($item->status) {
-                            'Pending', 'Menunggu Validasi' => 'bg-amber-50 text-amber-600 border-amber-100',
-                            'Verifikasi Doc', 'Proses Development' => 'bg-blue-50 text-blue-600 border-blue-100',
+                            'Pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                            'Proses' => 'bg-blue-50 text-blue-600 border-blue-100',
                             'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
                             'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
                             default   => 'bg-gray-50 text-gray-600 border-gray-100'
@@ -147,7 +147,7 @@
                                                     <div class="dk-input-modal flex items-center px-3 relative">
                                                         <i class="fa-solid fa-bars-progress text-sky-600 text-[13px] mr-2"></i>
                                                         <select name="status" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                                            @foreach(['Pending' => 'PENDING', 'Verifikasi Doc' => 'VERIFIKASI DOC', 'Proses Development' => 'PROSES PEMBUATAN', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
+                                                            @foreach(['Pending' => 'PENDING', 'Proses' => 'PROSES', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
                                                                 <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
                                                             @endforeach
                                                         </select>
@@ -268,11 +268,11 @@
                             </div>
                             <div class="space-y-4 bg-gray-50 p-5 rounded-2xl border border-gray-100">
                                 <div>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Asal Instansi / SKPK</p>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Instansi</p>
                                     <p class="text-[13px] font-bold text-[#071E3D]">{{ $dataForm['instansi'] ?? '-' }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Nomor HP / WhatsApp</p>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Nomor HP</p>
                                     <p class="text-[13px] font-bold text-[#071E3D]"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> {{ $dataForm['no_hp'] ?? '-' }}</p>
                                 </div>
                                 <div class="bg-cyan-50 p-3 rounded-xl border border-cyan-100">
@@ -357,7 +357,7 @@
                         <div class="col-span-1 md:col-span-2">
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih ASN Pemohon <span class="text-rose-500">*</span></label>
                             <div class="dk-input-modal flex items-center px-3 relative">
-                                <i class="fa-solid fa-user-check text-sky-600 text-[13px] mr-2"></i>
+                                <i class="fa-solid fa-user text-sky-600 text-[13px] mr-2"></i>
                                 <select name="user_id" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
                                     <option value="">Silakan Pilih ASN Terdaftar</option>
                                     @php
@@ -373,21 +373,20 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Lengkap & Gelar <span class="text-rose-500">*</span></label>
-                            <input type="text" name="data_pengajuan[nama]" required placeholder="Contoh: Budi Santoso, S.Kom" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama<span class="text-rose-500">*</span></label>
+                            <input type="text" name="data_pengajuan[nama]" required placeholder="Masukkan Nama Lengkap" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP (18 Digit) <span class="text-rose-500">*</span></label>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP<span class="text-rose-500">*</span></label>
                             <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div class="col-span-1 md:col-span-2">
-                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Asal Instansi / SKPK <span class="text-rose-500">*</span></label>
-                            <input type="text" name="data_pengajuan[instansi]" required placeholder="Contoh: Dinas Kesehatan" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Instansi<span class="text-rose-500">*</span></label>
+                            <input type="text" name="data_pengajuan[instansi]" required placeholder="Dinas Kesehatan" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP / WhatsApp <span class="text-rose-500">*</span></label>
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP<span class="text-rose-500">*</span></label>
                             <div class="dk-input-modal flex items-center px-3">
-                                <i class="fa-brands fa-whatsapp text-emerald-600 text-[13px] mr-2"></i>
                                 <input type="number" name="data_pengajuan[no_hp]" required placeholder="0812xxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>

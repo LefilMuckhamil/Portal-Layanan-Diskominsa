@@ -188,7 +188,7 @@
                     </div>
 
                     <div class="bg-white p-4 rounded-xl border border-[#E4E7EC] shadow-sm space-y-3">
-                        <h5 class="text-[12px] font-black text-[#101828] uppercase tracking-wider">Diskusi / Pesan</h5>
+                        <h5 class="text-[12px] font-black text-[#101828] uppercase tracking-wider">Pesan</h5>
                         
                         <div id="chat-box-{{ $item->id }}" class="space-y-3">
                             @if(!empty($item->pesan) && is_array($item->pesan))

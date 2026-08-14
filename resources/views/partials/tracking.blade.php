@@ -15,7 +15,7 @@
                     <input 
                         type="text" 
                         id="input-tiket" 
-                        placeholder="Masukkan ID / Nomor Tiket..." 
+                        placeholder="Masukkan Nomor Tiket..." 
                         class="flex-1 bg-white/5 border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors"
                         onkeypress="if(event.key === 'Enter') lacakTiketCard()"
                     >

@@ -5,13 +5,9 @@
 
 @section('content')
     
-    <!-- Memanggil file Statistik -->
     @include('admin.email.partials.statistics')
-
-    <!-- Memanggil file Tabel dan Form CRUD -->
     @include('admin.email.partials.table')
 
-    <!-- SCRIPT PENGGERAK MODAL DINAMIS -->
     <script>
         function bukaModalCreate() {
             document.getElementById('modal-create').classList.remove('hidden');

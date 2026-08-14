@@ -31,7 +31,7 @@
                 <i class="fa-solid fa-gears"></i>
             </div>
         </div>
-        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Proses Pembuatan</p>
+        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Proses</p>
         <div class="flex items-end gap-2 mt-1">
             <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $proses ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-blue-500 mb-1">Dikerjakan</span>
@@ -44,7 +44,7 @@
                 <i class="fa-solid fa-user-check"></i>
             </div>
         </div>
-        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Akun Aktif</p>
+        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Selesai</p>
         <div class="flex items-end gap-2 mt-1">
             <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $selesai ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-green-500 mb-1">Berhasil</span>
