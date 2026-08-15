@@ -286,7 +286,7 @@
                             </div>
                             <div class="mt-6">
                                 @if(!empty($item->file_pendukung))
-                                    <a href="{{ asset('storage/' . $item->file_pendukung) }}" target="_blank" class="w-full block text-center bg-[#071E3D] hover:bg-[#1F4287] text-white py-3 rounded-xl font-bold text-[13px] transition-all shadow-md">
+                                    <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'pendukung']) }}" target="_blank" class="w-full block text-center bg-[#071E3D] hover:bg-[#1F4287] text-white py-3 rounded-xl font-bold text-[13px] transition-all shadow-md">
                                         <i class="fa-solid fa-file-pdf mr-2"></i> Download Dokumen Persyaratan
                                     </a>
                                 @else

@@ -81,7 +81,7 @@ class AuthController extends Controller
         $request->merge(['email' => strtolower(trim($request->email))]);
 
         // sve ke db
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'nip' => $request->nip,
             'unit_kerja' => $request->unit_kerja,
@@ -89,8 +89,10 @@ class AuthController extends Controller
             'no_hp' => $request->no_hp,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user',
         ]);
+
+        // role tidak boleh di-mass-assignment; tetapkan eksplisit setelah create
+        $user->forceFill(['role' => 'user'])->save();
 
         return redirect()->route('login')->with('sukses', 'Akun berhasil didaftarkan! Silakan masuk menggunakan email dan kata sandi Anda.');
     }

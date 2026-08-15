@@ -112,6 +112,12 @@
     </nav>
 
     <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 @yield('max_width', 'max-w-6xl')">
+        @if(session('error'))
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
+            <i class="fa-solid fa-circle-exclamation mr-2"></i>{{ session('error') }}
+        </div>
+        @endif
+
         @yield('content')
     </main>
 

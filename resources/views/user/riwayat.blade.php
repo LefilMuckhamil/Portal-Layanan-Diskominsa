@@ -159,7 +159,7 @@
                             <p class="text-[11px] font-black text-emerald-700 uppercase tracking-wider mb-0.5">Dokumen Selesai</p>
                             <p class="text-[13px] font-black text-[#101828]">File Hasil Tersedia</p>
                         </div>
-                        <a href="{{ asset('storage/' . $dataPengajuan['file_hasil']) }}" target="_blank" download class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-[12px] font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2 shrink-0">
+                        <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'hasil']) }}" target="_blank" download class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-[12px] font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2 shrink-0">
                             <i class="fa-solid fa-download"></i> Unduh File
                         </a>
                     </div>
@@ -287,17 +287,29 @@
                     const noChatMsg = chatBox.querySelector('.no-chat-msg');
                     if (noChatMsg) noChatMsg.remove();
 
-                    const bubbleHtml = `
-                        <div class="flex flex-col items-end animate-fade-in-down">
-                            <div class="max-w-[85%] p-3 rounded-2xl text-[12.5px] font-medium bg-[#16324F] text-white rounded-br-none">
-                                <p class="font-black text-[10px] opacity-80 mb-0.5">${data.pesan.pengirim}</p>
-                                <p class="leading-relaxed">${data.pesan.isi}</p>
-                            </div>
-                            <span class="text-[9.5px] font-bold text-[#667085] mt-1">${data.pesan.waktu}</span>
-                        </div>
-                    `;
+                    const bubble = document.createElement('div');
+                    bubble.className = 'flex flex-col items-end animate-fade-in-down';
 
-                    chatBox.insertAdjacentHTML('beforeend', bubbleHtml);
+                    const bubbleInner = document.createElement('div');
+                    bubbleInner.className = 'max-w-[85%] p-3 rounded-2xl text-[12.5px] font-medium bg-[#16324F] text-white rounded-br-none';
+
+                    const pengirim = document.createElement('p');
+                    pengirim.className = 'font-black text-[10px] opacity-80 mb-0.5';
+                    pengirim.textContent = data.pesan.pengirim || '';
+
+                    const isi = document.createElement('p');
+                    isi.className = 'leading-relaxed';
+                    isi.textContent = data.pesan.isi || '';
+
+                    bubbleInner.append(pengirim, isi);
+
+                    const waktu = document.createElement('span');
+                    waktu.className = 'text-[9.5px] font-bold text-[#667085] mt-1';
+                    waktu.textContent = data.pesan.waktu || '';
+
+                    bubble.append(bubbleInner, waktu);
+                    chatBox.appendChild(bubble);
+
                     inputField.value = '';
 
                     const panelDetail = document.getElementById('panel-detail-' + id);

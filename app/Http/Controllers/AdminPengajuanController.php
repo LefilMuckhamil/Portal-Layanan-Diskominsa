@@ -49,7 +49,7 @@ class AdminPengajuanController extends Controller
             ])],
             'catatan' => ['nullable', 'string', 'max:500'],
             'pesan' => ['nullable', 'string', 'max:1000'],
-            'file_hasil' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
+            'file_hasil' => ['nullable', 'file', 'mimetypes:application/pdf', 'max:5120'],
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
@@ -60,13 +60,13 @@ class AdminPengajuanController extends Controller
             : (json_decode((string) $pengajuan->getRawOriginal('data_pengajuan') ?? '{}', true) ?: []);
 
         if ($request->hasFile('file_hasil')) {
-            if (isset($dataPengajuan['file_hasil']) && Storage::disk('public')->exists($dataPengajuan['file_hasil'])) {
-                Storage::disk('public')->delete($dataPengajuan['file_hasil']);
+            if (isset($dataPengajuan['file_hasil']) && Storage::disk('local')->exists($dataPengajuan['file_hasil'])) {
+                Storage::disk('local')->delete($dataPengajuan['file_hasil']);
             }
 
             $file = $request->file('file_hasil');
             $fileName = time().'_'.uniqid().'_'.$file->getClientOriginalName();
-            $dataPengajuan['file_hasil'] = $file->storeAs('dokumen_hasil', $fileName, 'public');
+            $dataPengajuan['file_hasil'] = $file->storeAs('dokumen_hasil', $fileName, 'local');
             $pengajuan->data_pengajuan = $dataPengajuan;
         }
 
@@ -107,8 +107,8 @@ class AdminPengajuanController extends Controller
             : (json_decode((string) $pengajuan->getRawOriginal('data_pengajuan') ?? '{}', true) ?: []);
 
         foreach (array_filter([$pengajuan->file_pendukung, $dataPengajuan['file_hasil'] ?? null]) as $path) {
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
             }
         }
 
@@ -157,7 +157,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.nama_pimpinan' => 'required|string|max:255',
             'data_pengajuan.domain' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|max:5120',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.instansi.required' => 'Kolom Instansi wajib diisi.',
@@ -170,7 +170,7 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/website', $fileName, 'public');
+            $filePath = $file->storeAs('pengajuan/website', $fileName, 'local');
         }
 
         Pengajuan::create([
@@ -224,7 +224,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.usulan_email' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -238,7 +238,7 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/email', $fileName, 'public');
+            $filePath = $file->storeAs('pengajuan/email', $fileName, 'local');
         }
 
         Pengajuan::create([
@@ -293,7 +293,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.alamat' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -308,7 +308,7 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/tte', $fileName, 'public');
+            $filePath = $file->storeAs('pengajuan/tte', $fileName, 'local');
         }
 
         Pengajuan::create([
@@ -362,7 +362,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.kapasitas' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Penanggung Jawab wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -376,7 +376,7 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/cloud', $fileName, 'public');
+            $filePath = $file->storeAs('pengajuan/cloud', $fileName, 'local');
         }
 
         Pengajuan::create([
@@ -429,7 +429,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.nama' => 'required|string|max:255',
             'data_pengajuan.nip' => 'required|string',
             'data_pengajuan.email' => 'required|email',
-            'file_pendukung' => 'required|file|mimes:pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
         ], [
             'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
@@ -442,7 +442,7 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/bantuan', $fileName, 'public');
+            $filePath = $file->storeAs('pengajuan/bantuan', $fileName, 'local');
         }
 
         Pengajuan::create([

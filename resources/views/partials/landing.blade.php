@@ -64,6 +64,8 @@
 </section>
 
 <script>
+    const escHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
     async function lacakTiketCard() {
         const inputTiket = document.getElementById('input-tiket').value.trim();
         const errorMsg = document.getElementById('error-tracking');
@@ -102,11 +104,11 @@
                         <div class="relative">
                             <span class="absolute -left-[19px] top-1 w-2.5 h-2.5 rounded-full ${isFirst ? 'bg-sky-400 ring-4 ring-sky-100' : 'bg-slate-700'}"></span>
                             <div>
-                                <p class="text-[10px] font-semibold text-gray-400">${item.waktu}</p>
-                                <p class="text-xs font-extrabold text-slate-800 mt-0.5">${item.judul}</p>
+                                <p class="text-[10px] font-semibold text-gray-400">${escHtml(item.waktu)}</p>
+                                <p class="text-xs font-extrabold text-slate-800 mt-0.5">${escHtml(item.judul)}</p>
                                 ${item.pesan_admin ? `
                                     <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 mt-1.5">
-                                        <p class="text-[11px] text-slate-600 font-medium">"${item.pesan_admin}"</p>
+                                        <p class="text-[11px] text-slate-600 font-medium">"${escHtml(item.pesan_admin)}"</p>
                                     </div>
                                 ` : ''}
                             </div>

@@ -61,6 +61,8 @@
 </section>
 
 <script>
+    const escHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
     async function lacakTiketCard() {
         let inputTiket = document.getElementById('input-tiket').value.trim();
         const errorMsg = document.getElementById('error-tracking');
@@ -111,12 +113,12 @@
                             <span class="absolute -left-[23.5px] top-1.5 w-2.5 h-2.5 rounded-full ${isLatest ? 'bg-cyan-400 ring-4 ring-cyan-400/20' : 'bg-slate-600'}"></span>
                             <div>
                                 <div class="flex items-baseline justify-between gap-2">
-                                    <p class="text-sm font-semibold ${isLatest ? 'text-white' : 'text-slate-400'}">${item.judul}</p>
-                                    <span class="text-[11px] text-slate-500 shrink-0">${item.waktu}</span>
+                                    <p class="text-sm font-semibold ${isLatest ? 'text-white' : 'text-slate-400'}">${escHtml(item.judul)}</p>
+                                    <span class="text-[11px] text-slate-500 shrink-0">${escHtml(item.waktu)}</span>
                                 </div>
                                 ${item.pesan_admin ? `
                                     <div class="bg-white/5 border border-white/5 rounded-xl p-3 mt-2">
-                                        <p class="text-xs text-slate-300 font-normal leading-relaxed font-sans">${item.pesan_admin}</p>
+                                        <p class="text-xs text-slate-300 font-normal leading-relaxed font-sans">${escHtml(item.pesan_admin)}</p>
                                     </div>
                                 ` : ''}
                             </div>
