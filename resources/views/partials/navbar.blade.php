@@ -39,7 +39,7 @@
                     <!-- Dropdown Desktop -->
                     <div class="absolute right-0 top-10 w-52 bg-[#0B1528] rounded-2xl shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-white/10 backdrop-blur-xl">
                         @if(Auth::user()->role === 'admin')
-                            <a href="{{ url('/admin/dashboard') }}" class="block px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-white/10 hover:text-cyan-300 transition-colors">
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-white/10 hover:text-cyan-300 transition-colors">
                                 <i class="fa-solid fa-gauge-high mr-2 text-cyan-400"></i> Dashboard Admin
                             </a>
                         @else
@@ -98,7 +98,7 @@
                 </div>
 
                 @if(Auth::user()->role === 'admin')
-                    <a href="{{ url('/admin/dashboard') }}" class="hover:text-cyan-400 transition-colors py-1.5 mobile-link font-bold">
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-cyan-400 transition-colors py-1.5 mobile-link font-bold">
                         <i class="fa-solid fa-gauge-high mr-2 text-cyan-400"></i> Dashboard Admin
                     </a>
                 @else

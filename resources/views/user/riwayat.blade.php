@@ -314,6 +314,9 @@
 
                     const panelDetail = document.getElementById('panel-detail-' + id);
                     panelDetail.scrollTop = panelDetail.scrollHeight;
+                } else {
+                    alert(data.message || 'Pesan tidak terkirim. Silakan coba lagi.');
+                    inputField.value = pesanText;
                 }
             })
             .catch(error => {
@@ -322,5 +325,12 @@
                 alert('Gagal mengirim pesan. Silakan coba lagi.');
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlId = new URLSearchParams(window.location.search).get('id');
+            if (urlId && document.getElementById('panel-detail-' + urlId)) {
+                pilihPengajuan(urlId);
+            }
+        });
     </script>
 @endsection

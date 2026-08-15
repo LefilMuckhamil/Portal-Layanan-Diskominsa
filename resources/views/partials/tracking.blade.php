@@ -99,7 +99,7 @@
             }
 
             document.getElementById('card-nama-layanan').textContent = result.data.layanan;
-            document.getElementById('card-id-tiket').textContent = result.data.nomor_tiket.startsWith('#') ? result.data.nomor_tiket : `#${result.data.nomor_tiket}`;
+            document.getElementById('card-id-tiket').textContent = (result.data.nomor_tiket ?? '').startsWith('#') ? result.data.nomor_tiket : `#${result.data.nomor_tiket}`;
             document.getElementById('card-status-terakhir').textContent = result.data.status || 'Sedang Diproses';
 
             timelineList.innerHTML = '';

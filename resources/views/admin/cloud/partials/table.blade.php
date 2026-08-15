@@ -181,7 +181,7 @@
 
                                                 <div class="flex-1 flex flex-col">
                                                     <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Catatan E-Tracking</label>
-                                                    <textarea name="catatan" placeholder="Tuliskan catatan progres pemohon..." class="dk-input-modal w-full p-3 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none flex-1 min-h-[90px]"></textarea>
+                                                    <textarea name="catatan" placeholder="Tuliskan catatan progres pemohon..." class="dk-input-modal w-full p-3 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none flex-1 min-h-[90px]">{{ old('catatan') }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -215,7 +215,7 @@
                                                 @if($chatAktif ?? true)
                                                     <div class="dk-input-modal flex items-center px-3 shrink-0">
                                                         <i class="fa-regular fa-paper-plane text-sky-600 text-[13px] mr-2"></i>
-                                                        <input type="text" name="pesan" placeholder="Ketik pesan balasan..." class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                                        <input type="text" name="pesan" value="{{ old('pesan') }}" placeholder="Ketik pesan balasan..." class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                                                     </div>
                                                 @else
                                                     <div class="bg-rose-50 border border-rose-100 p-2 rounded-xl text-center shrink-0">
@@ -369,7 +369,7 @@
                                         $listUsers = $users ?? \App\Models\User::where('role', '!=', 'admin')->get();
                                     @endphp
                                     @forelse($listUsers as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->nip ?? $user->unit_kerja ?? 'ASN' }}</option>
+                                        <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>{{ $user->name }} - {{ $user->nip ?? $user->unit_kerja ?? 'ASN' }}</option>
                                     @empty
                                         <option value="" disabled>Belum ada data ASN</option>
                                     @endforelse
@@ -379,15 +379,15 @@
                         </div>
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Penanggung Jawab <span class="text-rose-500">*</span></label>
-                            <input type="text" name="data_pengajuan[nama]" required placeholder="Masukkan nama lengkap" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP (18 Digit) <span class="text-rose-500">*</span></label>
-                            <input type="number" name="data_pengajuan[nip]" required placeholder="Masukkan NIP" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="number" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div class="col-span-1 md:col-span-2">
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Instansi / Unit Kerja <span class="text-rose-500">*</span></label>
-                            <input type="text" name="data_pengajuan[instansi]" required placeholder="Contoh: Dinas Komunikasi dan Informatika" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Komunikasi dan Informatika" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
@@ -401,7 +401,7 @@
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Email Resmi (Untuk Aktivasi) <span class="text-rose-500">*</span></label>
                             <div class="dk-input-modal flex items-center px-3">
                                 <i class="fa-solid fa-envelope text-sky-600 text-[13px] mr-2"></i>
-                                <input type="email" name="data_pengajuan[email]" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
                         <div>
@@ -410,9 +410,9 @@
                                 <i class="fa-solid fa-server text-sky-600 text-[13px] mr-2"></i>
                                 <select name="data_pengajuan[kapasitas]" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
                                     <option value="" disabled selected>-- Pilih Kapasitas --</option>
-                                    <option value="10GB">10 GB (Standar)</option>
-                                    <option value="50GB">50 GB (Menengah)</option>
-                                    <option value="100GB">100 GB (Instansi)</option>
+                                    <option value="10GB" @selected(old('data_pengajuan.kapasitas') == '10GB')>10 GB (Standar)</option>
+                                    <option value="50GB" @selected(old('data_pengajuan.kapasitas') == '50GB')>50 GB (Menengah)</option>
+                                    <option value="100GB" @selected(old('data_pengajuan.kapasitas') == '100GB')>100 GB (Instansi)</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                             </div>

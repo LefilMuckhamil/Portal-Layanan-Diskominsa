@@ -1,10 +1,3 @@
-@extends('layouts.admin')
-
-@section('header_title', 'Pengaturan Sistem')
-@section('header_subtitle', 'Kelola konfigurasi dan fitur global Portal Layanan Diskominsa.')
-
-@section('content')
-    
     @if(session('sukses'))
         <div class="bg-green-50 text-green-600 px-6 py-3 rounded-2xl border border-green-100 text-[13px] font-bold flex items-center gap-2 mb-6 shadow-sm">
             <i class="fa-solid fa-circle-check"></i> {{ session('sukses') }}
@@ -50,5 +43,3 @@
             <p class="text-[11px] text-gray-400 mt-1">Dapat ditambahkan di kemudian hari.</p>
         </div>
     </div>
-
-@endsection

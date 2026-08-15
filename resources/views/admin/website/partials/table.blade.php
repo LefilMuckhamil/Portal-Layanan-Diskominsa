@@ -176,7 +176,7 @@
 
                                                 <div class="flex-1 flex flex-col">
                                                     <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Catatan E-Tracking</label>
-                                                    <textarea name="catatan" placeholder="Tuliskan catatan progres yang akan muncul di E-Tracking pemohon..." class="dk-input-modal w-full p-3 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none flex-1 min-h-[90px]"></textarea>
+                                                    <textarea name="catatan" placeholder="Tuliskan catatan progres yang akan muncul di E-Tracking pemohon..." class="dk-input-modal w-full p-3 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none flex-1 min-h-[90px]">{{ old('catatan') }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -210,7 +210,7 @@
                                                 @if($chatAktif ?? true)
                                                     <div class="dk-input-modal flex items-center px-3 shrink-0">
                                                         <i class="fa-regular fa-paper-plane text-indigo-600 text-[13px] mr-2"></i>
-                                                        <input type="text" name="pesan" placeholder="Ketik pesan balasan atau pertanyaan..." class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                                        <input type="text" name="pesan" value="{{ old('pesan') }}" placeholder="Ketik pesan balasan atau pertanyaan..." class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                                                     </div>
                                                 @else
                                                     <div class="bg-rose-50 border border-rose-100 p-2 rounded-xl text-center shrink-0">
@@ -364,7 +364,7 @@
                                 <select name="user_id" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
                                     <option value="">Silakan Pilih ASN Terdaftar</option>
                                     @foreach($users ?? [] as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->nip }}</option>
+                                        <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>{{ $user->name }} - {{ $user->nip }}</option>
                                     @endforeach
                                 </select>
                                 <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
@@ -372,26 +372,26 @@
                         </div>
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pemohon <span class="text-rose-500">*</span></label>
-                            <input type="text" name="data_pengajuan[nama]" required placeholder="Nama lengkap..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Nama lengkap..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP Pemohon</label>
-                            <input type="text" name="data_pengajuan[nip]" placeholder="Masukkan NIP..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" placeholder="Masukkan NIP..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Instansi <span class="text-rose-500">*</span></label>
-                            <input type="text" name="data_pengajuan[instansi]" required placeholder="Dinasxxxxx" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinasxxxxx" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP <span class="text-rose-500">*</span></label>
                             <div class="dk-input-modal flex items-center px-3">
                                 <i class="fa-solid fa-phone text-emerald-600 text-[13px] mr-2"></i>
-                                <input type="number" name="data_pengajuan[no_hp]" required placeholder="0812xxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <input type="number" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="0812xxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
                         <div class="col-span-1 md:col-span-2">
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pimpinan <span class="text-rose-500">*</span></label>
-                            <input type="text" name="data_pengajuan[nama_pimpinan]" required placeholder="Masukkan nama pimpinan..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[nama_pimpinan]" value="{{ old('data_pengajuan.nama_pimpinan') }}" required placeholder="Masukkan nama pimpinan..." class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
@@ -405,7 +405,7 @@
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Domain <span class="text-rose-500">*</span></label>
                             <div class="dk-input-modal flex items-center overflow-hidden">
                                 <i class="fa-solid fa-link text-indigo-600 text-[13px] ml-3 mr-2"></i>
-                                <input type="text" name="data_pengajuan[domain]" required placeholder="contohnamadinas" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <input type="text" name="data_pengajuan[domain]" value="{{ old('data_pengajuan.domain') }}" required placeholder="contohnamadinas" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                                 <span class="bg-gray-50 border-l border-[#DCE1E8] px-3 py-2 text-[11.5px] font-extrabold text-indigo-700 h-full flex items-center">.go.id</span>
                             </div>
                         </div>
