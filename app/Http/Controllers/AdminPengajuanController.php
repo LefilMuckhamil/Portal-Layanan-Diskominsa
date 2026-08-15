@@ -49,7 +49,7 @@ class AdminPengajuanController extends Controller
             ])],
             'catatan' => ['nullable', 'string', 'max:500'],
             'pesan' => ['nullable', 'string', 'max:1000'],
-            'file_hasil' => ['nullable', 'file', 'mimetypes:application/pdf', 'max:5120'],
+            'file_hasil' => ['nullable', 'file', 'mimetypes:application/pdf', 'min:10', 'max:5120'],
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
@@ -157,7 +157,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.nama_pimpinan' => 'required|string|max:255',
             'data_pengajuan.domain' => 'required|string',
-            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:5120',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.instansi.required' => 'Kolom Instansi wajib diisi.',
@@ -224,7 +224,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.usulan_email' => 'required|string',
-            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -293,7 +293,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.alamat' => 'required|string',
-            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -362,7 +362,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.kapasitas' => 'required|string',
-            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Penanggung Jawab wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -429,7 +429,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.nama' => 'required|string|max:255',
             'data_pengajuan.nip' => 'required|string',
             'data_pengajuan.email' => 'required|email',
-            'file_pendukung' => 'required|file|mimetypes:application/pdf|max:2048',
+            'file_pendukung' => 'required|file|mimetypes:application/pdf|min:10|max:2048',
         ], [
             'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
