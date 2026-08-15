@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 
 class Pengajuan extends Model
 {
@@ -19,13 +19,13 @@ class Pengajuan extends Model
         'data_pengajuan',
         'file_pendukung',
         'logs',
-        'pesan'
+        'pesan',
     ];
 
     protected $casts = [
         'data_pengajuan' => 'array',
-        'logs'           => 'array',
-        'pesan'          => 'array',
+        'logs' => 'array',
+        'pesan' => 'array',
     ];
 
     // Relasi ke User
@@ -43,17 +43,24 @@ class Pengajuan extends Model
     // PEMBUAT NOMOR TIKET OTOMATIS
     protected static function booted()
     {
-        static::creating(function ($pengajuan) {
-            $kode = match($pengajuan->jenis_layanan) {
-                'Pembuatan Website', 'pembuatan_website'   => 'WEB',
-                'Pembuatan Email Resmi', 'pembuatan_email' => 'EML',
-                'Layanan TTE', 'layanan_tte'               => 'TTE',
-                'Cloud Government', 'cloud_government'     => 'CLD',
-                'Reset Password', 'Pusat Bantuan'          => 'HLP',
-                default                                    => 'REQ'
-            };
+        static::creating(function (Pengajuan $pengajuan) {
+            do {
+                $tiket = '#'.static::kodeLayanan($pengajuan->jenis_layanan).'-'.strtoupper(bin2hex(random_bytes(4)));
+            } while (static::where('nomor_tiket', $tiket)->exists());
 
-            $pengajuan->nomor_tiket = '#' . $kode . '-' . strtoupper(substr(md5(uniqid()), 0, 5));
+            $pengajuan->nomor_tiket = $tiket;
         });
+    }
+
+    public static function kodeLayanan(string $jenis): string
+    {
+        return match ($jenis) {
+            'Pembuatan Website', 'pembuatan_website' => 'WEB',
+            'Pembuatan Email Resmi', 'pembuatan_email' => 'EML',
+            'Layanan TTE', 'layanan_tte' => 'TTE',
+            'Cloud Government', 'cloud_government' => 'CLD',
+            'Reset Password', 'Pusat Bantuan' => 'HLP',
+            default => throw new \InvalidArgumentException("Jenis layanan tidak dikenal: {$jenis}"),
+        };
     }
 }
