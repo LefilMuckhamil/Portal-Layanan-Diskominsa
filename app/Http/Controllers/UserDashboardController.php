@@ -31,7 +31,7 @@ class UserDashboardController extends Controller
         'pesan' => 'required|string',
     ]);
 
-    $pengajuan = Pengajuan::findOrFail($id);
+    $pengajuan = Pengajuan::where('user_id', auth()->id())->findOrFail($id);
     
     $pesanBaru = [
         'role' => 'user',

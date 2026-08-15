@@ -7,7 +7,7 @@
 
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Ajuan Cloud Storage</h3>
+            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Permohonan Cloud Gov Storage</h3>
             <p class="text-[12px] text-gray-400 font-medium mt-1">Kelola pembuatan akun dan alokasi kapasitas penyimpanan (storage).</p>
         </div>
         
