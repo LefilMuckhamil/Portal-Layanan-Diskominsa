@@ -19,7 +19,7 @@ use App\Http\Controllers\TrackingController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () { return view('welcome'); })->name('home');
-Route::get('/track-tiket/{nomor_tiket}', [TrackingController::class, 'track'])->name('track.tiket');
+Route::get('/track-tiket/{nomor_tiket}', [TrackingController::class, 'track'])->name('track.tiket')->middleware('throttle:20,1');
 
 /*
 |--------------------------------------------------------------------------

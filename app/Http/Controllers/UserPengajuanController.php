@@ -8,12 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UserPengajuanController extends Controller
 {
-    private function generateTicketNumber(string $prefix): string
-    {
-        $randomCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 5));
-        return '#' . $prefix . '-' . $randomCode;
-    }
-
     public function storeWebsite(Request $request)
     {
         $request->validate([
@@ -51,7 +45,6 @@ class UserPengajuanController extends Controller
         }
 
         $pengajuan = Pengajuan::create([
-            'nomor_tiket'    => $this->generateTicketNumber('WEB'),
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Pembuatan Website',
             'status'         => 'Pending',
@@ -98,7 +91,6 @@ class UserPengajuanController extends Controller
         }
 
         $pengajuan = Pengajuan::create([
-            'nomor_tiket'    => $this->generateTicketNumber('EML'),
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Pembuatan Email Resmi',
             'status'         => 'Pending',
@@ -139,7 +131,6 @@ class UserPengajuanController extends Controller
         }
 
         $pengajuan = Pengajuan::create([
-            'nomor_tiket'    => $this->generateTicketNumber('TTE'),
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Layanan TTE',
             'status'         => 'Pending',
@@ -178,7 +169,6 @@ class UserPengajuanController extends Controller
         }
 
         $pengajuan = Pengajuan::create([
-            'nomor_tiket'    => $this->generateTicketNumber('CLD'),
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Cloud Government',
             'status'         => 'Pending',
@@ -215,7 +205,6 @@ class UserPengajuanController extends Controller
         }
 
         $pengajuan = Pengajuan::create([
-            'nomor_tiket'    => $this->generateTicketNumber('HLP'),
             'user_id'        => Auth::id(),
             'jenis_layanan'  => 'Pusat Bantuan',
             'status'         => 'Pending',

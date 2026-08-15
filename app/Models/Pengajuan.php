@@ -40,11 +40,6 @@ class Pengajuan extends Model
         return $this->hasMany(PengajuanLog::class, 'pengajuan_id');
     }
 
-    public function pesanDiskusi()
-    {
-        return $this->hasMany(PesanDiskusi::class, 'pengajuan_id');
-    }
-
     // PEMBUAT NOMOR TIKET OTOMATIS
     protected static function booted()
     {

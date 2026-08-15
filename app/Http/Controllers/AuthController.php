@@ -39,7 +39,7 @@ class AuthController extends Controller
             'name'       => ['required', 'string', 'max:255'],
             'unit_kerja' => ['required', 'string', 'max:255'],
             'jabatan'    => ['required', 'string', 'max:255'],
-            'no_hp'      => ['required', 'string', 'max:20'], 
+            'no_hp'      => ['required', 'string', 'max:20', 'unique:users,no_hp'], 
             'password'   => ['required', 'string', 'min:8', 'confirmed'],
             
             'nip' => [

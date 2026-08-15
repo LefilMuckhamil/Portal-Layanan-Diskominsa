@@ -32,6 +32,12 @@ class AdminPengajuanController extends Controller
         return view('admin.dashboard', compact('pengajuans'));
     }
 
+    public function show($id)
+    {
+        $pengajuan = Pengajuan::with('user')->findOrFail($id);
+        return view('admin.pengajuan.show', compact('pengajuan'));
+    }
+
     public function updateProgres(Request $request, $id)
     {
         $request->validate([
@@ -54,7 +60,8 @@ class AdminPengajuanController extends Controller
             }
             
             $file = $request->file('file_hasil');
-            $dataPengajuan['file_hasil'] = $file->storeAs('dokumen_hasil', $file->getClientOriginalName(), 'public');
+            $fileName = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+            $dataPengajuan['file_hasil'] = $file->storeAs('dokumen_hasil', $fileName, 'public');
             $pengajuan->data_pengajuan = $dataPengajuan;
         }
 
@@ -113,7 +120,7 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        $users = User::where('role', '!=', 'admin')->get();
+        $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
                         
         return view('admin.website.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
@@ -181,7 +188,7 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        $users = User::where('role', '!=', 'admin')->get();
+        $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
                         
         return view('admin.email.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
@@ -249,7 +256,7 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
     
-        $users = User::where('role', '!=', 'admin')->get();
+        $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
                         
         return view('admin.tte.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
@@ -319,7 +326,7 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        $users = User::where('role', '!=', 'admin')->get();
+        $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
                         
         return view('admin.cloud.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
@@ -387,7 +394,7 @@ class AdminPengajuanController extends Controller
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
         
-        $users = User::where('role', '!=', 'admin')->get();
+        $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
                         
         return view('admin.bantuan.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'

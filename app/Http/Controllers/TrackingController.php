@@ -20,11 +20,7 @@ class TrackingController extends Controller
                 ], 400);
             }
 
-            $pengajuan = Pengajuan::with(['riwayatStatus' => function ($q) {
-                $q->latest();
-            }])
-            ->where('nomor_tiket', 'like', '%' . $cleanKey . '%')
-            ->first();
+            $pengajuan = Pengajuan::where('nomor_tiket', $cleanKey)->first();
 
             if (!$pengajuan) {
                 return response()->json([
@@ -34,16 +30,6 @@ class TrackingController extends Controller
             }
 
             $riwayatData = [];
-
-            if ($pengajuan->relationLoaded('riwayatStatus') && $pengajuan->riwayatStatus->count() > 0) {
-                foreach ($pengajuan->riwayatStatus as $item) {
-                    $riwayatData[] = [
-                        'waktu'       => $item->created_at ? Carbon::parse($item->created_at)->timezone('Asia/Jakarta')->translatedFormat('d M Y, H:i') . ' WIB' : '-',
-                        'judul'       => 'Status: ' . ucfirst($item->status),
-                        'pesan_admin' => $item->catatan_admin ?? $item->catatan ?? $item->keterangan ?? null,
-                    ];
-                }
-            }
 
             $logs = is_string($pengajuan->logs) ? json_decode($pengajuan->logs, true) : $pengajuan->logs;
             if (is_array($logs) && count($logs) > 0) {
