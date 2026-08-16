@@ -65,6 +65,14 @@
             </div>
         </a>
 
+        <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.users.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group hover:translate-x-1">
+            <i class="fa-solid fa-users w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
+            <div class="flex flex-col leading-tight">
+                <span class="text-[13px]">Manajemen Akun</span>
+                <span class="text-[10px] text-gray-400">Kelola Pengguna ASN</span>
+            </div>
+        </a>
+
         <a href="{{ route('admin.reset-password.index') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.reset-password.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group hover:translate-x-1">
             <i class="fa-solid fa-key-skeleton w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">

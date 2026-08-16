@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminPengajuanController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -33,7 +34,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', function () {
         return view('auth.login');
     })->name('login');
-    Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:10,1');
+    Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:5,1');
 
     Route::get('/register', function () {
         return view('auth.register');
@@ -137,6 +138,11 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
 
     Route::get('/reset-password-requests', [ResetPasswordAdminController::class, 'index'])->name('admin.reset-password.index');
     Route::post('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'process'])->name('admin.reset-password.process');
+
+    Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
+    Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
 
     Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index');
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');

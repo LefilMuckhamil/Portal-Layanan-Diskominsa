@@ -19,8 +19,15 @@ class DocumentController extends Controller
             ? ($dataPengajuan['file_hasil'] ?? null)
             : $pengajuan->file_pendukung;
 
-        abort_if(! $path || ! Storage::disk('local')->exists($path), 404);
+        abort_if(! $path, 404);
 
-        return Storage::disk('local')->download($path);
+        // Legacy files live on the 'public' disk; newer ones on 'local' — check both.
+        foreach (['local', 'public'] as $disk) {
+            if (Storage::disk($disk)->exists($path)) {
+                return Storage::disk($disk)->download($path);
+            }
+        }
+
+        abort(404);
     }
 }

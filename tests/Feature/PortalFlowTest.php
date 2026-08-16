@@ -6,6 +6,7 @@ use App\Models\Pengajuan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -166,5 +167,69 @@ class PortalFlowTest extends TestCase
         $this->get(route('track.tiket', ['nomor_tiket' => 'WEB-TIDAKADA']))
             ->assertNotFound()
             ->assertJsonPath('success', false);
+    }
+
+    public function test_permintaan_reset_sandi_ditolak_saat_no_wa_bukan_milik_akun(): void
+    {
+        $this->buatUser('user', 'korban@acehbaratkab.go.id');
+
+        $response = $this->post(route('password.email'), [
+            'email' => 'korban@acehbaratkab.go.id',
+            'phone' => '081399998888',
+        ]);
+
+        $response->assertSessionHasErrors('phone');
+        $this->assertDatabaseMissing('password_reset_requests', [
+            'email_or_nip' => 'korban@acehbaratkab.go.id',
+        ]);
+    }
+
+    public function test_permintaan_reset_sandi_ditolak_saat_akun_tidak_ditemukan(): void
+    {
+        $response = $this->post(route('password.email'), [
+            'email' => 'tidakada@acehbaratkab.go.id',
+            'phone' => '081234567890',
+        ]);
+
+        $response->assertSessionHasErrors('phone');
+        $this->assertDatabaseCount('password_reset_requests', 0);
+    }
+
+    public function test_permintaan_reset_sandi_berhasil_dengan_no_wa_yang_terdaftar(): void
+    {
+        $user = $this->buatUser('user', 'korban@acehbaratkab.go.id');
+
+        $response = $this->post(route('password.email'), [
+            'email' => 'korban@acehbaratkab.go.id',
+            'phone' => '081234567890',
+        ]);
+
+        $response->assertSessionHas('status');
+        $this->assertDatabaseHas('password_reset_requests', [
+            'email_or_nip' => 'korban@acehbaratkab.go.id',
+            'phone' => '081234567890',
+            'status' => 'pending',
+        ]);
+
+        $this->assertTrue(Hash::check('password123', $user->fresh()->password));
+    }
+
+    public function test_admin_tidak_bisa_reset_sandi_akun_jika_no_wa_tidak_cocok(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $korban = $this->buatUser('user', 'korban@acehbaratkab.go.id');
+
+        $requestId = DB::table('password_reset_requests')->insertGetId([
+            'email_or_nip' => 'korban@acehbaratkab.go.id',
+            'phone' => '081399998888',
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.reset-password.process', $requestId));
+
+        $response->assertSessionHas('error');
+        $this->assertTrue(Hash::check('password123', $korban->fresh()->password));
     }
 }
