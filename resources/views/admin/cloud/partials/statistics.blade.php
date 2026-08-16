@@ -21,7 +21,7 @@
         </div>
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Pending</p>
         <div class="flex items-end gap-2 mt-1">
-            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->whereIn('status', ['Pending', 'Menunggu Validasi'])->count() }}</h3>
+            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->where('status', 'Pending')->count() }}</h3>
             <span class="text-[10px] font-bold text-amber-500 mb-1">Antrean</span>
         </div>
     </div>
@@ -34,7 +34,7 @@
         </div>
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Proses</p>
         <div class="flex items-end gap-2 mt-1">
-            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->whereIn('status', ['Proses', 'Sedang Diproses'])->count() }}</h3>
+            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->where('status', 'Proses')->count() }}</h3>
             <span class="text-[10px] font-bold text-blue-500 mb-1">Akun</span>
         </div>
     </div>

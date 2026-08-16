@@ -126,6 +126,14 @@
                         <p class="text-[11px] text-[#667085] font-medium mt-1.5 ml-1"><i class="fa-solid fa-circle-info text-sky-600 mr-1"></i> Pastikan alamat email resmi yang dimasukkan sudah benar.</p>
                     </div>
 
+                    <div class="mb-6">
+                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Deskripsi Kendala</label>
+                        <div class="dk-input flex items-start px-3.5">
+                            <i class="fa-solid fa-comment-dots text-amber-500 text-[14px] mr-2.5 mt-2.5"></i>
+                            <textarea name="data_pengajuan[pesan_kendala]" rows="3" placeholder="Jelaskan kendala yang dialami secara singkat (opsional)" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none">{{ old('data_pengajuan.pesan_kendala') }}</textarea>
+                        </div>
+                    </div>
+
                     <div class="mb-2">
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Surat Permohonan Reset Password (PDF)</label>
                         <label for="file-upload" class="group flex items-center gap-4 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-5 py-4 cursor-pointer shadow-sm">

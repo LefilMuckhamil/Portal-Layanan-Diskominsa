@@ -85,7 +85,7 @@
                         </td>
                         <td class="py-4 px-6">
                             <span class="px-3 py-1.5 rounded-lg border text-[10px] font-extrabold uppercase tracking-wider {{ $badgeColor }}">
-                                {{ $item->status == 'Proses Development' ? 'Proses Pembuatan' : $item->status }}
+                                {{ $item->status }}
                             </span>
                         </td>
                         <td class="py-4 px-6 text-center space-x-1 whitespace-nowrap">

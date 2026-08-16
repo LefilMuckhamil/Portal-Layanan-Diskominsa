@@ -107,7 +107,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
 
         if ($request->filled('status')) {
             if ($request->status == 'Proses') {
-                $query->whereIn('status', ['Proses Development', 'Proses BSSN', 'Proses']);
+                $query->where('status', 'Proses');
             } else {
                 $query->where('status', $request->status);
             }

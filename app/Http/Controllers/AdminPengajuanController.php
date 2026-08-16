@@ -22,7 +22,7 @@ class AdminPengajuanController extends Controller
 
         if ($request->filled('status')) {
             if ($request->status == 'Proses') {
-                $query->whereIn('status', ['Proses Development', 'Proses BSSN', 'Proses']);
+                $query->where('status', 'Proses');
             } else {
                 $query->where('status', $request->status);
             }
@@ -44,8 +44,7 @@ class AdminPengajuanController extends Controller
     {
         $request->validate([
             'status' => ['required', 'string', Rule::in([
-                'Pending', 'Verifikasi Doc', 'Proses Development', 'Proses BSSN',
-                'Proses', 'Selesai', 'Ditolak',
+                'Pending', 'Proses', 'Selesai', 'Ditolak',
             ])],
             'catatan' => ['nullable', 'string', 'max:500'],
             'pesan' => ['nullable', 'string', 'max:1000'],
@@ -134,8 +133,8 @@ class AdminPengajuanController extends Controller
         $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Website');
 
         $total = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
-        $proses = (clone $baseQuery)->where('status', 'Proses Development')->count();
+        $pending = (clone $baseQuery)->where('status', 'Pending')->count();
+        $proses = (clone $baseQuery)->where('status', 'Proses')->count();
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
@@ -202,8 +201,8 @@ class AdminPengajuanController extends Controller
         $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi');
 
         $total = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
-        $proses = (clone $baseQuery)->where('status', 'Proses Development')->count();
+        $pending = (clone $baseQuery)->where('status', 'Pending')->count();
+        $proses = (clone $baseQuery)->where('status', 'Proses')->count();
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
@@ -270,8 +269,8 @@ class AdminPengajuanController extends Controller
         $baseQuery = Pengajuan::where('jenis_layanan', 'Layanan TTE');
 
         $total = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
-        $proses = (clone $baseQuery)->where('status', 'Proses BSSN')->count();
+        $pending = (clone $baseQuery)->where('status', 'Pending')->count();
+        $proses = (clone $baseQuery)->where('status', 'Proses')->count();
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
@@ -340,8 +339,8 @@ class AdminPengajuanController extends Controller
         $baseQuery = Pengajuan::where('jenis_layanan', 'Cloud Government');
 
         $total = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
-        $proses = (clone $baseQuery)->where('status', 'Proses Development')->count();
+        $pending = (clone $baseQuery)->where('status', 'Pending')->count();
+        $proses = (clone $baseQuery)->where('status', 'Proses')->count();
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
@@ -408,8 +407,8 @@ class AdminPengajuanController extends Controller
         $baseQuery = Pengajuan::whereIn('jenis_layanan', ['Pusat Bantuan', 'Reset Password']);
 
         $total = (clone $baseQuery)->count();
-        $pending = (clone $baseQuery)->whereIn('status', ['Pending', 'Verifikasi Doc'])->count();
-        $proses = (clone $baseQuery)->where('status', 'Proses Development')->count();
+        $pending = (clone $baseQuery)->where('status', 'Pending')->count();
+        $proses = (clone $baseQuery)->where('status', 'Proses')->count();
         $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
@@ -429,6 +428,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.nama' => 'required|string|max:255',
             'data_pengajuan.nip' => 'required|string',
             'data_pengajuan.email' => 'required|email',
+            'data_pengajuan.pesan_kendala' => 'nullable|string',
             'file_pendukung' => 'required|file|mimetypes:application/pdf|min:10|max:2048',
         ], [
             'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',

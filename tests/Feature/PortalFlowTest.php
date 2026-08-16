@@ -1,0 +1,170 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Pengajuan;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+class PortalFlowTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private function buatUser(string $role = 'user', string $email = 'pegawai@acehbaratkab.go.id'): User
+    {
+        return User::create([
+            'name' => 'Pegawai Diskominsa',
+            'email' => $email,
+            'password' => Hash::make('password123'),
+            'role' => $role,
+            'nip' => '198501012010011001',
+            'unit_kerja' => 'Dinas Kominfo',
+            'jabatan' => 'Fungsional',
+            'no_hp' => '081234567890',
+        ]);
+    }
+
+    public function test_user_biasa_tidak_bisa_akses_rute_admin(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->get(route('admin.dashboard'));
+
+        $response->assertStatus(302);
+        $response->assertRedirect('/');
+        $response->assertSessionHas('error', 'Anda tidak memiliki hak akses administrator.');
+    }
+
+    public function test_guest_dialihkan_ke_halaman_login_saat_akses_rute_admin(): void
+    {
+        $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
+    }
+
+    public function test_user_login_berhasil_membuat_pengajuan_website_berstatus_pending(): void
+    {
+        Storage::fake('local');
+
+        $user = $this->buatUser();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $response = $this->post(route('pengajuan.website.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'nama_pimpinan' => 'Dr. Andi Wijaya',
+                'domain' => 'dinkes',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('sukses');
+        $response->assertSessionHas('nomor_tiket');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::where('user_id', $user->id)->first();
+        $this->assertNotNull($pengajuan);
+        $this->assertStringStartsWith('#WEB-', $pengajuan->nomor_tiket);
+        $this->assertSame('dinkes.go.id', $pengajuan->data_pengajuan['domain']);
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_user_lain_tidak_bisa_mengunduh_file_pengajuan_milik_user_pertama(): void
+    {
+        Storage::fake('local');
+
+        $pemilik = $this->buatUser('user', 'pemilik@acehbaratkab.go.id');
+        $penyerang = $this->buatUser('user', 'penyerang@acehbaratkab.go.id');
+
+        Storage::disk('local')->put('dokumen_pengajuan/website/dokumen-rahasia.pdf', 'isi-pdf');
+
+        $pengajuan = Pengajuan::create([
+            'user_id' => $pemilik->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'status' => 'Pending',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
+            'file_pendukung' => 'dokumen_pengajuan/website/dokumen-rahasia.pdf',
+        ]);
+
+        $response = $this->actingAs($penyerang)->get(route('dokumen.unduh', [
+            'pengajuan' => $pengajuan->id,
+            'jenis' => 'lampiran',
+        ]));
+
+        $response->assertForbidden();
+
+        $this->actingAs($pemilik)->get(route('dokumen.unduh', [
+            'pengajuan' => $pengajuan->id,
+            'jenis' => 'lampiran',
+        ]))->assertOk();
+    }
+
+    public function test_tracking_tiket_publik_mengembalikan_200_dan_data_json(): void
+    {
+        $user = $this->buatUser();
+
+        $pengajuan = Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Layanan TTE',
+            'status' => 'Proses',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
+            'logs' => [
+                ['status' => 'Pending', 'catatan' => 'Pengajuan diterima', 'created_at' => now()->subDay()->toDateTimeString()],
+                ['status' => 'Proses', 'catatan' => 'Sedang diverifikasi', 'created_at' => now()->toDateTimeString()],
+            ],
+        ]);
+
+        $response = $this->get(route('track.tiket', ['nomor_tiket' => rawurlencode($pengajuan->nomor_tiket)]));
+
+        $response->assertOk();
+        $response->assertJson([
+            'success' => true,
+        ]);
+        $response->assertJsonPath('data.nomor_tiket', $pengajuan->nomor_tiket);
+        $response->assertJsonPath('data.layanan', 'Layanan TTE');
+        $response->assertJsonPath('data.status', 'Proses');
+        $response->assertJsonCount(2, 'data.riwayat');
+    }
+
+    public function test_tracking_tiket_tetap_ditemukan_walaupun_diketik_tanpa_karakter_pagar(): void
+    {
+        $user = $this->buatUser();
+
+        $pengajuan = Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'status' => 'Pending',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
+        ]);
+
+        $nomorTanpaPagar = str_replace('#', '', $pengajuan->nomor_tiket);
+
+        $response = $this->get(route('track.tiket', ['nomor_tiket' => $nomorTanpaPagar]));
+
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
+        $response->assertJsonPath('data.nomor_tiket', $pengajuan->nomor_tiket);
+    }
+
+    public function test_tracking_tiket_yang_tidak_ada_mengembalikan_404(): void
+    {
+        $this->get(route('track.tiket', ['nomor_tiket' => 'WEB-TIDAKADA']))
+            ->assertNotFound()
+            ->assertJsonPath('success', false);
+    }
+}

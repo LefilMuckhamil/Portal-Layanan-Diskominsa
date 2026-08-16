@@ -63,6 +63,14 @@
 <script>
     const escHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
+    const statusPillMap = {
+        'Pending': 'bg-amber-400/10 border-amber-400/30 text-amber-300',
+        'Proses': 'bg-blue-400/10 border-blue-400/30 text-blue-300',
+        'Selesai': 'bg-emerald-400/10 border-emerald-400/30 text-emerald-300',
+        'Ditolak': 'bg-rose-400/10 border-rose-400/30 text-rose-300',
+        'default': 'bg-cyan-400/10 border-cyan-400/30 text-cyan-300'
+    };
+
     async function lacakTiketCard() {
         let inputTiket = document.getElementById('input-tiket').value.trim();
         const errorMsg = document.getElementById('error-tracking');
@@ -100,7 +108,9 @@
 
             document.getElementById('card-nama-layanan').textContent = result.data.layanan;
             document.getElementById('card-id-tiket').textContent = (result.data.nomor_tiket ?? '').startsWith('#') ? result.data.nomor_tiket : `#${result.data.nomor_tiket}`;
-            document.getElementById('card-status-terakhir').textContent = result.data.status || 'Sedang Diproses';
+            const statusPill = document.getElementById('card-status-terakhir');
+            statusPill.textContent = result.data.status || 'Sedang Diproses';
+            statusPill.className = `inline-block px-3.5 py-1.5 rounded-full text-xs font-semibold ${statusPillMap[result.data.status] || statusPillMap.default}`;
 
             timelineList.innerHTML = '';
             

@@ -52,8 +52,8 @@
                     @php
                         $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
                         $badgeColor = match($item->status) {
-                            'Pending', 'Menunggu' => 'bg-amber-50 text-amber-600 border-amber-100',
-                            'Proses', 'Sedang Ditangani' => 'bg-blue-50 text-blue-600 border-blue-100',
+                            'Pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                            'Proses' => 'bg-blue-50 text-blue-600 border-blue-100',
                             'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
                             'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
                             default   => 'bg-gray-50 text-gray-600 border-gray-100'
@@ -153,7 +153,7 @@
                                                     <div class="dk-input-modal flex items-center px-3 relative">
                                                         <i class="fa-solid fa-bars-progress text-blue-600 text-[13px] mr-2"></i>
                                                         <select name="status" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                                            @foreach(['Pending' => 'PENDING', 'Proses' => 'SEDANG DITANGANI', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
+                                                            @foreach(['Pending' => 'PENDING', 'Proses' => 'PROSES', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
                                                                 <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
                                                             @endforeach
                                                         </select>
@@ -411,6 +411,13 @@
                             <div class="dk-input-modal flex items-center px-3">
                                 <i class="fa-solid fa-envelope-open-text text-sky-600 text-[13px] mr-2"></i>
                                 <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            </div>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Deskripsi Kendala</label>
+                            <div class="dk-input-modal flex items-start px-3">
+                                <i class="fa-solid fa-comment-dots text-amber-500 text-[13px] mr-2 mt-2.5"></i>
+                                <textarea name="data_pengajuan[pesan_kendala]" rows="3" placeholder="Jelaskan kendala yang dialami secara singkat (opsional)" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none">{{ old('data_pengajuan.pesan_kendala') }}</textarea>
                             </div>
                         </div>
                         <div class="col-span-1 md:col-span-2">

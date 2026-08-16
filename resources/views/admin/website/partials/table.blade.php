@@ -147,7 +147,7 @@
                                                     <div class="dk-input-modal flex items-center px-3 relative">
                                                         <i class="fa-solid fa-bars-progress text-indigo-600 text-[13px] mr-2"></i>
                                                         <select name="status" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                                            @foreach(['Pending' => 'PENDING', 'Verifikasi Doc' => 'VERIFIKASI DOC', 'Proses Development' => 'PROSES DEVELOPMENT', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
+                                                            @foreach(['Pending' => 'PENDING', 'Proses' => 'PROSES', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
                                                                 <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
                                                             @endforeach
                                                         </select>

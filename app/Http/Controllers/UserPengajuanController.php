@@ -188,6 +188,7 @@ class UserPengajuanController extends Controller
             'data_pengajuan.nama' => 'required|string|max:255',
             'data_pengajuan.nip' => 'required|string',
             'data_pengajuan.email' => 'required|email',
+            'data_pengajuan.pesan_kendala' => 'nullable|string',
             'file_pendukung' => 'required|file|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',

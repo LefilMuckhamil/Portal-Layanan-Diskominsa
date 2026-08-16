@@ -155,15 +155,15 @@
                             <td class="py-4 px-6 text-center">
                                 @php
                                     $badgeColor = match($item->status) {
-                                        'Pending', 'Menunggu Validasi' => 'bg-amber-50 text-amber-600 border-amber-100',
-                                        'Verifikasi Doc', 'Proses Development', 'Proses BSSN', 'Proses' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                        'Pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                        'Proses' => 'bg-blue-50 text-blue-600 border-blue-100',
                                         'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
                                         'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
                                         default   => 'bg-gray-50 text-gray-600 border-gray-100'
                                     };
                                 @endphp
                                 <span class="px-3 py-1.5 rounded-lg border text-[10px] font-extrabold uppercase tracking-wider {{ $badgeColor }}">
-                                    {{ $item->status == 'Proses Development' || $item->status == 'Proses BSSN' ? 'Proses' : $item->status }}
+                                    {{ $item->status }}
                                 </span>
                             </td>
 
