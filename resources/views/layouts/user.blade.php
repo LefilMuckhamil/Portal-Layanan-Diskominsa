@@ -113,8 +113,13 @@
 
     <main class="flex-grow w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 @yield('max_width', 'max-w-6xl')">
         @if(session('error'))
-        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200" role="alert">
-            <i class="fa-solid fa-circle-exclamation mr-2"></i>{{ session('error') }}
+        <div id="flash-error" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 border border-red-200 flex items-center justify-between gap-3" role="alert">
+            <p class="font-bold flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
+            </p>
+            <button type="button" onclick="document.getElementById('flash-error').remove()" class="text-red-500 hover:text-red-800 transition-colors cursor-pointer" aria-label="Tutup notifikasi">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         @endif
 
@@ -128,6 +133,9 @@
     @if(session('sukses'))
     <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 backdrop-blur-sm p-4 transition-opacity duration-300">
         <div class="bg-white rounded-[2rem] p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden border-2 border-slate-200">
+            <button type="button" onclick="document.getElementById('successModal').remove()" class="absolute top-4 right-4 w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full flex items-center justify-center transition-colors cursor-pointer" aria-label="Tutup">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
             <div class="w-20 h-20 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-5 text-3xl shadow-inner">
                 <i class="fa-solid fa-check"></i>
             </div>

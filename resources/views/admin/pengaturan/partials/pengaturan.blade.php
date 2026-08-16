@@ -1,9 +1,3 @@
-    @if(session('sukses'))
-        <div class="bg-green-50 text-green-600 px-6 py-3 rounded-2xl border border-green-100 text-[13px] font-bold flex items-center gap-2 mb-6 shadow-sm">
-            <i class="fa-solid fa-circle-check"></i> {{ session('sukses') }}
-        </div>
-    @endif
-
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- KARTU MASTER SWITCH GLOBAL CHAT -->
         <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 flex flex-col justify-between gap-6">

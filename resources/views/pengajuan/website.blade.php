@@ -101,7 +101,7 @@
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor Hp</label>
                             <div class="dk-input flex items-center px-3.5">
-                                <input type="number" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="081234567890" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
                         <div>

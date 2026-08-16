@@ -26,6 +26,28 @@
         @include('admin.partials.navbar')
 
         <div class="flex-1 overflow-y-auto p-8 space-y-6">
+            @if(session('sukses'))
+            <div id="flash-sukses" class="flex items-center justify-between gap-3 p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50 text-emerald-800 shadow-sm">
+                <p class="text-[13px] font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> {{ session('sukses') }}
+                </p>
+                <button type="button" onclick="document.getElementById('flash-sukses').remove()" class="text-emerald-500 hover:text-emerald-800 transition-colors cursor-pointer" aria-label="Tutup notifikasi">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div id="flash-error" class="flex items-center justify-between gap-3 p-4 rounded-2xl border-2 border-rose-200 bg-rose-50 text-rose-800 shadow-sm">
+                <p class="text-[13px] font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation"></i> {{ session('error') }}
+                </p>
+                <button type="button" onclick="document.getElementById('flash-error').remove()" class="text-rose-500 hover:text-rose-800 transition-colors cursor-pointer" aria-label="Tutup notifikasi">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            @endif
+
             @yield('content')
         </div>
 

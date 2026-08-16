@@ -134,15 +134,17 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         $pesan = ! $statusSekarang ? 'diaktifkan' : 'dinonaktifkan';
 
         return back()->with('sukses', "Fitur Global Chat berhasil $pesan!");
-    })->name('admin.toggleChat');
+    })->name('admin.toggleChat')->middleware('throttle:20,1');
 
     Route::get('/reset-password-requests', [ResetPasswordAdminController::class, 'index'])->name('admin.reset-password.index');
-    Route::post('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'process'])->name('admin.reset-password.process');
+    Route::post('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'process'])->name('admin.reset-password.process')->middleware('throttle:20,1');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
-    Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
-    Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::middleware('throttle:20,1')->group(function () {
+        Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
+        Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
+        Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+    });
 
     Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index');
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');

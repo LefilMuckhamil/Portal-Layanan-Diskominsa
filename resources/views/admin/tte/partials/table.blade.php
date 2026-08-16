@@ -1,10 +1,4 @@
 <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
-    @if(session('sukses'))
-        <div class="bg-green-50 text-green-600 px-6 py-3 border-b border-green-100 text-[13px] font-bold flex items-center gap-2">
-            <i class="fa-solid fa-check-circle"></i> {{ session('sukses') }}
-        </div>
-    @endif
-
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Pengajuan TTE</h3>
@@ -129,7 +123,7 @@
                             </div>
 
                             <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar flex-1 flex flex-col">
-                                <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)" class="flex-1 flex flex-col justify-between">
+                                <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" onsubmit="return konfirmasiTolak(this)" class="flex-1 flex flex-col justify-between">
                                     @csrf
                                     @method('PUT')
 
@@ -349,7 +343,7 @@
         </div>
 
         <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar">
-            <form method="POST" action="{{ route('admin.pengajuan.storeTte') }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
+            <form method="POST" action="{{ route('admin.pengajuan.storeTte') }}" enctype="multipart/form-data" onsubmit="return konfirmasiTolak(this)">
                 @csrf
                 @if ($errors->any())
                     <div class="mb-5 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3.5 text-[#B42318]">
@@ -412,7 +406,7 @@
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP <span class="text-rose-500">*</span></label>
                             <div class="dk-input-modal flex items-center px-3">
                                 <i class="fa-brands fa-whatsapp text-emerald-600 text-[13px] mr-2"></i>
-                                <input type="number" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="0812xxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                                <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                             </div>
                         </div>
                         <div>
@@ -509,6 +503,15 @@
             bukaModalCreate();
         });
     @endif
+
+    function konfirmasiTolak(form) {
+        const status = form.querySelector('select[name="status"]');
+        if (status && status.value === 'Ditolak' && !confirm('Apakah Anda yakin menolak pengajuan ini? Status pengajuan akan menjadi Ditolak.')) {
+            return false;
+        }
+        disableSubmitButton(form);
+        return true;
+    }
 
     function disableSubmitButton(form) {
         const btn = form.querySelector('button[type="submit"]');

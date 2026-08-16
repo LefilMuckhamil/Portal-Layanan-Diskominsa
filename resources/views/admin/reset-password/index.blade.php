@@ -9,13 +9,6 @@
         </div>
     </div>
 
-    @if (session('error'))
-        <div class="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 text-xs rounded-xl font-bold flex items-center gap-2">
-            <i class="fa-solid fa-circle-exclamation text-sm"></i>
-            {{ session('error') }}
-        </div>
-    @endif
-
     <div class="overflow-x-auto">
         <table class="w-full text-xs text-left border-collapse">
             <thead>

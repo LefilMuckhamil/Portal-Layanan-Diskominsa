@@ -8,7 +8,7 @@ Indonesian-language government service portal (Diskominsa Aceh Barat) for submit
 - All routes live in a single `routes/web.php` with clear section comments (public / guest / auth / admin).
 - Dev server: `composer run dev` (runs `artisan serve` + `queue:listen` + `pail` + `vite` concurrently). Requires node deps (`npm install`); `.npmrc` sets `ignore-scripts=true`.
 - Build frontend: `npm run build` (prod) or `npm run dev` (watch). `resources/js/app.js` is empty; most interactivity is inline Blade JS.
-- Tests: `composer test` (or `php artisan test`). Tests run on in-memory sqlite per `phpunit.xml`; only default ExampleTests exist.
+- Tests: `composer test` (or `php artisan test`). Tests run on in-memory sqlite per `phpunit.xml`; the real suite is `tests/Feature/PortalFlowTest.php` (access control, IDOR/BOLA, tracking, reset password, validasi input).
 - Formatting: `vendor/bin/pint`. No pint.json; default Laravel preset.
 
 ## Database gotchas

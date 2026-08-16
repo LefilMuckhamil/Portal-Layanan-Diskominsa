@@ -20,7 +20,10 @@ class TrackingController extends Controller
                 ], 400);
             }
 
-            $pengajuan = Pengajuan::whereRaw("REPLACE(nomor_tiket, '#', '') = ?", [$cleanKey])->first();
+            // Normalisasi selalu ke format '#KODE-...' agar query langsung memanfaatkan index unik nomor_tiket.
+            $queryKey = '#'.strtoupper($cleanKey);
+
+            $pengajuan = Pengajuan::where('nomor_tiket', $queryKey)->first();
 
             if (! $pengajuan) {
                 return response()->json([
