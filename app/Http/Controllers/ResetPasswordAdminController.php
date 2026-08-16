@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class ResetPasswordAdminController extends Controller
 {
@@ -41,7 +42,8 @@ class ResetPasswordAdminController extends Controller
             return back()->with('error', 'Nomor WhatsApp pada pengajuan tidak cocok dengan nomor HP yang terdaftar pada akun tersebut. Reset dibatalkan untuk keamanan.');
         }
 
-        $newPassword = 'Pass'.rand(100000, 999999).'!';
+        // Generator kriptografis aman (bukan rand()): 12 karakter alfanumerik.
+        $newPassword = Str::password(12, letters: true, numbers: true, symbols: false);
         $user->password = Hash::make($newPassword);
         $user->save();
 

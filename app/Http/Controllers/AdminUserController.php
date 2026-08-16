@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
 use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -32,6 +33,8 @@ class AdminUserController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge(['no_hp' => PhoneNumber::normalize($request->no_hp)]);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -42,7 +45,7 @@ class AdminUserController extends Controller
             'nip' => ['nullable', 'string', 'max:255', 'unique:users,nip'],
             'unit_kerja' => ['nullable', 'string', 'max:255'],
             'jabatan' => ['nullable', 'string', 'max:255'],
-            'no_hp' => ['required', 'string', 'max:20', 'unique:users,no_hp'],
+            'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', 'unique:users,no_hp'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', Rule::in(['admin', 'user'])],
         ], [
@@ -50,6 +53,7 @@ class AdminUserController extends Controller
             'email.unique' => 'Email ini sudah terdaftar di sistem.',
             'nip.unique' => 'NIP ini sudah terdaftar di sistem.',
             'no_hp.unique' => 'Nomor HP ini sudah terdaftar di sistem.',
+            'no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
         ]);
 
         $user = User::create([
@@ -71,6 +75,8 @@ class AdminUserController extends Controller
     {
         $user = User::findOrFail($id);
 
+        $request->merge(['no_hp' => PhoneNumber::normalize($request->no_hp)]);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -81,7 +87,7 @@ class AdminUserController extends Controller
             'nip' => ['nullable', 'string', 'max:255', Rule::unique('users', 'nip')->ignore($user->id)],
             'unit_kerja' => ['nullable', 'string', 'max:255'],
             'jabatan' => ['nullable', 'string', 'max:255'],
-            'no_hp' => ['required', 'string', 'max:20', Rule::unique('users', 'no_hp')->ignore($user->id)],
+            'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', Rule::unique('users', 'no_hp')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8'],
             'role' => ['required', Rule::in(['admin', 'user'])],
         ], [
@@ -89,7 +95,18 @@ class AdminUserController extends Controller
             'email.unique' => 'Email ini sudah terdaftar di sistem.',
             'nip.unique' => 'NIP ini sudah terdaftar di sistem.',
             'no_hp.unique' => 'Nomor HP ini sudah terdaftar di sistem.',
+            'no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
         ]);
+
+        if ($validated['role'] !== $user->role) {
+            if ($user->id === Auth::id() && $validated['role'] !== 'admin') {
+                return back()->with('error', 'Anda tidak dapat mengubah peran (role) akun Anda sendiri.');
+            }
+
+            if ($user->role === 'admin' && $validated['role'] === 'user' && User::where('role', 'admin')->count() <= 1) {
+                return back()->with('error', 'Tidak dapat menurunkan admin terakhir. Minimal satu admin harus tetap ada.');
+            }
+        }
 
         if ($validated['password'] !== null) {
             $validated['password'] = Hash::make($validated['password']);

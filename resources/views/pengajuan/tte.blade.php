@@ -153,6 +153,10 @@
                             </div>
                             <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold')">
                         </label>
+                        @error('file_pendukung')
+                            <p class="text-[12px] font-semibold text-red-600 mt-2"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
+                        @enderror
+                        <p class="text-[11.5px] text-amber-700 font-medium mt-1">Catatan: Jika terjadi kesalahan validasi pada formulir, silakan pilih kembali berkas PDF Anda.</p>
                     </div>
                 </div>
 

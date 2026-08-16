@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class TrackingController extends Controller
 {
@@ -43,7 +44,8 @@ class TrackingController extends Controller
                     $riwayatData[] = [
                         'waktu' => $waktuFormatted,
                         'judul' => 'Status: '.ucfirst($log['status'] ?? 'Proses'),
-                        'pesan_admin' => $log['catatan_admin'] ?? $log['catatan'] ?? $log['pesan'] ?? null,
+                        // Catatan internal admin TIDAK dikembalikan ke publik.
+                        'pesan_admin' => null,
                     ];
                 }
             }
@@ -67,9 +69,14 @@ class TrackingController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Gagal melacak tiket: '.$e->getMessage(), [
+                'nomor_tiket' => $nomor_tiket ?? null,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan sistem: '.$e->getMessage(),
+                'message' => 'Terjadi kendala saat memproses pelacakan tiket.',
             ], 500);
         }
     }

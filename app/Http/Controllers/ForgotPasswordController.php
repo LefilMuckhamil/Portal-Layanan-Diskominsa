@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,20 +16,22 @@ class ForgotPasswordController extends Controller
 
     public function submitRequest(Request $request)
     {
+        $request->merge(['phone' => PhoneNumber::normalize($request->phone)]);
+
         $request->validate([
             'email' => 'required|string',
-            'phone' => 'required|numeric',
+            'phone' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
         ], [
             'email.required' => 'Email atau NIP wajib diisi.',
             'phone.required' => 'Nomor WhatsApp wajib diisi.',
-            'phone.numeric' => 'Nomor WhatsApp harus berupa angka.',
+            'phone.regex' => 'Format nomor WhatsApp tidak valid.',
         ]);
 
         $user = User::where('email', $request->email)
             ->orWhere('nip', $request->email)
             ->first();
 
-        if (! $user || self::normalizePhone($user->no_hp) !== self::normalizePhone($request->phone)) {
+        if (! $user || PhoneNumber::normalize($user->no_hp) !== $request->phone) {
             return back()->withErrors([
                 'phone' => 'Nomor WhatsApp tidak terdaftar pada akun tersebut. Gunakan nomor HP yang didaftarkan saat membuat akun.',
             ])->withInput();
@@ -47,10 +50,6 @@ class ForgotPasswordController extends Controller
 
     public static function normalizePhone(?string $phone): string
     {
-        $clean = preg_replace('/[^0-9]/', '', (string) $phone);
-
-        return str_starts_with($clean, '0')
-            ? '62'.substr($clean, 1)
-            : $clean;
+        return PhoneNumber::normalize($phone);
     }
 }

@@ -15,18 +15,23 @@ class PortalFlowTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function buatUser(string $role = 'user', string $email = 'pegawai@acehbaratkab.go.id'): User
+    private function buatUser(string $role = 'user', string $email = 'pegawai@acehbaratkab.go.id', array $attrs = []): User
     {
-        return User::create([
+        $user = User::create(array_merge([
             'name' => 'Pegawai Diskominsa',
             'email' => $email,
             'password' => Hash::make('password123'),
-            'role' => $role,
-            'nip' => '198501012010011001',
+            'nip' => fake()->unique()->numerify(str_repeat('#', 18)),
             'unit_kerja' => 'Dinas Kominfo',
             'jabatan' => 'Fungsional',
-            'no_hp' => '081234567890',
-        ]);
+            'no_hp' => '08'.fake()->unique()->numerify(str_repeat('#', 10)),
+        ], $attrs));
+
+        if ($role === 'admin') {
+            $user->forceFill(['role' => 'admin'])->save();
+        }
+
+        return $user;
     }
 
     public function test_user_biasa_tidak_bisa_akses_rute_admin(): void
@@ -38,6 +43,13 @@ class PortalFlowTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect('/');
         $response->assertSessionHas('error', 'Anda tidak memiliki hak akses administrator.');
+    }
+
+    public function test_admin_dengan_role_valid_dapat_mengakses_dashboard_admin(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+
+        $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk();
     }
 
     public function test_guest_dialihkan_ke_halaman_login_saat_akses_rute_admin(): void
@@ -197,7 +209,7 @@ class PortalFlowTest extends TestCase
 
     public function test_permintaan_reset_sandi_berhasil_dengan_no_wa_yang_terdaftar(): void
     {
-        $user = $this->buatUser('user', 'korban@acehbaratkab.go.id');
+        $user = $this->buatUser('user', 'korban@acehbaratkab.go.id', ['no_hp' => '081234567890']);
 
         $response = $this->post(route('password.email'), [
             'email' => 'korban@acehbaratkab.go.id',
@@ -207,7 +219,7 @@ class PortalFlowTest extends TestCase
         $response->assertSessionHas('sukses');
         $this->assertDatabaseHas('password_reset_requests', [
             'email_or_nip' => 'korban@acehbaratkab.go.id',
-            'phone' => '081234567890',
+            'phone' => '6281234567890',
             'status' => 'pending',
         ]);
 
@@ -231,5 +243,166 @@ class PortalFlowTest extends TestCase
 
         $response->assertSessionHas('error');
         $this->assertTrue(Hash::check('password123', $korban->fresh()->password));
+    }
+
+    public function test_user_a_tidak_bisa_mengirim_chat_ke_tiket_milik_user_b(): void
+    {
+        $pemilik = $this->buatUser('user', 'pemilik@acehbaratkab.go.id');
+        $penyerang = $this->buatUser('user', 'penyerang@acehbaratkab.go.id');
+
+        $pengajuan = Pengajuan::create([
+            'user_id' => $pemilik->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'status' => 'Pending',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
+        ]);
+
+        $response = $this->actingAs($penyerang)->post(route('user.pengajuan.pesan', $pengajuan->id), [
+            'pesan' => 'Pesan mencoba akses tiket orang lain',
+        ]);
+
+        $response->assertNotFound();
+
+        $pengajuan->refresh();
+        $this->assertEmpty($pengajuan->pesan);
+    }
+
+    public function test_pengajuan_bantuan_ditolak_saat_kategori_tidak_valid(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.bantuan.store'), [
+            'data_pengajuan' => [
+                'kategori' => 'Kategori Hacker',
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'email' => 'pegawai@acehbaratkab.go.id',
+                'pesan_kendala' => 'Menguji validasi kategori',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.kategori');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_pengajuan_cloud_ditolak_saat_kapasitas_tidak_valid(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.cloud.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kominfo',
+                'email' => 'pegawai@acehbaratkab.go.id',
+                'kapasitas' => '999TB',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.kapasitas');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_registrasi_ditolak_saat_no_hp_tidak_valid(): void
+    {
+        $response = $this->post(route('register.process'), [
+            'name' => 'Pegawai Baru',
+            'unit_kerja' => 'Dinas Kominfo',
+            'jabatan' => 'Analis',
+            'no_hp' => '08123',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'nip' => '198501012010011002',
+            'email' => 'pegawaibaru@acehbaratkab.go.id',
+        ]);
+
+        $response->assertSessionHasErrors('no_hp');
+        $this->assertDatabaseMissing('users', ['email' => 'pegawaibaru@acehbaratkab.go.id']);
+    }
+
+    public function test_pengajuan_website_ditolak_saat_no_hp_tidak_valid(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.website.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => 'no-hp-salah',
+                'nama_pimpinan' => 'Dr. Andi Wijaya',
+                'domain' => 'dinkes',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.no_hp');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_pengajuan_website_ditolak_saat_menyuntikkan_file_hasil(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.website.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'nama_pimpinan' => 'Dr. Andi Wijaya',
+                'domain' => 'dinkes',
+                'file_hasil' => 'dokumen_hasil/hasil-rahasia.pdf',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.file_hasil');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_user_dapat_mengubah_password_sendiri_dengan_password_saat_ini_yang_benar(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('user.password.update'), [
+            'current_password' => 'password123',
+            'password' => 'passwordBaru123',
+            'password_confirmation' => 'passwordBaru123',
+        ]);
+
+        $response->assertSessionHas('sukses');
+        $this->assertTrue(Hash::check('passwordBaru123', $user->fresh()->password));
+    }
+
+    public function test_user_tidak_bisa_ubah_password_saat_password_saat_ini_salah(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('user.password.update'), [
+            'current_password' => 'salah123',
+            'password' => 'passwordBaru123',
+            'password_confirmation' => 'passwordBaru123',
+        ]);
+
+        $response->assertSessionHasErrors('current_password');
+        $this->assertTrue(Hash::check('password123', $user->fresh()->password));
+    }
+
+    public function test_admin_tidak_dapat_menurunkan_role_akun_sendiri(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id', ['no_hp' => '081234567890']);
+
+        $response = $this->actingAs($admin)->put(route('admin.users.update', $admin->id), [
+            'name' => 'Administrator Layanan',
+            'email' => 'admin@acehbaratkab.go.id',
+            'no_hp' => '081234567890',
+            'role' => 'user',
+        ]);
+
+        $response->assertSessionHas('error');
+        $this->assertSame('admin', $admin->fresh()->role);
     }
 }

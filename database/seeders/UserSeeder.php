@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // 1. Dibuat paling pertama -> Otomatis ID = 1
-        User::create([
+        $user = User::create([
             'name' => 'Administrator Layanan',
             'nip' => '199001012015011001',
             'unit_kerja' => 'Diskominsa Aceh Barat',
@@ -19,7 +19,9 @@ class UserSeeder extends Seeder
             'no_hp' => '081234567890',
             'email' => 'admin@acehbaratkab.go.id',
             'password' => Hash::make('password123'),
-            'role' => 'admin',
         ]);
+
+        // role tidak ada di $fillable sehingga harus di-forceFill
+        $user->forceFill(['role' => 'admin'])->save();
     }
 }

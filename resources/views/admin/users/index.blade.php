@@ -80,7 +80,7 @@
                             <form id="form-delete-{{ $item->id }}" action="{{ route('admin.users.destroy', $item->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="button" onclick="bukaModalDelete('{{ $item->id }}', '{{ $item->name }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Hapus Akun">
+                                <button type="button" onclick="bukaModalDelete('{{ $item->id }}', {{ Js::from($item->name) }})" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm" title="Hapus Akun">
                                     <i class="fa-solid fa-trash-can text-xs"></i>
                                 </button>
                             </form>

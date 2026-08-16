@@ -6,6 +6,7 @@ use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 
 class UserDashboardController extends Controller
 {
@@ -67,5 +68,30 @@ class UserDashboardController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function tampilUbahPassword()
+    {
+        return view('user.ubah-password');
+    }
+
+    public function ubahPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'current_password.required' => 'Kata sandi saat ini wajib diisi.',
+            'current_password' => 'Kata sandi saat ini tidak sesuai.',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.min' => 'Kata sandi baru minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+        ]);
+
+        $request->user()->forceFill([
+            'password' => Hash::make($validated['password']),
+        ])->save();
+
+        return redirect()->route('user.password.form')->with('sukses', 'Kata sandi Anda berhasil diperbarui.');
     }
 }

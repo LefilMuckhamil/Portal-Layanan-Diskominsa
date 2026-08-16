@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -46,11 +47,13 @@ class AuthController extends Controller
     // register
     public function registerProcess(Request $request)
     {
+        $request->merge(['no_hp' => PhoneNumber::normalize($request->no_hp)]);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'unit_kerja' => ['required', 'string', 'max:255'],
             'jabatan' => ['required', 'string', 'max:255'],
-            'no_hp' => ['required', 'string', 'max:20', 'unique:users,no_hp'],
+            'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', 'unique:users,no_hp'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
 
             'nip' => [
@@ -74,6 +77,7 @@ class AuthController extends Controller
             'nip.unique' => 'NIP ini sudah terdaftar. Silakan gunakan NIP Anda yang sebenarnya.',
             'nip.size' => 'NIP harus berjumlah tepat 18 digit.',
             'no_hp.required' => 'Nomor HP wajib diisi.',
+            'no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 

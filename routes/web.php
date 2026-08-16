@@ -83,6 +83,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan')->middleware('throttle:20,1');
 
+    Route::get('/profil/ubah-password', [UserDashboardController::class, 'tampilUbahPassword'])->name('user.password.form');
+    Route::post('/profil/ubah-password', [UserDashboardController::class, 'ubahPassword'])->name('user.password.update');
+
     Route::get('/dokumen/{pengajuan}/{jenis}', [DocumentController::class, 'unduh'])->name('dokumen.unduh');
 });
 

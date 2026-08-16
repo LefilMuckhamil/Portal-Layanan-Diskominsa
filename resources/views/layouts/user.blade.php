@@ -77,6 +77,9 @@
                             <a href="{{ route('user.riwayat') }}" class="w-full text-left px-5 py-3 text-[14px] font-extrabold text-slate-700 hover:bg-cyan-50 hover:text-cyan-800 transition-colors flex items-center gap-3 border-b border-slate-100">
                                 <i class="fa-solid fa-clock-rotate-left text-lg text-cyan-700"></i> Riwayat Pengajuan
                             </a>
+                            <a href="{{ route('user.password.form') }}" class="w-full text-left px-5 py-3 text-[14px] font-extrabold text-slate-700 hover:bg-cyan-50 hover:text-cyan-800 transition-colors flex items-center gap-3 border-b border-slate-100">
+                                <i class="fa-solid fa-key text-lg text-cyan-700"></i> Ubah Kata Sandi
+                            </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-5 py-3 text-[14px] font-extrabold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors flex items-center gap-3 rounded-b-2xl">
