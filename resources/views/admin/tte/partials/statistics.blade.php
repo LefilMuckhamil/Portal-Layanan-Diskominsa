@@ -9,7 +9,7 @@
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Total Pengajuan</p>
         <div class="flex items-end gap-2 mt-1">
             <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $total ?? 0 }}</h3>
-            <span class="text-[10px] font-bold text-emerald-500 mb-1">Permohonan</span>
+            <span class="text-[10px] font-bold text-emerald-500 mb-1">Pengajuan</span>
         </div>
     </div>
 

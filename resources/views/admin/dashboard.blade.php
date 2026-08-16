@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('header_title', 'Dashboard Portal Layanan Diskominsa Aceh Barat')
-@section('header_subtitle', 'Pantau seluruh statistik dan permohonan layanan secara real-time.')
+@section('header_subtitle', 'Pantau seluruh statistik dan pengajuan layanan secara real-time.')
 
 @section('content')
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div>
-                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1">Bantuan / OTP</p>
+                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1">Pusat Bantuan</p>
                 <div class="flex items-end gap-2">
                     <h3 class="text-3xl font-extrabold text-[#071E3D] leading-none">{{ $countBantuan ?? 0 }}</h3>
                     <span class="text-[10px] font-bold text-rose-500 mb-1">Ajuan</span>
@@ -86,8 +86,8 @@
     <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
         <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h3 class="text-lg font-extrabold text-[#071E3D]">Permohonan Terbaru Terpadu</h3>
-                <p class="text-[12px] text-gray-400 font-medium mt-1">Daftar semua permohonan masuk dari berbagai layanan.</p>
+                <h3 class="text-lg font-extrabold text-[#071E3D]">Pengajuan Terbaru Terpadu</h3>
+                <p class="text-[12px] text-gray-400 font-medium mt-1">Daftar semua pengajuan masuk dari berbagai layanan.</p>
             </div>
             
             <div class="flex gap-3 items-center">
@@ -174,7 +174,7 @@
                                 <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
                                     <i class="fa-regular fa-folder-open text-2xl text-gray-300"></i>
                                 </div>
-                                <h3 class="font-bold text-[14px] text-gray-600">Belum ada permohonan</h3>
+                                <h3 class="font-bold text-[14px] text-gray-600">Belum ada pengajuan</h3>
                             </td>
                         </tr>
                     @endforelse

@@ -4,7 +4,7 @@
 <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-xl font-extrabold text-[#071E3D]">Permohonan Reset Password</h2>
+            <h2 class="text-xl font-extrabold text-[#071E3D]">Pengajuan Reset Password</h2>
             <p class="text-xs text-gray-500 font-medium">Daftar pengajuan pemulihan akun ASN yang membutuhkan verifikasi.</p>
         </div>
     </div>
@@ -51,19 +51,23 @@
                         @endif
                     </td>
                     <td class="p-3.5 flex justify-center">
-                        <form action="{{ route('admin.reset-password.process', $req->id) }}" method="POST" target="_blank">
+                        @if($req->status == 'pending')
+                        <form action="{{ route('admin.reset-password.process', $req->id) }}" method="POST" target="_blank" onsubmit="this.querySelector('button').disabled = true;">
                             @csrf
                             <button type="submit" class="bg-green-600 hover:bg-green-700 active:scale-95 text-white font-extrabold px-3.5 py-2 rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all">
                                 <i class="fa-brands fa-whatsapp text-sm"></i>
                                 Reset & Kirim WA
                             </button>
                         </form>
+                        @else
+                        <span class="text-[11px] text-gray-400 font-bold">Sudah Diproses</span>
+                        @endif
                     </td>
                 </tr>
                 @empty
                 <tr>
                     <td colspan="5" class="p-6 text-center text-gray-400 font-medium">
-                        Belum ada permohonan reset password saat ini.
+                        Belum ada pengajuan reset password saat ini.
                     </td>
                 </tr>
                 @endforelse

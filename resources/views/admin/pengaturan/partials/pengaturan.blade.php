@@ -18,7 +18,7 @@
                             Status: {{ $chatAktif ? 'ON' : 'OFF' }}
                         </span>
                     </h3>
-                    <p class="text-[12px] text-gray-500 leading-relaxed">Kontrol penuh untuk mengaktifkan atau melumpuhkan fitur obrolan di seluruh tiket permohonan. Gunakan saat admin sedang *overload*.</p>
+                    <p class="text-[12px] text-gray-500 leading-relaxed">Kontrol penuh untuk mengaktifkan atau melumpuhkan fitur obrolan di seluruh tiket pengajuan. Gunakan saat admin sedang *overload*.</p>
                 </div>
             </div>
             

@@ -52,7 +52,7 @@ class TrackingController extends Controller
                 $riwayatData[] = [
                     'waktu' => $pengajuan->created_at ? Carbon::parse($pengajuan->created_at)->timezone('Asia/Jakarta')->translatedFormat('d M Y, H:i').' WIB' : '-',
                     'judul' => 'Pengajuan Dibuat',
-                    'pesan_admin' => 'Permohonan berhasil masuk ke sistem portal terpadu Diskominsa.',
+                    'pesan_admin' => 'Pengajuan berhasil masuk ke sistem portal terpadu Diskominsa.',
                 ];
             }
 

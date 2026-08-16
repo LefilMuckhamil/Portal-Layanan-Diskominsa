@@ -145,7 +145,7 @@
                 <div id="panel-detail-{{ $item->id }}" class="panel-detail hidden flex-grow flex-col overflow-y-auto p-5 space-y-4 bg-slate-50/20 custom-scrollbar">
                     
                     <div class="bg-sky-50/80 border border-sky-200 p-3.5 rounded-xl shrink-0">
-                        <p class="text-[11px] font-black text-sky-800 uppercase tracking-wider">Permohonan Aktif</p>
+                        <p class="text-[11px] font-black text-sky-800 uppercase tracking-wider">Pengajuan Aktif</p>
                         <p class="text-[13.5px] font-black text-[#101828]">{{ $item->nomor_tiket }} ({{ str_replace('_', ' ', $item->jenis_layanan) }})</p>
                     </div>
 
@@ -178,7 +178,7 @@
                                 @foreach($item->logs as $log)
                                 <div class="relative pl-5">
                                     <div class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-[#16324F] ring-2 ring-white"></div>
-                                    <p class="text-[10px] font-bold text-[#667085]">{{ \Carbon\Carbon::parse($log['created_at'])->format('d M Y, H:i') }}</p>
+                                    <p class="text-[10px] font-bold text-[#667085]">{{ \Carbon\Carbon::parse($log['waktu'] ?? $log['created_at'] ?? now())->format('d M Y, H:i') }}</p>
                                     <p class="text-[12.5px] font-extrabold text-[#101828]">Status: {{ $log['status'] }}</p>
                                     <p class="text-[12px] text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg mt-1 border border-slate-200">"{{ $log['catatan'] }}"</p>
                                 </div>

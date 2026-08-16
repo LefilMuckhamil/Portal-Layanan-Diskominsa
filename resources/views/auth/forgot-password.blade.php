@@ -58,7 +58,7 @@
             <p class="text-xs text-gray-500 font-medium text-center mt-1 max-w-xs">Masukkan data terdaftar Anda. Admin akan memverifikasi dan mengirimkan akses via WhatsApp.</p>
         </div>
 
-        @if (session('status'))
+        @if (session('sukses'))
             <div class="mb-3 p-3 bg-green-50 border border-green-100 text-green-600 text-xs rounded-xl font-bold flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-circle-check text-sm shrink-0"></i> {{ session('status') }}
             </div>
@@ -103,7 +103,7 @@
             </div>
 
             <button type="submit" class="w-full bg-[#071E3D] hover:bg-[#1F4287] active:scale-[0.99] text-white font-extrabold rounded-xl py-2.5 sm:py-3 text-xs sm:text-sm tracking-wide transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 group">
-                Kirim Permohonan
+                Kirim Permintaan Reset Sandi
                 <i class="fa-solid fa-paper-plane text-xs group-hover:translate-x-1 transition-transform"></i>
             </button>
         </form>

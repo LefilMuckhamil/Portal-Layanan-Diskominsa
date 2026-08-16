@@ -160,7 +160,7 @@
                                     </div>
                                     <div>
                                         <h4 class="text-white font-bold text-[11px] whitespace-nowrap">Bantuan</h4>
-                                        <p class="text-gray-400 text-[9px] mt-0.5">Permohonan Reset Sandi</p>
+                                        <p class="text-gray-400 text-[9px] mt-0.5">Pengajuan Reset Sandi</p>
                                     </div>
                                 </div>
                             </div>
@@ -212,7 +212,7 @@
                                     </div>
                                     <div>
                                         <h4 class="text-white font-bold text-[11px] whitespace-nowrap">Bantuan</h4>
-                                        <p class="text-gray-400 text-[9px] mt-0.5">Permohonan Reset Sandi</p>
+                                        <p class="text-gray-400 text-[9px] mt-0.5">Pengajuan Reset Sandi</p>
                                     </div>
                                 </div>
                             </div>

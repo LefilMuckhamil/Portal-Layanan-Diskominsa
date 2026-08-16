@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('header_title', 'Manajemen Layanan Bantuan')
-@section('header_subtitle', 'Kelola tiket bantuan, permohonan reset password email, dan kendala sistem lainnya.')
+@section('header_subtitle', 'Kelola tiket bantuan, pengajuan reset password email, dan kendala sistem lainnya.')
 
 @section('content')
     @include('admin.bantuan.partials.statistics')

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Cache;
 
 class UserDashboardController extends Controller
 {
-
     public function riwayat()
     {
         $pengajuans = Pengajuan::where('user_id', Auth::id())->latest()->get();
@@ -21,40 +20,52 @@ class UserDashboardController extends Controller
     public function show($id)
     {
         $pengajuan = Pengajuan::where('user_id', Auth::id())->findOrFail($id);
-        
-        return view('user.detail', compact('pengajuan'));
+        $chatAktif = Cache::get('chat_global_aktif', true);
+
+        return view('user.detail', compact('pengajuan', 'chatAktif'));
     }
 
     public function kirimPesan(Request $request, $id)
-{
-    $request->validate([
-        'pesan' => 'required|string',
-    ]);
+    {
+        if (! Cache::get('chat_global_aktif', true)) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'pesan' => 'Fitur chat sedang dinonaktifkan oleh Admin.',
+                ], 403);
+            }
 
-    $pengajuan = Pengajuan::where('user_id', auth()->id())->findOrFail($id);
-    
-    $pesanBaru = [
-        'role' => 'user',
-        'pengirim' => auth()->user()->name,
-        'isi' => $request->pesan,
-        'waktu' => now()->format('d M Y, H:i'),
-    ];
+            return back()->withErrors(['pesan' => 'Fitur chat sedang dinonaktifkan oleh Admin.']);
+        }
 
-    $pesanLama = is_string($pengajuan->pesan) ? json_decode($pengajuan->pesan, true) : ($pengajuan->pesan ?? []);
-    $pesanLama[] = $pesanBaru;
-
-    $pengajuan->update([
-        'pesan' => $pesanLama
-    ]);
-
-    // Jika request dikirim via AJAX / Fetch
-    if ($request->ajax() || $request->wantsJson()) {
-        return response()->json([
-            'status' => 'success',
-            'pesan' => $pesanBaru
+        $request->validate([
+            'pesan' => 'required|string|max:1000',
         ]);
-    }
 
-    return redirect()->back();
-}
+        $pengajuan = Pengajuan::where('user_id', auth()->id())->findOrFail($id);
+
+        $pesanBaru = [
+            'role' => 'user',
+            'pengirim' => auth()->user()->name,
+            'isi' => $request->pesan,
+            'waktu' => now()->format('d M Y, H:i'),
+        ];
+
+        $pesanLama = is_string($pengajuan->pesan) ? json_decode($pengajuan->pesan, true) : ($pengajuan->pesan ?? []);
+        $pesanLama[] = $pesanBaru;
+
+        $pengajuan->update([
+            'pesan' => $pesanLama,
+        ]);
+
+        // Jika request dikirim via AJAX / Fetch
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'pesan' => $pesanBaru,
+            ]);
+        }
+
+        return redirect()->back();
+    }
 }

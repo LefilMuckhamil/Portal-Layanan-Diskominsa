@@ -7,7 +7,7 @@
 
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Permohonan Cloud Gov Storage</h3>
+            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Pengajuan Cloud Gov Storage</h3>
             <p class="text-[12px] text-gray-400 font-medium mt-1">Kelola pembuatan akun dan alokasi kapasitas penyimpanan (storage).</p>
         </div>
         
@@ -29,7 +29,7 @@
             </form>
 
             <button type="button" onclick="bukaModalCreate()" class="px-4 py-2 bg-[#071E3D] hover:bg-[#1F4287] text-white text-[12px] font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Tambah Permohonan
+                <i class="fa-solid fa-plus"></i> Tambah Pengajuan
             </button>
         </div>
     </div>
@@ -120,7 +120,7 @@
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Admin Panel</p>
-                                        <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Kelola Permohonan Cloud</h2>
+                                        <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Kelola Pengajuan Cloud</h2>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
@@ -137,6 +137,19 @@
                                 <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)" class="flex-1 flex flex-col justify-between">
                                     @csrf
                                     @method('PUT')
+
+                                    @if ($errors->any())
+                                        <div class="mb-5 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3.5 text-[#B42318]">
+                                            <div class="flex items-center text-[12.5px] font-bold mb-1">
+                                                <i class="fa-solid fa-circle-exclamation mr-2"></i> Gagal memperbarui data:
+                                            </div>
+                                            <ul class="list-disc list-inside space-y-0.5 text-[11.5px] text-[#912018] font-medium pl-1">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
                                     
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-1">
                                         <div class="relative dk-rail-modal pl-10 flex flex-col h-full">
@@ -245,9 +258,9 @@
                             <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-5 border-4 border-white shadow-md">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                             </div>
-                            <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Permohonan?</h3>
+                            <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Pengajuan?</h3>
                             <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">
-                                Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data permohonan <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?
+                                Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data pengajuan <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?
                             </p>
                             <div class="flex gap-3">
                                 <button type="button" onclick="tutupModalDelete('{{ $item->id }}')" class="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
@@ -304,7 +317,7 @@
                             <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <i class="fa-solid fa-folder-open text-2xl text-gray-300"></i>
                             </div>
-                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada data permohonan cloud</h3>
+                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada data pengajuan cloud</h3>
                         </td>
                     </tr>
                 @endforelse
@@ -383,7 +396,7 @@
                         </div>
                         <div>
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP (18 Digit) <span class="text-rose-500">*</span></label>
-                            <input type="number" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" inputmode="numeric" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input-modal w-full px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div class="col-span-1 md:col-span-2">
                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Instansi / Unit Kerja <span class="text-rose-500">*</span></label>
@@ -426,7 +439,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <p class="text-[12.5px] text-[#101828] font-bold group-hover:text-sky-900 truncate">Klik untuk memilih berkas</p>
-                                        <p id="admin-cloud-name" class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Format PDF &middot; Maksimal 2MB</p>
+                                        <p id="admin-cloud-name" class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Format PDF &middot; Maksimal 5MB</p>
                                     </div>
                                 </div>
                                 <div class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 group-hover:border-sky-300 shrink-0">Browse</div>
@@ -439,7 +452,7 @@
                 <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">
                     <button type="button" onclick="tutupModalCreate()" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
                     <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg">
-                        Simpan Permohonan <i class="fa-solid fa-cloud-arrow-up text-[11px]"></i>
+                        Simpan Pengajuan <i class="fa-solid fa-cloud-arrow-up text-[11px]"></i>
                     </button>
                 </div>
             </form>

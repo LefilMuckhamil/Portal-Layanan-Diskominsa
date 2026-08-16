@@ -42,7 +42,7 @@ class ForgotPasswordController extends Controller
             'updated_at' => now(),
         ]);
 
-        return back()->with('status', 'Permohonan reset sandi berhasil dikirim! Admin akan memverifikasi dan mengirimkan akses via WhatsApp.');
+        return back()->with('sukses', 'Permintaan reset sandi berhasil dikirim! Admin akan memverifikasi dan mengirimkan akses via WhatsApp.');
     }
 
     public static function normalizePhone(?string $phone): string

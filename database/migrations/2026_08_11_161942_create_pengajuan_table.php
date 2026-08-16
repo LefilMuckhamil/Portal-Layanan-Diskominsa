@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('jenis_layanan');
             $table->string('status')->default('Pending');
-            $table->json('data_pengajuan')->nullable(); 
+            $table->json('data_pengajuan')->nullable();
             $table->string('file_pendukung')->nullable();
             $table->json('logs')->nullable();
             $table->json('pesan')->nullable();

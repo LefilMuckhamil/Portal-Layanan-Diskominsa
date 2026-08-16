@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;   // Tambahkan ini
-use Illuminate\Support\Facades\Cache;  // Tambahkan ini
+use Illuminate\Support\ServiceProvider;  // Tambahkan ini
 
 class AppServiceProvider extends ServiceProvider
 {

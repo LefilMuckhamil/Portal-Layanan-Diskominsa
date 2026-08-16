@@ -65,7 +65,7 @@
                                     @if(Auth::user()->nip)
                                         NIP. {{ Auth::user()->nip }}
                                     @else
-                                        {{ Auth::user()->role === 'instansi' ? 'Akun Instansi' : 'ASN / User' }}
+                                        ASN / User
                                     @endif
                                 </p>
                             </div>

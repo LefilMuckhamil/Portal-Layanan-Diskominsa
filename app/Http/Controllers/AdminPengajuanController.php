@@ -11,35 +11,6 @@ use Illuminate\Validation\Rule;
 
 class AdminPengajuanController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Pengajuan::with('user');
-
-        if ($request->filled('search')) {
-            $search = trim($request->search);
-            $query->where('nomor_tiket', 'like', "%{$search}%");
-        }
-
-        if ($request->filled('status')) {
-            if ($request->status == 'Proses') {
-                $query->where('status', 'Proses');
-            } else {
-                $query->where('status', $request->status);
-            }
-        }
-
-        $pengajuans = $query->latest()->paginate(10);
-
-        return view('admin.dashboard', compact('pengajuans'));
-    }
-
-    public function show($id)
-    {
-        $pengajuan = Pengajuan::with('user')->findOrFail($id);
-
-        return view('admin.pengajuan.show', compact('pengajuan'));
-    }
-
     public function updateProgres(Request $request, $id)
     {
         $request->validate([
@@ -119,7 +90,7 @@ class AdminPengajuanController extends Controller
 
         $pengajuan->delete();
 
-        return back()->with('sukses', 'Data permohonan berhasil dihapus permanen.');
+        return back()->with('sukses', 'Pengajuan berhasil dihapus permanen.');
     }
 
     public function website(Request $request)
@@ -175,19 +146,26 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/website', $fileName, 'local');
+            $filePath = $file->storeAs('dokumen_pengajuan/website', $fileName, 'local');
+        }
+
+        $dataPengajuan = $request->data_pengajuan;
+        if (isset($dataPengajuan['domain'])) {
+            $domainInput = trim($dataPengajuan['domain']);
+            $dataPengajuan['domain'] = str_contains($domainInput, '.go.id')
+                                    ? $domainInput
+                                    : $domainInput.'.go.id';
         }
 
         Pengajuan::create([
             'user_id' => $request->user_id,
-            'nomor_tiket' => '#WEB-'.strtoupper(substr(md5(uniqid(rand(), true)), 0, 5)),
             'jenis_layanan' => 'Pembuatan Website',
-            'data_pengajuan' => $request->data_pengajuan,
+            'data_pengajuan' => $dataPengajuan,
             'file_pendukung' => $filePath,
             'status' => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan Website berhasil ditambahkan manual.');
+        return back()->with('sukses', 'Pengajuan Pembuatan Website berhasil ditambahkan manual.');
     }
 
     public function emailResmi(Request $request)
@@ -229,7 +207,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.usulan_email' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:2048',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -243,19 +221,26 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/email', $fileName, 'local');
+            $filePath = $file->storeAs('dokumen_pengajuan/email', $fileName, 'local');
+        }
+
+        $dataPengajuan = $request->data_pengajuan;
+        if (isset($dataPengajuan['usulan_email'])) {
+            $emailInput = trim($dataPengajuan['usulan_email']);
+            $dataPengajuan['usulan_email'] = str_contains($emailInput, '@acehbaratkab.go.id')
+                                           ? $emailInput
+                                           : $emailInput.'@acehbaratkab.go.id';
         }
 
         Pengajuan::create([
             'user_id' => $request->user_id,
-            'nomor_tiket' => '#EML-'.strtoupper(substr(md5(uniqid(rand(), true)), 0, 5)),
             'jenis_layanan' => 'Pembuatan Email Resmi',
-            'data_pengajuan' => $request->data_pengajuan,
+            'data_pengajuan' => $dataPengajuan,
             'file_pendukung' => $filePath,
             'status' => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan Email Resmi berhasil ditambahkan manual.');
+        return back()->with('sukses', 'Pengajuan Pembuatan Email Resmi berhasil ditambahkan manual.');
     }
 
     public function layananTte(Request $request)
@@ -298,7 +283,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => 'required|string',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.alamat' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:2048',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -313,19 +298,18 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/tte', $fileName, 'local');
+            $filePath = $file->storeAs('dokumen_pengajuan/tte', $fileName, 'local');
         }
 
         Pengajuan::create([
             'user_id' => $request->user_id,
-            'nomor_tiket' => '#TTE-'.strtoupper(substr(md5(uniqid(rand(), true)), 0, 5)),
             'jenis_layanan' => 'Layanan TTE',
             'data_pengajuan' => $request->data_pengajuan,
             'file_pendukung' => $filePath,
             'status' => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan TTE berhasil ditambahkan manual.');
+        return back()->with('sukses', 'Pengajuan Layanan TTE berhasil ditambahkan manual.');
     }
 
     public function layananCloud(Request $request)
@@ -367,7 +351,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.kapasitas' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:2048',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Penanggung Jawab wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -381,24 +365,23 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/cloud', $fileName, 'local');
+            $filePath = $file->storeAs('dokumen_pengajuan/cloud', $fileName, 'local');
         }
 
         Pengajuan::create([
             'user_id' => $request->user_id,
-            'nomor_tiket' => '#CLD-'.strtoupper(substr(md5(uniqid(rand(), true)), 0, 5)),
             'jenis_layanan' => 'Cloud Government',
             'data_pengajuan' => $request->data_pengajuan,
             'file_pendukung' => $filePath,
             'status' => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Permohonan Cloud Government berhasil ditambahkan manual.');
+        return back()->with('sukses', 'Pengajuan Cloud Government berhasil ditambahkan manual.');
     }
 
     public function layananBantuan(Request $request)
     {
-        $query = Pengajuan::whereIn('jenis_layanan', ['Pusat Bantuan', 'Reset Password'])->with('user');
+        $query = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->with('user');
 
         if ($request->filled('search')) {
             $search = trim($request->search);
@@ -410,7 +393,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::whereIn('jenis_layanan', ['Pusat Bantuan', 'Reset Password']);
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Pusat Bantuan');
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -435,7 +418,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.nip' => 'required|string',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.pesan_kendala' => 'nullable|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:2048',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
@@ -448,18 +431,17 @@ class AdminPengajuanController extends Controller
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
             $fileName = time().'_'.$file->getClientOriginalName();
-            $filePath = $file->storeAs('pengajuan/bantuan', $fileName, 'local');
+            $filePath = $file->storeAs('dokumen_pengajuan/bantuan', $fileName, 'local');
         }
 
         Pengajuan::create([
             'user_id' => $request->user_id,
-            'nomor_tiket' => '#HLP-'.strtoupper(substr(md5(uniqid(rand(), true)), 0, 5)),
             'jenis_layanan' => 'Pusat Bantuan',
             'data_pengajuan' => $request->data_pengajuan,
             'file_pendukung' => $filePath,
             'status' => 'Pending',
         ]);
 
-        return back()->with('sukses', 'Tiket Pusat Bantuan berhasil ditambahkan manual.');
+        return back()->with('sukses', 'Pengajuan Pusat Bantuan berhasil ditambahkan manual.');
     }
 }

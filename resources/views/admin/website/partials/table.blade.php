@@ -7,7 +7,7 @@
 
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Permohonan Website</h3>
+            <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Pengajuan Website</h3>
             <p class="text-[12px] text-gray-400 font-medium mt-1">Kelola data dan perbarui status progres pembuatan website.</p>
         </div>
         
@@ -29,7 +29,7 @@
             </form>
 
             <button type="button" onclick="bukaModalCreate()" class="px-4 py-2 bg-[#071E3D] hover:bg-[#1F4287] text-white text-[12px] font-bold rounded-lg transition-colors shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Tambah Permohonan
+                <i class="fa-solid fa-plus"></i> Tambah Pengajuan
             </button>
         </div>
     </div>
@@ -76,7 +76,7 @@
                             </span>
                             @if(!empty($dataForm['domain']))
                                 <p class="text-[11px] text-blue-500 font-medium mt-0.5">
-                                    {{ $dataForm['domain'] }}.go.id
+                                    {{ $dataForm['domain'] }}
                                 </p>
                             @endif
                         </td>
@@ -115,7 +115,7 @@
                                     </div>
                                     <div>
                                         <p class="text-[10px] font-bold tracking-[0.16em] text-indigo-700 uppercase mb-0.5">Admin Panel</p>
-                                        <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Kelola Permohonan</h2>
+                                        <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Kelola Pengajuan</h2>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
@@ -132,6 +132,19 @@
                                 <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)" class="flex-1 flex flex-col justify-between">
                                     @csrf
                                     @method('PUT')
+
+                                    @if ($errors->any())
+                                        <div class="mb-5 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3.5 text-[#B42318]">
+                                            <div class="flex items-center text-[12.5px] font-bold mb-1">
+                                                <i class="fa-solid fa-circle-exclamation mr-2"></i> Gagal memperbarui data:
+                                            </div>
+                                            <ul class="list-disc list-inside space-y-0.5 text-[11.5px] text-[#912018] font-medium pl-1">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
                                     
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch flex-1">
                                         <div class="relative dk-rail-modal pl-10 flex flex-col h-full">
@@ -240,9 +253,9 @@
                             <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-5 border-4 border-white shadow-md">
                                 <i class="fa-solid fa-triangle-exclamation"></i>
                             </div>
-                            <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Permohonan?</h3>
+                            <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Pengajuan?</h3>
                             <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">
-                                Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data permohonan <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?
+                                Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data pengajuan <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?
                             </p>
                             <div class="flex gap-3">
                                 <button type="button" onclick="tutupModalDelete('{{ $item->id }}')" class="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
@@ -281,7 +294,7 @@
                                 </div>
                                 <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
                                     <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-0.5">Nama Domain</p>
-                                    <p class="text-[14px] font-black text-blue-700">{{ $dataForm['domain'] ?? '-' }}<span class="text-blue-400">.go.id</span></p>
+                                    <p class="text-[14px] font-black text-blue-700">{{ $dataForm['domain'] ?? '-' }}</p>
                                 </div>
                             </div>
                             <div class="mt-6">
@@ -303,7 +316,7 @@
                             <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <i class="fa-solid fa-folder-open text-2xl text-gray-300"></i>
                             </div>
-                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada data permohonan</h3>
+                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada data pengajuan</h3>
                         </td>
                     </tr>
                 @endforelse
@@ -431,7 +444,7 @@
                 <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">
                     <button type="button" onclick="tutupModalCreate()" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
                     <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg">
-                        Simpan Permohonan <i class="fa-solid fa-paper-plane text-[11px]"></i>
+                        Simpan Pengajuan <i class="fa-solid fa-paper-plane text-[11px]"></i>
                     </button>
                 </div>
             </form>

@@ -53,7 +53,7 @@
             <i class="fa-solid fa-headset w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">
                 <span class="text-[13px]">Bantuan</span>
-                <span class="text-[10px] text-gray-400">Permohonan Reset Sandi</span>
+                <span class="text-[10px] text-gray-400">Pengajuan Reset Sandi</span>
             </div>
         </a>
 

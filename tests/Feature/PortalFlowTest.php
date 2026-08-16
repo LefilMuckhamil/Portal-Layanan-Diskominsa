@@ -204,7 +204,7 @@ class PortalFlowTest extends TestCase
             'phone' => '081234567890',
         ]);
 
-        $response->assertSessionHas('status');
+        $response->assertSessionHas('sukses');
         $this->assertDatabaseHas('password_reset_requests', [
             'email_or_nip' => 'korban@acehbaratkab.go.id',
             'phone' => '081234567890',

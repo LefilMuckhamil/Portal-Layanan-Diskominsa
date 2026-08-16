@@ -58,7 +58,7 @@
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Pengembangan dan pengelolaan website resmi profil desa, gampong, serta instansi daerah.</p>
                 </div>
                 <a href="{{ route('pengajuan.website') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Permohonan</span>
+                    <span class="tracking-wide">Ajukan Pengajuan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -74,7 +74,7 @@
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Pembuatan dan aktivasi akun email resmi korporat berkategori go.id untuk seluruh ASN daerah.</p>
                 </div>
                 <a href="{{ route('pengajuan.email') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Permohonan</span>
+                    <span class="tracking-wide">Ajukan Pengajuan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -90,7 +90,7 @@
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Fasilitasi penerbitan Tanda Tangan Elektronik tersertifikasi BSrE BSSN untuk pejabat instansi.</p>
                 </div>
                 <a href="{{ route('pengajuan.tte') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Permohonan</span>
+                    <span class="tracking-wide">Ajukan Pengajuan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -106,7 +106,7 @@
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8">Penyimpanan server cloud terdedikasi untuk manajemen dokumen dan kolaborasi file perangkat daerah.</p>
                 </div>
                 <a href="{{ route('pengajuan.cloud') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Permohonan</span>
+                    <span class="tracking-wide">Ajukan Pengajuan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>
@@ -122,7 +122,7 @@
                     <p class="text-xs text-slate-400 leading-relaxed font-normal mb-8 max-w-xl">Layanan pertolongan cepat untuk kendala sistem, reset sandi email resmi, bantuan kendala OTP, serta permasalahan teknis jaringan ASN.</p>
                 </div>
                 <a href="{{ route('pengajuan.bantuan') }}" class="inline-flex items-center justify-between w-full pt-4 border-t border-white/10 text-xs font-bold text-white group-hover:text-white transition-colors">
-                    <span class="tracking-wide">Ajukan Permohonan</span>
+                    <span class="tracking-wide">Ajukan Pengajuan</span>
                     <i class="fa-solid fa-arrow-right text-xs transform group-hover:translate-x-1.5 transition-transform"></i>
                 </a>
             </div>

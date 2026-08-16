@@ -14,7 +14,7 @@ class PengajuanLog extends Model
     protected $fillable = [
         'pengajuan_id',
         'status',
-        'catatan_admin'
+        'catatan_admin',
     ];
 
     public function pengajuan()

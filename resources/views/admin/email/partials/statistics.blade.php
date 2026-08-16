@@ -5,7 +5,7 @@
                 <i class="fa-solid fa-envelope-circle-check"></i>
             </div>
         </div>
-        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Total Permohonan</p>
+        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Total Pengajuan</p>
         <div class="flex items-end gap-2 mt-1">
             <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $total ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-cyan-500 mb-1">Akun</span>

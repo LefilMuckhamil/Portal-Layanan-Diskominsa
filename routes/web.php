@@ -151,9 +151,6 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
     Route::get('/layanan-bantuan', [AdminPengajuanController::class, 'layananBantuan'])->name('admin.bantuan.index');
 
     Route::prefix('pengajuan')->group(function () {
-        Route::get('/', [AdminPengajuanController::class, 'index'])->name('admin.pengajuan.index');
-        Route::get('/{id}', [AdminPengajuanController::class, 'show'])->name('admin.pengajuan.show')->whereNumber('id');
-
         Route::middleware('throttle:20,1')->group(function () {
             Route::post('/store-website', [AdminPengajuanController::class, 'storeWebsite'])->name('admin.pengajuan.storeWebsite');
             Route::post('/store-email', [AdminPengajuanController::class, 'storeEmailResmi'])->name('admin.pengajuan.storeEmail');

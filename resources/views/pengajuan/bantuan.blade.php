@@ -87,14 +87,14 @@
                     <div class="flex items-center gap-2 mb-0.5">
                         <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
                     </div>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Pilih jenis permohonan bantuan dan lengkapi identitas pemohon.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Pilih jenis pengajuan bantuan dan lengkapi identitas pemohon.</p>
 
                     <div class="mb-5">
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Kategori Kendala</label>
                         <div class="dk-input flex items-center px-3.5 relative">
                             <i class="fa-solid fa-layer-group text-rose-500 text-[14px] mr-2.5"></i>
                             <select name="data_pengajuan[kategori]" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                <option value="Reset Password" {{ old('data_pengajuan.kategori', 'Reset Password') == 'Reset Password' ? 'selected' : '' }}>Reset Password</option>
+                                <option value="Reset Password Email" {{ old('data_pengajuan.kategori', 'Reset Password Email') == 'Reset Password Email' ? 'selected' : '' }}>Reset Password Email</option>
                             </select>
                             <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
                         </div>
@@ -114,8 +114,8 @@
 
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
-                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Data Permohonan</h3>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi akun resmi yang bermasalah dan unggah berkas permohonan.</p>
+                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Data Pengajuan</h3>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi akun resmi yang bermasalah dan unggah berkas pengajuan.</p>
 
                     <div class="mb-6">
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Email Resmi yang Ingin Direset</label>

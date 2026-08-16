@@ -87,7 +87,7 @@
                     <div class="flex items-center gap-2 mb-0.5">
                         <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
                     </div>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang mengajukan permohonan.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang mengajukan layanan.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
@@ -96,7 +96,7 @@
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP</label>
-                            <input type="number" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" inputmode="numeric" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor Hp</label>

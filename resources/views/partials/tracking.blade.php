@@ -36,7 +36,7 @@
                 
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
                     <div>
-                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Permohonan</span>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pengajuan</span>
                         <h3 id="card-id-tiket" class="text-lg md:text-xl font-bold text-white mt-0.5">-</h3>
                         <p id="card-nama-layanan" class="text-xs text-cyan-400 font-medium mt-0.5">-</p>
                     </div>

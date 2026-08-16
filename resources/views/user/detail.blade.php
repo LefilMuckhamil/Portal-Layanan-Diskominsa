@@ -44,7 +44,7 @@
                     <div class="flex justify-between items-start mb-6">
                         <div>
                             <span class="bg-slate-100 text-[#16324F] font-black px-3.5 py-1.5 rounded-lg text-[12px] uppercase tracking-wider border border-slate-200">
-                                {{ $pengajuan->nomor_tiket ?? '#REQ-' . strtoupper(substr($pengajuan->id, -5)) }}
+                                {{ $pengajuan->nomor_tiket }}
                             </span>
                             <h2 class="text-2xl font-black text-[#101828] mt-3.5 capitalize">
                                 Pengajuan {{ str_replace('_', ' ', $pengajuan->jenis_layanan) }}
@@ -157,6 +157,7 @@
                     @endif
                 </div>
 
+                @if($chatAktif)
                 <div class="bg-white p-4 border-t border-[#E4E7EC] z-10">
                     <form action="{{ route('user.pengajuan.pesan', $pengajuan->id) }}" method="POST" class="flex gap-2">
                         @csrf
@@ -166,6 +167,7 @@
                         </button>
                     </form>
                 </div>
+                @endif
 
             </div>
 

@@ -22,7 +22,11 @@ class ResetPasswordAdminController extends Controller
         $requestData = DB::table('password_reset_requests')->where('id', $id)->first();
 
         if (! $requestData) {
-            return back()->with('error', 'Permohonan tidak ditemukan.');
+            return back()->with('error', 'Pengajuan tidak ditemukan.');
+        }
+
+        if ($requestData->status !== 'pending') {
+            return back()->with('error', 'Permintaan reset sandi ini sudah diproses sebelumnya.');
         }
 
         $user = User::where('email', $requestData->email_or_nip)
@@ -34,7 +38,7 @@ class ResetPasswordAdminController extends Controller
         }
 
         if (ForgotPasswordController::normalizePhone($user->no_hp) !== ForgotPasswordController::normalizePhone($requestData->phone)) {
-            return back()->with('error', 'Nomor WhatsApp pada permohonan tidak cocok dengan nomor HP yang terdaftar pada akun tersebut. Reset dibatalkan untuk keamanan.');
+            return back()->with('error', 'Nomor WhatsApp pada pengajuan tidak cocok dengan nomor HP yang terdaftar pada akun tersebut. Reset dibatalkan untuk keamanan.');
         }
 
         $newPassword = 'Pass'.rand(100000, 999999).'!';
@@ -49,7 +53,7 @@ class ResetPasswordAdminController extends Controller
         $cleanPhone = preg_replace('/[^0-9]/', '', $user->no_hp);
         $phone = preg_replace('/^0/', '62', $cleanPhone);
 
-        $pesanTeks = "Halo {$user->name}, permohonan reset kata sandi Anda pada Portal Layanan Diskominsa telah disetujui.\n\n"
+        $pesanTeks = "Halo {$user->name}, permintaan reset kata sandi Anda pada Portal Layanan Diskominsa telah disetujui.\n\n"
                    ."Kata Sandi Baru: *{$newPassword}*\n\n"
                    .'Silakan masuk dan segera ubah kata sandi Anda pada menu profil demi keamanan.';
 

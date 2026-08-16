@@ -108,7 +108,7 @@
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
                     <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Spesifikasi Cloud &amp; Dokumen</h3>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Konfigurasi kapasitas penyimpanan cloud dan berkas permohonan.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Konfigurasi kapasitas penyimpanan cloud dan berkas pengajuan.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                         <div>

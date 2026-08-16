@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-            Schema::create('password_reset_requests', function (Blueprint $table) {
-                $table->id();
-                $table->string('email_or_nip');
-                $table->string('phone');
-                $table->enum('status', ['pending', 'processed'])->default('pending');
-                $table->timestamps();
-            });
-         }
+        Schema::create('password_reset_requests', function (Blueprint $table) {
+            $table->id();
+            $table->string('email_or_nip');
+            $table->string('phone');
+            $table->enum('status', ['pending', 'processed'])->default('pending');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

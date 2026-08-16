@@ -6,9 +6,9 @@
                 <i class="fa-solid fa-cloud-arrow-up"></i>
             </div>
         </div>
-        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Total Permohonan</p>
+        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Total Pengajuan</p>
         <div class="flex items-end gap-2 mt-1">
-            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->count() }}</h3>
+            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $total ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-cyan-500 mb-1">Ajuan</span>
         </div>
     </div>
@@ -21,7 +21,7 @@
         </div>
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Pending</p>
         <div class="flex items-end gap-2 mt-1">
-            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->where('status', 'Pending')->count() }}</h3>
+            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pending ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-amber-500 mb-1">Antrean</span>
         </div>
     </div>
@@ -34,7 +34,7 @@
         </div>
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Proses</p>
         <div class="flex items-end gap-2 mt-1">
-            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->where('status', 'Proses')->count() }}</h3>
+            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $proses ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-blue-500 mb-1">Akun</span>
         </div>
     </div>
@@ -47,7 +47,7 @@
         </div>
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Selesai</p>
         <div class="flex items-end gap-2 mt-1">
-            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->where('status', 'Selesai')->count() }}</h3>
+            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $selesai ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-green-500 mb-1">Pengguna</span>
         </div>
     </div>
@@ -60,7 +60,7 @@
         </div>
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Ditolak</p>
         <div class="flex items-end gap-2 mt-1">
-            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $pengajuans->where('status', 'Ditolak')->count() }}</h3>
+            <h3 class="text-3xl font-extrabold text-[#071E3D]">{{ $ditolak ?? 0 }}</h3>
             <span class="text-[10px] font-bold text-rose-500 mb-1">Batal</span>
         </div>
     </div>

@@ -1,6 +1,6 @@
 @php
     $statistik = [
-        ['title' => 'Total Permohonan', 'count' => $total ?? 0, 'label' => 'Unit Web', 'icon' => 'fa-laptop-code', 'theme' => 'indigo'],
+        ['title' => 'Total Pengajuan', 'count' => $total ?? 0, 'label' => 'Unit Web', 'icon' => 'fa-laptop-code', 'theme' => 'indigo'],
         ['title' => 'Pending', 'count' => $pending ?? 0, 'label' => 'Antrian', 'icon' => 'fa-hourglass-half', 'theme' => 'amber'],
         ['title' => 'Proses', 'count' => $proses ?? 0, 'label' => 'Dikerjakan', 'icon' => 'fa-code', 'theme' => 'blue'],
         ['title' => 'Selesai', 'count' => $selesai ?? 0, 'label' => 'Selesai', 'icon' => 'fa-check-circle', 'theme' => 'green'],
