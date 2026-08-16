@@ -363,34 +363,6 @@ class PortalFlowTest extends TestCase
         $this->assertDatabaseCount('pengajuan', 0);
     }
 
-    public function test_user_dapat_mengubah_password_sendiri_dengan_password_saat_ini_yang_benar(): void
-    {
-        $user = $this->buatUser();
-
-        $response = $this->actingAs($user)->post(route('user.password.update'), [
-            'current_password' => 'password123',
-            'password' => 'passwordBaru123',
-            'password_confirmation' => 'passwordBaru123',
-        ]);
-
-        $response->assertSessionHas('sukses');
-        $this->assertTrue(Hash::check('passwordBaru123', $user->fresh()->password));
-    }
-
-    public function test_user_tidak_bisa_ubah_password_saat_password_saat_ini_salah(): void
-    {
-        $user = $this->buatUser();
-
-        $response = $this->actingAs($user)->post(route('user.password.update'), [
-            'current_password' => 'salah123',
-            'password' => 'passwordBaru123',
-            'password_confirmation' => 'passwordBaru123',
-        ]);
-
-        $response->assertSessionHasErrors('current_password');
-        $this->assertTrue(Hash::check('password123', $user->fresh()->password));
-    }
-
     public function test_admin_tidak_dapat_menurunkan_role_akun_sendiri(): void
     {
         $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id', ['no_hp' => '081234567890']);

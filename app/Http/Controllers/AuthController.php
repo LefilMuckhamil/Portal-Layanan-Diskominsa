@@ -19,6 +19,9 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
+        // Normalisasi email sebelum autentikasi agar konsisten terlepas dari kapitalisasi/spasi.
+        $request->merge(['email' => strtolower(trim($request->email))]);
+
         $key = 'login_attempt_'.strtolower($request->email);
         if (Cache::get($key, 0) >= 5) {
             return back()->withErrors([
