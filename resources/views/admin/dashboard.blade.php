@@ -103,6 +103,16 @@
                         <i class="fa-solid fa-rotate-left mr-1"></i> Reset
                     </a>
                 @endif
+                @php
+                    $exportParams = array_filter([
+                        'start_date' => $dateMulai,
+                        'end_date' => $dateSelesai,
+                        'status' => request('status'),
+                    ]);
+                @endphp
+                <a href="{{ route('admin.pengajuan.export', $exportParams) }}" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-[12px] font-bold transition-colors shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-excel"></i> Unduh Rekap
+                </a>
             </div>
         </form>
     </div>

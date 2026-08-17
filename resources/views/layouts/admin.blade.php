@@ -126,6 +126,73 @@
                 if (!m.classList.contains('hidden')) { tutupModalLogout(); }
             }
         });
+
+        (function () {
+            let pollTimer = null;
+
+            function getChatUrl(id) {
+                return '{{ url("/admin/pengajuan") }}/' + id + '/chat';
+            }
+
+            function escapeHtml(str) {
+                const d = document.createElement('div');
+                d.textContent = str;
+                return d.innerHTML;
+            }
+
+            function pollVisibleModals() {
+                document.querySelectorAll('[id^="modal-"]:not(#modal-logout):not(#modal-create)').forEach(function (modal) {
+                    if (modal.classList.contains('hidden')) return;
+                    const id = modal.id.replace('modal-', '');
+                    const chatBox = modal.querySelector('.bg-slate-50.border.border-slate-200\\/80');
+                    if (!chatBox) return;
+                    const currentCount = chatBox.querySelectorAll('.flex.flex-col').length;
+
+                    fetch(getChatUrl(id), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.status !== 'success') return;
+                        const pesan = data.pesan || [];
+                        if (pesan.length <= currentCount) return;
+
+                        const newMessages = pesan.slice(currentCount);
+                        newMessages.forEach(function (msg) {
+                            const isUser = msg.role === 'user';
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'flex flex-col ' + (isUser ? 'items-start' : 'items-end');
+
+                            const bubble = document.createElement('div');
+                            bubble.className = 'max-w-[85%] px-3 py-1.5 rounded-xl text-[11.5px] ' +
+                                (isUser ? 'bg-white border border-slate-200 text-[#101828] rounded-bl-none shadow-sm' : 'bg-[#16324F] text-white rounded-br-none');
+
+                            const sender = document.createElement('p');
+                            sender.className = 'font-bold text-[9.5px] opacity-80 mb-0.5';
+                            sender.textContent = msg.pengirim || '';
+
+                            const isi = document.createElement('p');
+                            isi.className = 'leading-relaxed';
+                            isi.textContent = msg.isi || '';
+
+                            bubble.append(sender, isi);
+
+                            const waktu = document.createElement('span');
+                            waktu.className = 'text-[9px] text-[#667085] mt-0.5';
+                            waktu.textContent = msg.waktu || '';
+
+                            wrapper.append(bubble, waktu);
+                            chatBox.appendChild(wrapper);
+                        });
+
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    })
+                    .catch(function () {});
+                });
+            }
+
+            pollTimer = setInterval(pollVisibleModals, 6000);
+        })();
     </script>
 </body>
 </html>

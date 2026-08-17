@@ -186,4 +186,67 @@ function copyTiket(tiket) {
         setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 1500);
     });
 }
+
+(function () {
+    const chatUrl = '{{ route("user.pengajuan.chat", $pengajuan->id) }}';
+    const chatContainer = document.querySelector('.custom-scrollbar');
+    const userPesanCount = @json(count(array_filter($pengajuan->pesan ?? [], fn($p) => ($p['role'] ?? '') === 'user')));
+
+    let lastCount = {{ count($pengajuan->pesan ?? []) }};
+
+    function pollChat() {
+        fetch(chatUrl, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status !== 'success') return;
+            const pesan = data.pesan || [];
+            if (pesan.length === lastCount) return;
+
+            const chatArea = document.querySelector('.flex-grow.p-5.overflow-y-auto');
+            if (!chatArea) return;
+
+            const bubbles = chatArea.querySelectorAll('.flex.flex-col.items-end, .flex.flex-col.items-start');
+            const newMessages = pesan.slice(bubbles.length);
+
+            newMessages.forEach(msg => {
+                const isUser = msg.role === 'user';
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex flex-col ' + (isUser ? 'items-end' : 'items-start') + ' animate-fade-in-down';
+
+                const bubble = document.createElement('div');
+                bubble.className = isUser
+                    ? 'bg-[#16324F] text-white p-3.5 rounded-2xl rounded-tr-none max-w-[85%] shadow-sm'
+                    : 'bg-slate-100 border border-slate-200 text-slate-900 p-3.5 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm';
+
+                const senderHtml = isUser
+                    ? ''
+                    : '<p class="text-[10px] font-black text-sky-700 mb-0.5">' + (msg.pengirim || 'Admin Diskominsa') + '</p>';
+
+                bubble.innerHTML = senderHtml + '<p class="text-[12.5px] font-medium leading-relaxed">' + escapeHtml(msg.isi || '') + '</p>';
+
+                const waktu = document.createElement('span');
+                waktu.className = 'text-[9.5px] text-[#667085] font-bold mt-1';
+                waktu.textContent = msg.waktu || '';
+
+                wrapper.append(bubble, waktu);
+                chatArea.appendChild(wrapper);
+            });
+
+            lastCount = pesan.length;
+            if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+        })
+        .catch(() => {});
+    }
+
+    function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    setInterval(pollChat, 6000);
+    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+})();
 </script>

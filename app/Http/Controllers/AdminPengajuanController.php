@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
+use App\Models\PengajuanLog;
 use App\Models\User;
 use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class AdminPengajuanController extends Controller
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
+        $statusSebelumnya = $pengajuan->status;
         $pengajuan->status = $request->status;
 
         $dataPengajuan = is_array($pengajuan->data_pengajuan)
@@ -66,6 +68,14 @@ class AdminPengajuanController extends Controller
 
         $pengajuan->save();
 
+        PengajuanLog::create([
+            'pengajuan_id' => $pengajuan->id,
+            'admin_id' => auth()->id(),
+            'status_lama' => $statusSebelumnya,
+            'status' => $request->status,
+            'catatan_admin' => $request->catatan ?? null,
+        ]);
+
         return back()->with('sukses', 'Update progres dan file hasil sukses disimpan!');
     }
 
@@ -107,6 +117,80 @@ class AdminPengajuanController extends Controller
         if (Storage::disk('local')->exists($path)) {
             Storage::disk('local')->delete($path);
         }
+    }
+
+    public function getChat($id)
+    {
+        $pengajuan = Pengajuan::findOrFail($id);
+
+        $pesan = is_array($pengajuan->pesan)
+            ? $pengajuan->pesan
+            : (json_decode((string) $pengajuan->getRawOriginal('pesan') ?? '[]', true) ?: []);
+
+        return response()->json([
+            'status' => 'success',
+            'pesan' => $pesan,
+        ]);
+    }
+
+    public function export(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'nullable|date_format:Y-m-d',
+            'end_date' => 'nullable|date_format:Y-m-d',
+            'status' => 'nullable|string',
+        ]);
+
+        $query = Pengajuan::with('user');
+
+        if ($request->filled('start_date')) {
+            $query->where('created_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->where('created_at', '<=', $request->end_date.' 23:59:59');
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->get();
+
+        $filename = 'rekap_pengajuan_'.now()->format('Ymd_His').'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $callback = function () use ($pengajuans) {
+            $file = fopen('php://output', 'w');
+
+            // UTF-8 BOM for Excel compatibility
+            fprintf($file, '%s', chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Header
+            fputcsv($file, ['Nomor Tiket', 'Nama Pemohon', 'NIP', 'Instansi', 'Layanan', 'Status', 'Tanggal Pengajuan'], ';');
+
+            foreach ($pengajuans as $item) {
+                $data = is_array($item->data_pengajuan)
+                    ? $item->data_pengajuan
+                    : (json_decode((string) $item->getRawOriginal('data_pengajuan') ?? '{}', true) ?: []);
+
+                fputcsv($file, [
+                    $item->nomor_tiket,
+                    $data['nama'] ?? $item->user->name ?? '-',
+                    $data['nip'] ?? $item->user->nip ?? '-',
+                    $data['instansi'] ?? $item->user->unit_kerja ?? '-',
+                    $item->jenis_layanan,
+                    $item->status,
+                    $item->created_at->format('d M Y, H:i'),
+                ], ';');
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function website(Request $request)

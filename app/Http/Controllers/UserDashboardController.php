@@ -68,4 +68,18 @@ class UserDashboardController extends Controller
 
         return redirect()->back();
     }
+
+    public function getChat($id)
+    {
+        $pengajuan = Pengajuan::where('user_id', auth()->id())->findOrFail($id);
+
+        $pesan = is_array($pengajuan->pesan)
+            ? $pengajuan->pesan
+            : (json_decode((string) $pengajuan->getRawOriginal('pesan') ?? '[]', true) ?: []);
+
+        return response()->json([
+            'status' => 'success',
+            'pesan' => $pesan,
+        ]);
+    }
 }

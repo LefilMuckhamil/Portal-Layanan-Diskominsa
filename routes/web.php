@@ -82,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan')->middleware('throttle:20,1');
+    Route::get('/riwayat-pengajuan/{id}/chat', [UserDashboardController::class, 'getChat'])->name('user.pengajuan.chat');
 
     Route::get('/dokumen/{pengajuan}/{jenis}', [DocumentController::class, 'unduh'])->name('dokumen.unduh');
 });
@@ -215,6 +216,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
     Route::get('/layanan-cloud', [AdminPengajuanController::class, 'layananCloud'])->name('admin.cloud.index');
     Route::get('/layanan-bantuan', [AdminPengajuanController::class, 'layananBantuan'])->name('admin.bantuan.index');
 
+    Route::get('/pengajuan/export', [AdminPengajuanController::class, 'export'])->name('admin.pengajuan.export')->middleware('throttle:5,1');
+
     Route::prefix('pengajuan')->group(function () {
         Route::middleware('throttle:20,1')->group(function () {
             Route::post('/store-website', [AdminPengajuanController::class, 'storeWebsite'])->name('admin.pengajuan.storeWebsite');
@@ -226,6 +229,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
             Route::delete('/{id}/destroy', [AdminPengajuanController::class, 'destroy'])->name('admin.pengajuan.destroy');
             Route::put('/{id}/update', [AdminPengajuanController::class, 'updateProgres'])->name('admin.pengajuan.update');
         });
+
+        Route::get('/{id}/chat', [AdminPengajuanController::class, 'getChat'])->name('admin.pengajuan.chat');
     });
 
 });

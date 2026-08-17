@@ -342,6 +342,79 @@
             if (urlId && document.getElementById('panel-detail-' + urlId)) {
                 pilihPengajuan(urlId);
             }
+
+            const chatPollingIntervals = {};
+
+            function startChatPolling(id) {
+                if (chatPollingIntervals[id]) return;
+                const chatBox = document.getElementById('chat-box-' + id);
+                if (!chatBox) return;
+
+                let lastCount = chatBox.querySelectorAll('.flex.flex-col').length;
+
+                chatPollingIntervals[id] = setInterval(function () {
+                    fetch('{{ url("/riwayat-pengajuan") }}/' + id + '/chat', {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.status !== 'success') return;
+                        var pesan = data.pesan || [];
+                        if (pesan.length === lastCount) return;
+
+                        var bubbles = chatBox.querySelectorAll('.flex.flex-col');
+                        var newMessages = pesan.slice(bubbles.length);
+
+                        newMessages.forEach(function(msg) {
+                            var isUser = msg.role === 'user';
+                            var wrapper = document.createElement('div');
+                            wrapper.className = 'flex flex-col ' + (isUser ? 'items-end' : 'items-start');
+
+                            var bubble = document.createElement('div');
+                            bubble.className = 'max-w-[85%] p-3 rounded-2xl text-[12.5px] font-medium ' +
+                                (isUser ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-slate-100 text-slate-900 rounded-bl-none border border-slate-200');
+
+                            var sender = document.createElement('p');
+                            sender.className = 'font-black text-[10px] opacity-80 mb-0.5';
+                            sender.textContent = msg.pengirim || '';
+
+                            var isi = document.createElement('p');
+                            isi.className = 'leading-relaxed';
+                            isi.textContent = msg.isi || '';
+
+                            bubble.append(sender, isi);
+
+                            var waktu = document.createElement('span');
+                            waktu.className = 'text-[9.5px] font-bold text-[#667085] mt-1';
+                            waktu.textContent = msg.waktu || '';
+
+                            wrapper.append(bubble, waktu);
+                            chatBox.appendChild(wrapper);
+                        });
+
+                        lastCount = pesan.length;
+                        var panelDetail = document.getElementById('panel-detail-' + id);
+                        if (panelDetail) panelDetail.scrollTop = panelDetail.scrollHeight;
+                    })
+                    .catch(function() {});
+                }, 6000);
+            }
+
+            function stopChatPolling(id) {
+                if (chatPollingIntervals[id]) {
+                    clearInterval(chatPollingIntervals[id]);
+                    delete chatPollingIntervals[id];
+                }
+            }
+
+            var originalPilihPengajuan = window.pilihPengajuan;
+            window.pilihPengajuan = function (id) {
+                Object.keys(chatPollingIntervals).forEach(function(k) {
+                    if (k !== String(id)) stopChatPolling(k);
+                });
+                originalPilihPengajuan(id);
+                startChatPolling(id);
+            };
         });
     </script>
 @endsection
