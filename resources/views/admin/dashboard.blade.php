@@ -107,18 +107,29 @@
         </form>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
-            <h3 class="text-[14px] font-extrabold text-[#071E3D] mb-4"><i class="fa-solid fa-chart-bar text-cyan-500 mr-2"></i>Volume Pengajuan per Layanan</h3>
-            <div class="relative w-full" style="height: 260px;">
+            <h3 class="text-[14px] font-extrabold text-[#071E3D] mb-4"><i class="fa-solid fa-chart-pie text-cyan-500 mr-2"></i>Komposisi Status</h3>
+            <div class="relative w-full flex items-center justify-center" style="height: 240px;">
+                <canvas id="chartStatus"></canvas>
+            </div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
+            <h3 class="text-[14px] font-extrabold text-[#071E3D] mb-4"><i class="fa-solid fa-chart-bar text-cyan-500 mr-2"></i>Volume per Layanan</h3>
+            <div class="relative w-full" style="height: 240px;">
                 <canvas id="chartLayanan"></canvas>
             </div>
         </div>
         <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
-            <h3 class="text-[14px] font-extrabold text-[#071E3D] mb-4"><i class="fa-solid fa-chart-pie text-cyan-500 mr-2"></i>Komposisi Status Pengajuan</h3>
-            <div class="relative w-full flex items-center justify-center" style="height: 260px;">
-                <canvas id="chartStatus"></canvas>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-[14px] font-extrabold text-[#071E3D]"><i class="fa-solid fa-calendar-days text-cyan-500 mr-2"></i>Kalender</h3>
+                @if($tanggal)
+                    <a href="{{ route('admin.dashboard', ['date_mulai' => request('date_mulai'), 'date_selesai' => request('date_selesai'), 'search' => request('search'), 'status' => request('status')]) }}" class="text-[11px] font-bold text-cyan-600 hover:text-cyan-800 transition-colors">
+                        <i class="fa-solid fa-rotate-left mr-1"></i>Tampilkan Semua
+                    </a>
+                @endif
             </div>
+            <div id="calendarWidget" class="select-none"></div>
         </div>
     </div>
 
@@ -264,7 +275,7 @@
                                 grid: { color: '#f1f5f9' }
                             },
                             x: {
-                                ticks: { font: { size: 11, family: 'Outfit', weight: '600' } },
+                                ticks: { font: { size: 10, family: 'Outfit', weight: '600' } },
                                 grid: { display: false }
                             }
                         }
@@ -295,15 +306,81 @@
                             legend: {
                                 position: 'bottom',
                                 labels: {
-                                    padding: 16,
+                                    padding: 12,
                                     usePointStyle: true,
                                     pointStyle: 'circle',
-                                    font: { size: 11, family: 'Outfit', weight: '600' }
+                                    font: { size: 10, family: 'Outfit', weight: '600' }
                                 }
                             }
                         }
                     }
                 });
+            }
+
+            // Calendar Widget
+            const calEl = document.getElementById('calendarWidget');
+            if (calEl) {
+                const activeTanggal = @json($tanggal);
+                const baseParams = @json($calendarParams);
+                let viewDate = activeTanggal ? new Date(activeTanggal + 'T00:00:00') : new Date();
+
+                function renderCalendar() {
+                    const year = viewDate.getFullYear();
+                    const month = viewDate.getMonth();
+                    const firstDay = new Date(year, month, 1).getDay();
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+                    const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                    const dayNames = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+
+                    let html = '<div class="flex items-center justify-between mb-3">';
+                    html += '<button id="calPrev" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 text-[11px] transition-colors cursor-pointer"><i class="fa-solid fa-chevron-left"></i></button>';
+                    html += '<span class="text-[13px] font-extrabold text-[#071E3D]">' + monthNames[month] + ' ' + year + '</span>';
+                    html += '<button id="calNext" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 text-[11px] transition-colors cursor-pointer"><i class="fa-solid fa-chevron-right"></i></button>';
+                    html += '</div>';
+
+                    html += '<div class="grid grid-cols-7 gap-0 mb-1">';
+                    dayNames.forEach(d => {
+                        html += '<div class="text-center text-[10px] font-bold text-gray-400 py-1">' + d + '</div>';
+                    });
+                    html += '</div>';
+
+                    html += '<div class="grid grid-cols-7 gap-0">';
+                    for (let i = 0; i < firstDay; i++) {
+                        html += '<div></div>';
+                    }
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+                        const isActive = activeTanggal === dateStr;
+                        const isToday = new Date().toISOString().slice(0, 10) === dateStr;
+                        let cls = 'w-full aspect-square flex items-center justify-center text-[12px] font-bold rounded-lg transition-all cursor-pointer ';
+                        if (isActive) {
+                            cls += 'bg-cyan-500 text-white shadow-md';
+                        } else if (isToday) {
+                            cls += 'bg-cyan-50 text-cyan-600 hover:bg-cyan-100';
+                        } else {
+                            cls += 'text-gray-600 hover:bg-gray-100';
+                        }
+                        const params = new URLSearchParams(baseParams);
+                        params.set('tanggal', dateStr);
+                        html += '<a href="{{ route("admin.dashboard") }}?' + params.toString() + '" class="' + cls + '">' + day + '</a>';
+                    }
+                    html += '</div>';
+
+                    calEl.innerHTML = html;
+
+                    document.getElementById('calPrev').addEventListener('click', function (e) {
+                        e.preventDefault();
+                        viewDate.setMonth(viewDate.getMonth() - 1);
+                        renderCalendar();
+                    });
+                    document.getElementById('calNext').addEventListener('click', function (e) {
+                        e.preventDefault();
+                        viewDate.setMonth(viewDate.getMonth() + 1);
+                        renderCalendar();
+                    });
+                }
+
+                renderCalendar();
             }
         });
     </script>

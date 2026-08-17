@@ -66,7 +66,7 @@ class PortalFlowTest extends TestCase
         $this->post('/login', [
             'email' => $user->email,
             'password' => 'password123',
-        ])->assertRedirect(route('user.riwayat'));
+        ])->assertRedirect('/');
 
         $response = $this->post(route('pengajuan.website.store'), [
             'data_pengajuan' => [

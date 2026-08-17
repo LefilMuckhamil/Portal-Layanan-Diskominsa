@@ -56,6 +56,23 @@
 
     </main>
 
+    <div id="modal-logout" class="fixed inset-0 z-50 hidden items-center justify-center">
+        <div onclick="tutupModalLogout()" class="absolute inset-0 bg-[#071E3D]/60 backdrop-blur-sm transition-opacity"></div>
+        <div class="relative bg-white rounded-2xl p-6 shadow-2xl w-full max-w-sm mx-4 z-10">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </div>
+                <h3 class="text-[16px] font-extrabold text-[#071E3D] mb-1">Konfirmasi Keluar</h3>
+                <p class="text-[13px] text-gray-500 font-medium mb-6">Apakah Anda yakin ingin mengakhiri sesi admin saat ini?</p>
+                <div class="flex gap-3 w-full">
+                    <button onclick="tutupModalLogout()" class="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[13px] transition-colors cursor-pointer">Batal</button>
+                    <button onclick="document.getElementById('form-logout').submit()" class="flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-[13px] transition-colors cursor-pointer">Ya, Keluar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const sidebar = document.getElementById('adminSidebar');
         const backdrop = document.getElementById('sidebarBackdrop');
@@ -92,6 +109,23 @@
                 setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 1500);
             });
         }
+
+        function bukaModalLogout() {
+            const m = document.getElementById('modal-logout');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+        function tutupModalLogout() {
+            const m = document.getElementById('modal-logout');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const m = document.getElementById('modal-logout');
+                if (!m.classList.contains('hidden')) { tutupModalLogout(); }
+            }
+        });
     </script>
 </body>
 </html>

@@ -97,16 +97,24 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         $request->validate([
             'date_mulai' => 'nullable|date_format:Y-m-d',
             'date_selesai' => 'nullable|date_format:Y-m-d',
+            'tanggal' => 'nullable|date_format:Y-m-d',
         ], [
             'date_mulai.date_format' => 'Format tanggal mulai tidak valid.',
             'date_selesai.date_format' => 'Format tanggal selesai tidak valid.',
+            'tanggal.date_format' => 'Format tanggal tidak valid.',
         ]);
 
         $dateMulai = $request->filled('date_mulai') ? $request->date_mulai : null;
         $dateSelesai = $request->filled('date_selesai') ? $request->date_selesai : null;
+        $tanggal = $request->filled('tanggal') ? $request->tanggal : null;
 
         if ($dateMulai && $dateSelesai && $dateMulai > $dateSelesai) {
             return back()->with('error', 'Tanggal mulai tidak boleh melebihi tanggal selesai.');
+        }
+
+        if ($tanggal) {
+            $dateMulai = $tanggal;
+            $dateSelesai = $tanggal;
         }
 
         $dateScope = function ($q) use ($dateMulai, $dateSelesai) {
@@ -164,9 +172,16 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         $pengajuans = $query->latest()->paginate(10);
         $chatAktif = Cache::get('chat_global_aktif', true);
 
+        $calendarParams = array_filter([
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+            'date_mulai' => $request->input('date_mulai'),
+            'date_selesai' => $request->input('date_selesai'),
+        ]);
+
         return view('admin.dashboard', compact(
             'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan',
-            'pengajuans', 'chatAktif', 'chartData', 'dateMulai', 'dateSelesai'
+            'pengajuans', 'chatAktif', 'chartData', 'dateMulai', 'dateSelesai', 'tanggal', 'calendarParams'
         ));
     })->name('admin.dashboard');
 

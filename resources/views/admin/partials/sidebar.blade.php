@@ -93,9 +93,9 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('logout') }}" class="w-full" onsubmit="return confirm('Apakah Anda yakin ingin keluar dari sistem?')">
+        <form method="POST" action="{{ route('logout') }}" id="form-logout" class="w-full">
             @csrf
-            <button type="submit" class="flex items-center justify-center gap-2 w-full py-2.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl text-[12px] font-bold transition-all duration-300 group cursor-pointer">
+            <button type="button" onclick="bukaModalLogout()" class="flex items-center justify-center gap-2 w-full py-2.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl text-[12px] font-bold transition-all duration-300 group cursor-pointer">
                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>
                 Keluar Sistem
             </button>
