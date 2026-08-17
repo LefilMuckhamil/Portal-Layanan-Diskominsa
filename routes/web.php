@@ -186,6 +186,52 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         ));
     })->name('admin.dashboard');
 
+    Route::get('/dashboard/chart-data', function (Request $request) {
+        $request->validate([
+            'tanggal' => 'nullable|date_format:Y-m-d',
+        ]);
+
+        $dateMulai = $request->filled('tanggal') ? $request->tanggal : null;
+        $dateSelesai = $request->filled('tanggal') ? $request->tanggal : null;
+
+        $dateScope = function ($q) use ($dateMulai, $dateSelesai) {
+            if ($dateMulai) {
+                $q->where('created_at', '>=', $dateMulai);
+            }
+            if ($dateSelesai) {
+                $q->where('created_at', '<=', $dateSelesai.' 23:59:59');
+            }
+        };
+
+        $countWeb = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countEmail = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countTTE = Pengajuan::where('jenis_layanan', 'Layanan TTE')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countCloud = Pengajuan::where('jenis_layanan', 'Cloud Government')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countBantuan = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->when($dateMulai || $dateSelesai, $dateScope)->count();
+
+        $statusCounts = Pengajuan::selectRaw('status, count(*) as total')
+            ->when($dateMulai || $dateSelesai, $dateScope)
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $chartData = [
+            'layanan' => ['Website', 'Email Resmi', 'TTE', 'Cloud Gov', 'Bantuan'],
+            'volume' => [$countWeb, $countEmail, $countTTE, $countCloud, $countBantuan],
+            'status' => [
+                'Pending' => (int) $statusCounts->get('Pending', 0),
+                'Proses' => (int) $statusCounts->get('Proses', 0),
+                'Selesai' => (int) $statusCounts->get('Selesai', 0),
+                'Ditolak' => (int) $statusCounts->get('Ditolak', 0),
+            ],
+        ];
+
+        return response()->json([
+            'status' => 'success',
+            'chartData' => $chartData,
+            'tanggal' => $request->input('tanggal'),
+        ]);
+    })->name('admin.dashboard.chartData');
+
     Route::get('/pengaturan', function () {
         $chatAktif = Cache::get('chat_global_aktif', true);
 

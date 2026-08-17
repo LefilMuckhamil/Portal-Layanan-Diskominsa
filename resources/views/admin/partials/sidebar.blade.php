@@ -55,16 +55,8 @@
         <a href="{{ route('admin.bantuan.index') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.bantuan.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group hover:translate-x-1">
             <i class="fa-solid fa-headset w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
             <div class="flex flex-col leading-tight">
-                <span class="text-[13px]">Bantuan</span>
-                <span class="text-[10px] text-gray-400">Pengajuan Reset Sandi</span>
-            </div>
-        </a>
-
-        <a href="{{ route('admin.pengaturan') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.pengaturan*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group hover:translate-x-1">
-            <i class="fa-solid fa-gear w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
-            <div class="flex flex-col leading-tight">
-                <span class="text-[13px]">Pengaturan</span>
-                <span class="text-[10px] text-gray-400">Konfigurasi Sistem</span>
+                <span class="text-[13px]">Pusat Bantuan</span>
+                <span class="text-[10px] text-gray-400">Pengajuan Reset Sandi / Tiket Bantuan</span>
             </div>
         </a>
 
@@ -83,16 +75,17 @@
                 <span class="text-[10px] text-gray-400">Verifikasi Sandi ASN</span>
             </div>
         </a>
+
+        <a href="{{ route('admin.pengaturan') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.pengaturan*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group hover:translate-x-1">
+            <i class="fa-solid fa-gear w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
+            <div class="flex flex-col leading-tight">
+                <span class="text-[13px]">Pengaturan</span>
+                <span class="text-[10px] text-gray-400">Konfigurasi Sistem</span>
+            </div>
+        </a>
     </div>
 
-    <div class="p-4 border-t border-white/10 flex flex-col gap-3">
-        <div class="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl">
-            <img src="{{ asset('image/icon.png') }}" alt="User" class="w-9 h-9 rounded-full object-contain bg-white p-1 shrink-0">
-            <div class="flex-1 min-w-0">
-                <p class="text-[13px] font-bold text-white truncate">Admin</p>
-            </div>
-        </div>
-
+    <div class="p-4 border-t border-white/10">
         <form method="POST" action="{{ route('logout') }}" id="form-logout" class="w-full">
             @csrf
             <button type="button" onclick="bukaModalLogout()" class="flex items-center justify-center gap-2 w-full py-2.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl text-[12px] font-bold transition-all duration-300 group cursor-pointer">

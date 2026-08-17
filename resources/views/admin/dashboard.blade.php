@@ -83,40 +83,6 @@
 
     </div>
 
-    <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 mt-6">
-        <form method="GET" action="{{ route('admin.dashboard') }}" class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div class="flex items-center gap-2">
-                <i class="fa-regular fa-calendar text-gray-400 text-sm"></i>
-                <span class="text-[12px] font-bold text-gray-500 uppercase tracking-wide">Filter Tanggal</span>
-            </div>
-            <input type="text" name="search" value="{{ request('search') }}" class="hidden">
-            <input type="text" name="status" value="{{ request('status') }}" class="hidden">
-            <div class="flex flex-wrap items-center gap-2 flex-1">
-                <input type="date" name="date_mulai" value="{{ $dateMulai ?? '' }}" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white transition-all">
-                <span class="text-gray-400 text-[11px] font-bold">s/d</span>
-                <input type="date" name="date_selesai" value="{{ $dateSelesai ?? '' }}" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white transition-all">
-                <button type="submit" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg text-[12px] font-bold transition-colors cursor-pointer">
-                    <i class="fa-solid fa-filter mr-1"></i> Terapkan
-                </button>
-                @if($dateMulai || $dateSelesai)
-                    <a href="{{ route('admin.dashboard', ['search' => request('search'), 'status' => request('status')]) }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-[12px] font-bold transition-colors">
-                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset
-                    </a>
-                @endif
-                @php
-                    $exportParams = array_filter([
-                        'start_date' => $dateMulai,
-                        'end_date' => $dateSelesai,
-                        'status' => request('status'),
-                    ]);
-                @endphp
-                <a href="{{ route('admin.pengajuan.export', $exportParams) }}" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-[12px] font-bold transition-colors shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-file-excel"></i> Unduh Rekap
-                </a>
-            </div>
-        </form>
-    </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
             <h3 class="text-[14px] font-extrabold text-[#071E3D] mb-4"><i class="fa-solid fa-chart-pie text-cyan-500 mr-2"></i>Komposisi Status</h3>
@@ -133,11 +99,9 @@
         <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-[14px] font-extrabold text-[#071E3D]"><i class="fa-solid fa-calendar-days text-cyan-500 mr-2"></i>Kalender</h3>
-                @if($tanggal)
-                    <a href="{{ route('admin.dashboard', ['date_mulai' => request('date_mulai'), 'date_selesai' => request('date_selesai'), 'search' => request('search'), 'status' => request('status')]) }}" class="text-[11px] font-bold text-cyan-600 hover:text-cyan-800 transition-colors">
-                        <i class="fa-solid fa-rotate-left mr-1"></i>Tampilkan Semua
-                    </a>
-                @endif
+                <button type="button" id="btnTampilkanSemua" onclick="tampilkanSemua()" class="text-[11px] font-bold text-cyan-600 hover:text-cyan-800 transition-colors {{ $tanggal ? '' : 'hidden' }}">
+                    <i class="fa-solid fa-rotate-left mr-1"></i>Tampilkan Semua
+                </button>
             </div>
             <div id="calendarWidget" class="select-none"></div>
         </div>
@@ -169,6 +133,16 @@
                         </select>
                     </div>
                 </form>
+                @php
+                    $exportParams = array_filter([
+                        'start_date' => $dateMulai,
+                        'end_date' => $dateSelesai,
+                        'status' => request('status'),
+                    ]);
+                @endphp
+                <a id="btnExport" href="{{ route('admin.pengajuan.export', $exportParams) }}" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-[12px] font-bold transition-colors shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-excel"></i> Unduh Rekap
+                </a>
             </div>
         </div>
 
@@ -255,18 +229,90 @@
     </div>
 
     <script>
+        let chartBar, chartDoughnut;
+        let activeTanggal = @json($tanggal);
+        const chartDataUrl = '{{ url("/admin/dashboard/chart-data") }}';
+        const exportBaseUrl = '{{ route("admin.pengajuan.export") }}';
+
+        function updateExportLink(tgl) {
+            const btn = document.getElementById('btnExport');
+            if (!btn) return;
+            btn.href = tgl ? exportBaseUrl + '?start_date=' + tgl + '&end_date=' + tgl : exportBaseUrl;
+        }
+
+        function fetchChartData(tgl) {
+            const url = tgl ? chartDataUrl + '?tanggal=' + tgl : chartDataUrl;
+            fetch(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.status !== 'success') return;
+                updateCharts(data.chartData);
+                updateExportLink(data.tanggal);
+                updateTampilkanSemua(data.tanggal);
+            })
+            .catch(function () {});
+        }
+
+        function updateCharts(cd) {
+            if (chartBar) {
+                chartBar.data.datasets[0].data = cd.volume;
+                chartBar.update();
+            }
+            if (chartDoughnut) {
+                chartDoughnut.data.datasets[0].data = Object.values(cd.status);
+                chartDoughnut.update();
+            }
+        }
+
+        function updateTampilkanSemua(tgl) {
+            const btn = document.getElementById('btnTampilkanSemua');
+            if (btn) {
+                tgl ? btn.classList.remove('hidden') : btn.classList.add('hidden');
+            }
+        }
+
+        function tampilkanSemua() {
+            activeTanggal = null;
+            fetchChartData(null);
+            document.querySelectorAll('#calendarWidget a[data-day]').forEach(function (el) {
+                el.classList.remove('bg-cyan-500', 'text-white', 'shadow-md');
+                if (el.dataset.isToday === 'true') {
+                    el.classList.add('bg-cyan-50', 'text-cyan-600');
+                } else {
+                    el.classList.add('text-gray-600');
+                }
+            });
+        }
+
+        function highlightDay(dateStr) {
+            document.querySelectorAll('#calendarWidget a[data-day]').forEach(function (el) {
+                el.classList.remove('bg-cyan-500', 'text-white', 'shadow-md');
+                if (el.dataset.day === dateStr) {
+                    el.classList.add('bg-cyan-500', 'text-white', 'shadow-md');
+                } else {
+                    if (el.dataset.isToday === 'true') {
+                        el.classList.add('bg-cyan-50', 'text-cyan-600');
+                    } else {
+                        el.classList.add('text-gray-600');
+                    }
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            const chartData = @json($chartData);
+            const initChartData = @json($chartData);
 
             const barCtx = document.getElementById('chartLayanan');
             if (barCtx) {
-                new Chart(barCtx, {
+                chartBar = new Chart(barCtx, {
                     type: 'bar',
                     data: {
-                        labels: chartData.layanan,
+                        labels: initChartData.layanan,
                         datasets: [{
                             label: 'Jumlah Pengajuan',
-                            data: chartData.volume,
+                            data: initChartData.volume,
                             backgroundColor: ['#818cf8', '#22d3ee', '#34d399', '#38bdf8', '#fb7185'],
                             borderRadius: 8,
                             borderSkipped: false
@@ -275,9 +321,7 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        },
+                        plugins: { legend: { display: false } },
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -295,9 +339,9 @@
 
             const doughnutCtx = document.getElementById('chartStatus');
             if (doughnutCtx) {
-                const statusData = chartData.status;
-                const hasData = Object.values(statusData).some(v => v > 0);
-                new Chart(doughnutCtx, {
+                const statusData = initChartData.status;
+                const hasData = Object.values(statusData).some(function (v) { return v > 0; });
+                chartDoughnut = new Chart(doughnutCtx, {
                     type: 'doughnut',
                     data: {
                         labels: Object.keys(statusData),
@@ -330,7 +374,6 @@
             // Calendar Widget
             const calEl = document.getElementById('calendarWidget');
             if (calEl) {
-                const activeTanggal = @json($tanggal);
                 const baseParams = @json($calendarParams);
                 let viewDate = activeTanggal ? new Date(activeTanggal + 'T00:00:00') : new Date();
 
@@ -349,7 +392,7 @@
                     html += '</div>';
 
                     html += '<div class="grid grid-cols-7 gap-0 mb-1">';
-                    dayNames.forEach(d => {
+                    dayNames.forEach(function (d) {
                         html += '<div class="text-center text-[10px] font-bold text-gray-400 py-1">' + d + '</div>';
                     });
                     html += '</div>';
@@ -358,10 +401,11 @@
                     for (let i = 0; i < firstDay; i++) {
                         html += '<div></div>';
                     }
+                    const todayStr = new Date().toISOString().slice(0, 10);
                     for (let day = 1; day <= daysInMonth; day++) {
                         const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+                        const isToday = todayStr === dateStr;
                         const isActive = activeTanggal === dateStr;
-                        const isToday = new Date().toISOString().slice(0, 10) === dateStr;
                         let cls = 'w-full aspect-square flex items-center justify-center text-[12px] font-bold rounded-lg transition-all cursor-pointer ';
                         if (isActive) {
                             cls += 'bg-cyan-500 text-white shadow-md';
@@ -370,9 +414,7 @@
                         } else {
                             cls += 'text-gray-600 hover:bg-gray-100';
                         }
-                        const params = new URLSearchParams(baseParams);
-                        params.set('tanggal', dateStr);
-                        html += '<a href="{{ route("admin.dashboard") }}?' + params.toString() + '" class="' + cls + '">' + day + '</a>';
+                        html += '<a href="#" data-day="' + dateStr + '" data-is-today="' + isToday + '" class="' + cls + '">' + day + '</a>';
                     }
                     html += '</div>';
 
@@ -387,6 +429,16 @@
                         e.preventDefault();
                         viewDate.setMonth(viewDate.getMonth() + 1);
                         renderCalendar();
+                    });
+
+                    calEl.querySelectorAll('a[data-day]').forEach(function (link) {
+                        link.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const tgl = this.dataset.day;
+                            activeTanggal = tgl;
+                            highlightDay(tgl);
+                            fetchChartData(tgl);
+                        });
                     });
                 }
 
