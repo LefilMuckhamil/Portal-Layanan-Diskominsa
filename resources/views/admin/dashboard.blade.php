@@ -83,6 +83,45 @@
 
     </div>
 
+    <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 mt-6">
+        <form method="GET" action="{{ route('admin.dashboard') }}" class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-regular fa-calendar text-gray-400 text-sm"></i>
+                <span class="text-[12px] font-bold text-gray-500 uppercase tracking-wide">Filter Tanggal</span>
+            </div>
+            <input type="text" name="search" value="{{ request('search') }}" class="hidden">
+            <input type="text" name="status" value="{{ request('status') }}" class="hidden">
+            <div class="flex flex-wrap items-center gap-2 flex-1">
+                <input type="date" name="date_mulai" value="{{ $dateMulai ?? '' }}" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white transition-all">
+                <span class="text-gray-400 text-[11px] font-bold">s/d</span>
+                <input type="date" name="date_selesai" value="{{ $dateSelesai ?? '' }}" class="px-3 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white transition-all">
+                <button type="submit" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg text-[12px] font-bold transition-colors cursor-pointer">
+                    <i class="fa-solid fa-filter mr-1"></i> Terapkan
+                </button>
+                @if($dateMulai || $dateSelesai)
+                    <a href="{{ route('admin.dashboard', ['search' => request('search'), 'status' => request('status')]) }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-[12px] font-bold transition-colors">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
+            <h3 class="text-[14px] font-extrabold text-[#071E3D] mb-4"><i class="fa-solid fa-chart-bar text-cyan-500 mr-2"></i>Volume Pengajuan per Layanan</h3>
+            <div class="relative w-full" style="height: 260px;">
+                <canvas id="chartLayanan"></canvas>
+            </div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50">
+            <h3 class="text-[14px] font-extrabold text-[#071E3D] mb-4"><i class="fa-solid fa-chart-pie text-cyan-500 mr-2"></i>Komposisi Status Pengajuan</h3>
+            <div class="relative w-full flex items-center justify-center" style="height: 260px;">
+                <canvas id="chartStatus"></canvas>
+            </div>
+        </div>
+    </div>
+
     <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
         <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -92,6 +131,8 @@
             
             <div class="flex gap-3 items-center">
                 <form method="GET" action="{{ route('admin.dashboard') }}" class="flex gap-3">
+                    @if($dateMulai)<input type="hidden" name="date_mulai" value="{{ $dateMulai }}">@endif
+                    @if($dateSelesai)<input type="hidden" name="date_selesai" value="{{ $dateSelesai }}">@endif
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nomor Tiket..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
@@ -131,6 +172,7 @@
                             
                             <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
                                 {{ $item->nomor_tiket }}
+                                <button onclick="event.stopPropagation(); copyTiket('{{ $item->nomor_tiket }}')" title="Salin Nomor Tiket" class="ml-1 text-gray-400 hover:text-cyan-500 transition-colors cursor-pointer"><i class="fa-regular fa-copy text-[11px]"></i></button>
                             </td>
                             
                             <td class="py-4 px-6">
@@ -190,4 +232,79 @@
         @endif
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartData = @json($chartData);
+
+            const barCtx = document.getElementById('chartLayanan');
+            if (barCtx) {
+                new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.layanan,
+                        datasets: [{
+                            label: 'Jumlah Pengajuan',
+                            data: chartData.volume,
+                            backgroundColor: ['#818cf8', '#22d3ee', '#34d399', '#38bdf8', '#fb7185'],
+                            borderRadius: 8,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1, font: { size: 11, family: 'Outfit', weight: '600' } },
+                                grid: { color: '#f1f5f9' }
+                            },
+                            x: {
+                                ticks: { font: { size: 11, family: 'Outfit', weight: '600' } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const doughnutCtx = document.getElementById('chartStatus');
+            if (doughnutCtx) {
+                const statusData = chartData.status;
+                const hasData = Object.values(statusData).some(v => v > 0);
+                new Chart(doughnutCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(statusData),
+                        datasets: [{
+                            data: Object.values(statusData),
+                            backgroundColor: ['#fbbf24', '#3b82f6', '#10b981', '#f43f5e'],
+                            borderWidth: 0,
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: hasData ? '65%' : '100%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 16,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    font: { size: 11, family: 'Outfit', weight: '600' }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 @endsection

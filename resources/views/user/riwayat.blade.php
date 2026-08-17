@@ -70,6 +70,7 @@
                                     <span class="font-mono text-[12.5px] font-black text-[#16324F] bg-slate-100 px-3 py-1 rounded-md border border-slate-200">
                                         {{ $item->nomor_tiket }}
                                     </span>
+                                    <button onclick="event.stopPropagation(); copyTiket('{{ $item->nomor_tiket }}')" title="Salin Nomor Tiket" class="ml-1 text-gray-400 hover:text-cyan-500 transition-colors cursor-pointer"><i class="fa-regular fa-copy text-[11px]"></i></button>
                                 </td>
 
                                 <td class="py-3.5 px-4 border-y border-[#E4E7EC] group-hover:border-sky-400 font-extrabold text-[#101828] capitalize">
@@ -213,7 +214,7 @@
                     @if($chatAktif ?? true)
                         <form onsubmit="kirimPesanAjax(event, '{{ $item->id }}', '{{ route('user.pengajuan.pesan', $item->id) }}')" class="flex gap-2">
                             @csrf
-                            <input type="text" id="input-pesan-{{ $item->id }}" name="pesan" required placeholder="Tulis pesan ke admin..." class="w-full bg-slate-50 border border-[#DCE1E8] rounded-xl px-4 py-2.5 text-[13px] font-medium text-[#101828] outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10">
+                            <input type="text" id="input-pesan-{{ $item->id }}" name="pesan" required maxlength="1000" placeholder="Tulis pesan ke admin..." class="w-full bg-slate-50 border border-[#DCE1E8] rounded-xl px-4 py-2.5 text-[13px] font-medium text-[#101828] outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10">
                             <button type="submit" id="btn-submit-{{ $item->id }}" class="w-11 h-11 shrink-0 bg-[#16324F] hover:bg-[#0F2438] text-white rounded-xl flex items-center justify-center transition-all shadow-md">
                                 <i class="fa-solid fa-paper-plane text-xs"></i>
                             </button>
@@ -242,6 +243,16 @@
     </div>
 
     <script>
+        function copyTiket(tiket) {
+            navigator.clipboard.writeText(tiket).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-[#071E3D] text-white text-[12px] font-bold rounded-xl shadow-lg transition-opacity';
+                toast.innerHTML = '<i class="fa-solid fa-check mr-1.5 text-emerald-400"></i>Nomor tiket disalin';
+                document.body.appendChild(toast);
+                setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 1500);
+            });
+        }
+
         function pilihPengajuan(id) {
             document.getElementById('panel-kosong').classList.add('hidden');
             document.getElementById('panel-form-kosong').classList.add('hidden');

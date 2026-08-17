@@ -94,31 +94,79 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
 
     Route::get('/dashboard', function (Request $request) {
-        $countWeb = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->count();
-        $countEmail = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->count();
-        $countTTE = Pengajuan::where('jenis_layanan', 'Layanan TTE')->count();
-        $countCloud = Pengajuan::where('jenis_layanan', 'Cloud Government')->count();
-        $countBantuan = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->count();
+        $request->validate([
+            'date_mulai' => 'nullable|date_format:Y-m-d',
+            'date_selesai' => 'nullable|date_format:Y-m-d',
+        ], [
+            'date_mulai.date_format' => 'Format tanggal mulai tidak valid.',
+            'date_selesai.date_format' => 'Format tanggal selesai tidak valid.',
+        ]);
+
+        $dateMulai = $request->filled('date_mulai') ? $request->date_mulai : null;
+        $dateSelesai = $request->filled('date_selesai') ? $request->date_selesai : null;
+
+        if ($dateMulai && $dateSelesai && $dateMulai > $dateSelesai) {
+            return back()->with('error', 'Tanggal mulai tidak boleh melebihi tanggal selesai.');
+        }
+
+        $dateScope = function ($q) use ($dateMulai, $dateSelesai) {
+            if ($dateMulai) {
+                $q->where('created_at', '>=', $dateMulai);
+            }
+            if ($dateSelesai) {
+                $q->where('created_at', '<=', $dateSelesai.' 23:59:59');
+            }
+        };
+
+        $countWeb = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countEmail = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countTTE = Pengajuan::where('jenis_layanan', 'Layanan TTE')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countCloud = Pengajuan::where('jenis_layanan', 'Cloud Government')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countBantuan = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->when($dateMulai || $dateSelesai, $dateScope)->count();
+
+        $statusCounts = Pengajuan::selectRaw('status, count(*) as total')
+            ->when($dateMulai || $dateSelesai, $dateScope)
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $chartData = [
+            'layanan' => ['Website', 'Email Resmi', 'TTE', 'Cloud Gov', 'Bantuan'],
+            'volume' => [$countWeb, $countEmail, $countTTE, $countCloud, $countBantuan],
+            'status' => [
+                'Pending' => (int) $statusCounts->get('Pending', 0),
+                'Proses' => (int) $statusCounts->get('Proses', 0),
+                'Selesai' => (int) $statusCounts->get('Selesai', 0),
+                'Ditolak' => (int) $statusCounts->get('Ditolak', 0),
+            ],
+        ];
 
         $query = Pengajuan::with('user');
+
+        if ($dateMulai || $dateSelesai) {
+            $query->where(function ($q) use ($dateMulai, $dateSelesai) {
+                if ($dateMulai) {
+                    $q->where('created_at', '>=', $dateMulai);
+                }
+                if ($dateSelesai) {
+                    $q->where('created_at', '<=', $dateSelesai.' 23:59:59');
+                }
+            });
+        }
 
         if ($request->filled('search')) {
             $query->where('nomor_tiket', 'like', '%'.trim($request->search).'%');
         }
 
         if ($request->filled('status')) {
-            if ($request->status == 'Proses') {
-                $query->where('status', 'Proses');
-            } else {
-                $query->where('status', $request->status);
-            }
+            $query->where('status', $request->status);
         }
 
         $pengajuans = $query->latest()->paginate(10);
         $chatAktif = Cache::get('chat_global_aktif', true);
 
         return view('admin.dashboard', compact(
-            'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan', 'pengajuans', 'chatAktif'
+            'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan',
+            'pengajuans', 'chatAktif', 'chartData', 'dateMulai', 'dateSelesai'
         ));
     })->name('admin.dashboard');
 

@@ -16,7 +16,7 @@
                 </div>
             </div>
             
-            <form action="{{ route('admin.toggleChat') }}" method="POST" class="mt-auto">
+            <form action="{{ route('admin.toggleChat') }}" method="POST" class="mt-auto" onsubmit="return confirm('Apakah Anda yakin ingin mengubah status aktif fitur chat untuk semua tiket?')">
                 @csrf
                 <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-[13px] transition-all shadow-sm flex items-center justify-center gap-2 {{ $chatAktif ? 'bg-white text-rose-600 hover:bg-rose-50 border-2 border-rose-100 hover:border-rose-300' : 'bg-[#071E3D] hover:bg-[#1F4287] text-white shadow-lg' }}">
                     @if($chatAktif)

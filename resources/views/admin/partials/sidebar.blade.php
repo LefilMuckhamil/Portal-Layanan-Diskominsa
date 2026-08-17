@@ -1,12 +1,15 @@
-<aside class="w-72 bg-[#071E3D] text-white flex flex-col h-full flex-shrink-0 transition-all duration-300 shadow-xl z-20">
+<aside id="adminSidebar" class="fixed inset-y-0 left-0 z-40 w-72 -translate-x-full lg:translate-x-0 lg:static lg:z-20 bg-[#071E3D] text-white flex flex-col h-full flex-shrink-0 transition-transform duration-300 ease-in-out shadow-xl">
     <div class="h-24 flex items-center px-6 border-b border-white/10">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 flex-1">
             <img src="{{ asset('image/icon.png') }}" alt="Logo" class="w-10 h-10 object-contain bg-white rounded-lg p-1">
             <div class="flex flex-col">
                 <span class="text-[16px] font-extrabold tracking-wide leading-tight">Portal Layanan</span>
                 <span class="text-[11px] text-cyan-400 font-medium">Diskominsa Aceh Barat</span>
             </div>
         </div>
+        <button onclick="closeSidebar()" class="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer" aria-label="Tutup menu">
+            <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
     </div>
 
     <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
@@ -90,7 +93,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('logout') }}" class="w-full">
+        <form method="POST" action="{{ route('logout') }}" class="w-full" onsubmit="return confirm('Apakah Anda yakin ingin keluar dari sistem?')">
             @csrf
             <button type="submit" class="flex items-center justify-center gap-2 w-full py-2.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl text-[12px] font-bold transition-all duration-300 group cursor-pointer">
                 <i class="fa-solid fa-arrow-right-from-bracket group-hover:-translate-x-1 transition-transform"></i>

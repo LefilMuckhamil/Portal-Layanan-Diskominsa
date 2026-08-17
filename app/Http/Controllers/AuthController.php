@@ -37,7 +37,7 @@ class AuthController extends Controller
 
             return $user->role === 'admin'
                 ? redirect()->intended('/admin/dashboard')
-                : redirect()->intended('/');
+                : redirect()->intended(route('user.riwayat'));
         }
 
         Cache::put($key, Cache::get($key, 0) + 1, now()->addMinutes(15));

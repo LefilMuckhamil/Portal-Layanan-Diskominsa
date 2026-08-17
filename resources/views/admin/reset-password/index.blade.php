@@ -45,7 +45,7 @@
                     </td>
                     <td class="p-3.5 flex justify-center">
                         @if($req->status == 'pending')
-                        <form action="{{ route('admin.reset-password.process', $req->id) }}" method="POST" target="_blank" onsubmit="this.querySelector('button').disabled = true;">
+                        <form action="{{ route('admin.reset-password.process', $req->id) }}" method="POST" target="_blank" onsubmit="if (!confirm('Yakin ingin mereset password pengguna ini dan membuka WhatsApp?')) return false; this.querySelector('button').disabled = true;">
                             @csrf
                             <button type="submit" class="bg-green-600 hover:bg-green-700 active:scale-95 text-white font-extrabold px-3.5 py-2 rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all">
                                 <i class="fa-brands fa-whatsapp text-sm"></i>

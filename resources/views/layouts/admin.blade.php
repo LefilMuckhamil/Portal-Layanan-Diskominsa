@@ -8,7 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
     <style>
         body { font-family: 'Outfit', sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -18,6 +19,8 @@
     </style>
 </head>
 <body class="bg-[#f4f7f6] text-gray-800 h-screen flex overflow-hidden selection:bg-cyan-300 selection:text-[#071E3D]">
+
+    <div id="sidebarBackdrop" onclick="closeSidebar()" class="fixed inset-0 bg-[#071E3D]/60 backdrop-blur-sm z-30 hidden lg:hidden transition-opacity duration-300 opacity-0 pointer-events-none"></div>
 
     @include('admin.partials.sidebar')
 
@@ -53,5 +56,42 @@
 
     </main>
 
+    <script>
+        const sidebar = document.getElementById('adminSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('translate-x-0');
+            backdrop.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+            backdrop.classList.add('opacity-100');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            backdrop.classList.add('opacity-0', 'pointer-events-none');
+            backdrop.classList.remove('opacity-100');
+            setTimeout(() => { backdrop.classList.add('hidden'); }, 300);
+            document.body.style.overflow = '';
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                closeSidebar();
+            }
+        });
+
+        function copyTiket(tiket) {
+            navigator.clipboard.writeText(tiket).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-[#071E3D] text-white text-[12px] font-bold rounded-xl shadow-lg transition-opacity';
+                toast.innerHTML = '<i class="fa-solid fa-check mr-1.5 text-emerald-400"></i>Nomor tiket disalin';
+                document.body.appendChild(toast);
+                setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 1500);
+            });
+        }
+    </script>
 </body>
 </html>

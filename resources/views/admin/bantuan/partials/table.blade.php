@@ -56,6 +56,7 @@
                     <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
                         <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
                             {{ $item->nomor_tiket }}
+                            <button onclick="event.stopPropagation(); copyTiket('{{ $item->nomor_tiket }}')" title="Salin Nomor Tiket" class="ml-1 text-gray-400 hover:text-cyan-500 transition-colors cursor-pointer"><i class="fa-regular fa-copy text-[11px]"></i></button>
                         </td>
                         <td class="py-4 px-6">
                             <p class="text-[13px] font-bold text-[#071E3D]">

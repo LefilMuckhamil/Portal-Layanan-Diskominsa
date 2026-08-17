@@ -46,6 +46,7 @@
                             <span class="bg-slate-100 text-[#16324F] font-black px-3.5 py-1.5 rounded-lg text-[12px] uppercase tracking-wider border border-slate-200">
                                 {{ $pengajuan->nomor_tiket }}
                             </span>
+                            <button onclick="copyTiket('{{ $pengajuan->nomor_tiket }}')" title="Salin Nomor Tiket" class="ml-2 text-gray-400 hover:text-cyan-500 transition-colors cursor-pointer"><i class="fa-regular fa-copy text-[13px]"></i></button>
                             <h2 class="text-2xl font-black text-[#101828] mt-3.5 capitalize">
                                 Pengajuan {{ str_replace('_', ' ', $pengajuan->jenis_layanan) }}
                             </h2>
@@ -161,7 +162,7 @@
                 <div class="bg-white p-4 border-t border-[#E4E7EC] z-10">
                     <form action="{{ route('user.pengajuan.pesan', $pengajuan->id) }}" method="POST" class="flex gap-2">
                         @csrf
-                        <input type="text" name="pesan" required autocomplete="off" placeholder="Ketik pesan Anda..." class="w-full bg-slate-50 border border-[#DCE1E8] rounded-xl px-4 py-2.5 text-[13px] font-medium text-[#101828] outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10">
+                        <input type="text" name="pesan" required maxlength="1000" autocomplete="off" placeholder="Ketik pesan Anda..." class="w-full bg-slate-50 border border-[#DCE1E8] rounded-xl px-4 py-2.5 text-[13px] font-medium text-[#101828] outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/10">
                         <button type="submit" class="w-11 h-11 shrink-0 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white rounded-xl flex items-center justify-center transition-all shadow-md">
                             <i class="fa-solid fa-paper-plane text-xs"></i>
                         </button>
@@ -174,3 +175,15 @@
         </div>
     </div>
 @endsection
+
+<script>
+function copyTiket(tiket) {
+    navigator.clipboard.writeText(tiket).then(() => {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-2.5 bg-[#071E3D] text-white text-[12px] font-bold rounded-xl shadow-lg transition-opacity';
+        toast.innerHTML = '<i class="fa-solid fa-check mr-1.5 text-emerald-400"></i>Nomor tiket disalin';
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 1500);
+    });
+}
+</script>
