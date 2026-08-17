@@ -45,8 +45,7 @@ class Pengajuan extends Model
     {
         static::creating(function (Pengajuan $pengajuan) {
             do {
-                // Entropy diperbesar: random_bytes(6) = 12 karakter hex (48 bit).
-                $tiket = '#'.static::kodeLayanan($pengajuan->jenis_layanan).'-'.strtoupper(bin2hex(random_bytes(6)));
+                $tiket = '#'.static::kodeLayanan($pengajuan->jenis_layanan).'-'.strtoupper(substr(bin2hex(random_bytes(3)), 0, 5));
             } while (static::where('nomor_tiket', $tiket)->exists());
 
             $pengajuan->nomor_tiket = $tiket;
