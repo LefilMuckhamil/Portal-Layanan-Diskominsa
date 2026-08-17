@@ -217,6 +217,12 @@ class AdminPengajuanController extends Controller
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.website.partials.table', compact('pengajuans', 'users'))->render(),
+            ]);
+        }
+
         return view('admin.website.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
         ));
@@ -295,6 +301,12 @@ class AdminPengajuanController extends Controller
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.email.partials.table', compact('pengajuans', 'users'))->render(),
+            ]);
+        }
 
         return view('admin.email.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
@@ -375,6 +387,12 @@ class AdminPengajuanController extends Controller
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.tte.partials.table', compact('pengajuans', 'users'))->render(),
+            ]);
+        }
+
         return view('admin.tte.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
         ));
@@ -449,6 +467,12 @@ class AdminPengajuanController extends Controller
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.cloud.partials.table', compact('pengajuans', 'users'))->render(),
+            ]);
+        }
+
         return view('admin.cloud.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
         ));
@@ -514,6 +538,12 @@ class AdminPengajuanController extends Controller
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.bantuan.partials.table', compact('pengajuans', 'users'))->render(),
+            ]);
+        }
 
         return view('admin.bantuan.index', compact(
             'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'

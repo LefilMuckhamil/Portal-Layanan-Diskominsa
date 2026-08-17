@@ -1,0 +1,121 @@
+<div data-ajax-table class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
+    <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h3 class="text-lg font-extrabold text-[#071E3D]">Pengajuan Terbaru Terpadu</h3>
+            <p class="text-[12px] text-gray-400 font-medium mt-1">Daftar semua pengajuan masuk dari berbagai layanan.</p>
+        </div>
+        
+        <div class="flex gap-3 items-center">
+            <form method="GET" action="{{ route('admin.dashboard') }}" class="flex gap-3">
+                @if($dateMulai)<input type="hidden" name="date_mulai" value="{{ $dateMulai }}">@endif
+                @if($dateSelesai)<input type="hidden" name="date_selesai" value="{{ $dateSelesai }}">@endif
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nomor Tiket..." class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none focus:border-cyan-400 focus:bg-white w-48 transition-all">
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-[11px]"></i>
+                    <select name="status" onchange="this.form.submit()" class="pl-8 pr-4 py-2 bg-gray-50 border border-gray-100 rounded-lg text-[12px] font-bold text-gray-600 outline-none cursor-pointer">
+                        <option value="">Semua Status</option>
+                        <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Proses" {{ request('status') == 'Proses' ? 'selected' : '' }}>Proses</option>
+                        <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                        <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    </select>
+                </div>
+            </form>
+            @php
+                $exportParams = array_filter([
+                    'start_date' => $dateMulai,
+                    'end_date' => $dateSelesai,
+                    'status' => request('status'),
+                ]);
+            @endphp
+            <a id="btnExport" href="{{ route('admin.pengajuan.export', $exportParams) }}" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-[12px] font-bold transition-colors shadow-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-file-excel"></i> Unduh Rekap
+            </a>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[800px]">
+            <thead class="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
+                <tr>
+                    <th class="py-3 px-6">Tiket</th>
+                    <th class="py-3 px-6">Nama Pemohon</th>
+                    <th class="py-3 px-6">Layanan</th>
+                    <th class="py-3 px-6">Tanggal</th>
+                    <th class="py-3 px-6 text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody id="admin-tbody" class="divide-y divide-gray-50">
+                
+                @forelse ($pengajuans as $item)
+                    @php
+                        $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
+                    @endphp
+                    <tr class="hover:bg-cyan-50/10 transition-colors duration-200">
+                        
+                        <td class="py-4 px-6 text-[13px] font-extrabold text-[#071E3D]">
+                            {{ $item->nomor_tiket }}
+                            <button onclick="event.stopPropagation(); copyTiket('{{ $item->nomor_tiket }}')" title="Salin Nomor Tiket" class="ml-1 text-gray-400 hover:text-cyan-500 transition-colors cursor-pointer"><i class="fa-regular fa-copy text-[11px]"></i></button>
+                        </td>
+                        
+                        <td class="py-4 px-6">
+                            <p class="text-[13px] font-bold text-[#071E3D]">
+                                {{ $dataForm['nama'] ?? $item->user->name ?? 'Pemohon' }}
+                            </p>
+                            <p class="text-[11px] text-gray-500 font-medium mt-0.5">
+                                {{ $dataForm['instansi'] ?? $item->user->unit_kerja ?? 'Instansi' }}
+                            </p>
+                        </td>
+                        
+                        <td class="py-4 px-6">
+                            <span class="text-[12px] font-bold text-gray-700 capitalize">
+                                {{ str_replace('_', ' ', $item->jenis_layanan) }}
+                            </span>
+                        </td>
+                        
+                        <td class="py-4 px-6 text-[12px] text-gray-500 font-bold">
+                            {{ $item->created_at->format('d M Y') }}
+                        </td>
+                        
+                        <td class="py-4 px-6 text-center">
+                            @php
+                                $badgeColor = match($item->status) {
+                                    'Pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                    'Proses' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                    'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                    'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                    default   => 'bg-gray-50 text-gray-600 border-gray-100'
+                                };
+                            @endphp
+                            <span class="px-3 py-1.5 rounded-lg border text-[10px] font-extrabold uppercase tracking-wider {{ $badgeColor }}">
+                                {{ $item->status }}
+                            </span>
+                        </td>
+
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="py-12 text-center">
+                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fa-regular fa-folder-open text-2xl text-gray-300"></i>
+                            </div>
+                            <h3 class="font-bold text-[14px] text-gray-600">Belum ada pengajuan</h3>
+                        </td>
+                    </tr>
+                @endforelse
+
+            </tbody>
+        </table>
+    </div>
+
+    @if(method_exists($pengajuans, 'links'))
+        <div id="admin-pagination" class="admin-pagination px-6 py-4 border-t border-gray-100">
+            {{ $pengajuans->links() }}
+        </div>
+    @else
+        <div id="admin-pagination" class="admin-pagination"></div>
+    @endif
+</div>

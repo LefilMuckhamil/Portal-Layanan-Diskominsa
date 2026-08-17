@@ -180,6 +180,14 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
             'date_selesai' => $request->input('date_selesai'),
         ]);
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.dashboard.partials.table', compact(
+                    'pengajuans', 'dateMulai', 'dateSelesai'
+                ))->render(),
+            ]);
+        }
+
         return view('admin.dashboard', compact(
             'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan',
             'pengajuans', 'chatAktif', 'chartData', 'dateMulai', 'dateSelesai', 'tanggal', 'calendarParams'

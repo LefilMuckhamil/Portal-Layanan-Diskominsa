@@ -193,6 +193,103 @@
 
             pollTimer = setInterval(pollVisibleModals, 6000);
         })();
+
+        (function () {
+            var _ajaxAbort = null;
+            var _debounceTimer = null;
+
+            function buildUrl(form, page) {
+                var url = new URL(form.action, window.location.origin);
+                var fd = new FormData(form);
+                var entries = fd.entries();
+                var pair = entries.next();
+                while (!pair.done) {
+                    if (pair.value[1]) {
+                        url.searchParams.set(pair.value[0], pair.value[1]);
+                    }
+                    pair = entries.next();
+                }
+                if (page) {
+                    url.searchParams.set('page', page);
+                }
+                return url.toString();
+            }
+
+            function fetchTable(form, page) {
+                if (_ajaxAbort) {
+                    _ajaxAbort.abort();
+                }
+                _ajaxAbort = new AbortController();
+
+                var card = form.closest('[data-ajax-table]');
+                if (!card) return;
+
+                var tbody = card.querySelector('#admin-tbody');
+                if (tbody) {
+                    tbody.style.opacity = '0.5';
+                    tbody.style.transition = 'opacity 0.15s ease';
+                }
+
+                var url = buildUrl(form, page);
+
+                fetch(url, {
+                    signal: _ajaxAbort.signal,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json, text/html, */*'
+                    }
+                })
+                .then(function (r) {
+                    if (!r.ok) throw new Error(r.statusText);
+                    return r.json();
+                })
+                .then(function (data) {
+                    if (!data.html) return;
+                    var doc = new DOMParser().parseFromString(data.html, 'text/html');
+                    var newCard = doc.querySelector('[data-ajax-table]');
+                    if (newCard) {
+                        card.outerHTML = newCard.outerHTML;
+                    }
+                })
+                .catch(function (e) {
+                    if (e.name !== 'AbortError') {
+                        if (tbody) {
+                            tbody.style.opacity = '1';
+                        }
+                    }
+                });
+            }
+
+            document.addEventListener('input', function (e) {
+                if (!e.target.matches('[data-ajax-table] input[name="search"]')) return;
+                clearTimeout(_debounceTimer);
+                var input = e.target;
+                _debounceTimer = setTimeout(function () {
+                    var form = input.closest('form');
+                    if (form) fetchTable(form);
+                }, 400);
+            }, { passive: true });
+
+            document.addEventListener('submit', function (e) {
+                if (!e.target.closest('[data-ajax-table]')) return;
+                e.preventDefault();
+                e.stopPropagation();
+                fetchTable(e.target);
+            }, true);
+
+            document.addEventListener('click', function (e) {
+                var link = e.target.closest('[data-ajax-table] #admin-pagination a');
+                if (!link) return;
+                e.preventDefault();
+                e.stopPropagation();
+                var href = link.getAttribute('href');
+                if (!href) return;
+                var urlObj = new URL(href, window.location.origin);
+                var page = urlObj.searchParams.get('page');
+                var form = document.querySelector('[data-ajax-table] form');
+                if (form) fetchTable(form, page);
+            }, true);
+        })();
     </script>
 </body>
 </html>

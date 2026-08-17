@@ -1,4 +1,4 @@
-<div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
+<div data-ajax-table class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 overflow-hidden flex flex-col mt-6">
     <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h3 class="text-lg font-extrabold text-[#071E3D]">Daftar Pengajuan TTE</h3>
@@ -40,7 +40,7 @@
                     <th class="py-3 px-6 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody id="admin-tbody" class="divide-y divide-gray-50">
                 @forelse ($pengajuans as $item)
                     @php
                         $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
@@ -318,6 +318,14 @@
             </tbody>
         </table>
     </div>
+
+    @if(method_exists($pengajuans, 'links') && $pengajuans->hasPages())
+        <div id="admin-pagination" class="admin-pagination px-6 py-4 border-t border-gray-100">
+            {{ $pengajuans->links() }}
+        </div>
+    @else
+        <div id="admin-pagination" class="admin-pagination"></div>
+    @endif
 </div>
 
 <div id="modal-create" class="fixed inset-0 z-[150] hidden items-center justify-center">
