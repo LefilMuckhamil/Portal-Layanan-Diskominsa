@@ -33,7 +33,7 @@
                     <li><a href="#tentang" class="hover:text-cyan-300 transition-colors">Tentang</a></li>
                     <li><a href="#layanan" class="hover:text-cyan-300 transition-colors">Layanan</a></li>
                     <li><a href="#alur" class="hover:text-cyan-300 transition-colors">Alur Pengajuan</a></li>
-                    <li><a href="#tracking" class="hover:text-cyan-300 transition-colors">E-Tracking Tiket</a></li>
+                    <li><a href="#tracking" class="hover:text-cyan-300 transition-colors">E-Tracking</a></li>
                 </ul>
             </div>
 
