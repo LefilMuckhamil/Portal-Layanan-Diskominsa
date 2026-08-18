@@ -36,6 +36,7 @@ class TrackingController extends Controller
 
             $logs = is_string($pengajuan->logs) ? json_decode($pengajuan->logs, true) : $pengajuan->logs;
             if (is_array($logs) && count($logs) > 0) {
+                $logs = array_reverse($logs);
                 foreach ($logs as $log) {
                     $waktuFormatted = '-';
                     if (! empty($log['created_at'])) {
@@ -61,12 +62,22 @@ class TrackingController extends Controller
                 ];
             }
 
+            $waktuStatus = '-';
+            if (count($riwayatData) > 0 && ! empty($riwayatData[0]['waktu'])) {
+                $waktuStatus = $riwayatData[0]['waktu'];
+            } elseif ($pengajuan->updated_at) {
+                $waktuStatus = Carbon::parse($pengajuan->updated_at)->timezone('Asia/Jakarta')->translatedFormat('d M Y, H:i').' WIB';
+            } elseif ($pengajuan->created_at) {
+                $waktuStatus = Carbon::parse($pengajuan->created_at)->timezone('Asia/Jakarta')->translatedFormat('d M Y, H:i').' WIB';
+            }
+
             return response()->json([
                 'success' => true,
                 'data' => [
                     'nomor_tiket' => $pengajuan->nomor_tiket,
                     'layanan' => $pengajuan->jenis_layanan,
                     'status' => $pengajuan->status,
+                    'waktu_status' => $waktuStatus,
                     'riwayat' => $riwayatData,
                 ],
             ]);

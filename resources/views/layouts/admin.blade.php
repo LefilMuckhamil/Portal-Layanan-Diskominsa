@@ -272,6 +272,7 @@
 
             document.addEventListener('submit', function (e) {
                 if (!e.target.closest('[data-ajax-table]')) return;
+                if (e.target.hasAttribute('data-no-ajax') || e.target.closest('[data-no-ajax]')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 fetchTable(e.target);

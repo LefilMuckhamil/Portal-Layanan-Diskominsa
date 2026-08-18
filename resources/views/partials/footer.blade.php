@@ -30,8 +30,8 @@
                 <h4 class="text-xs font-mono font-bold text-cyan-400 tracking-widest uppercase"></h4>
                 <ul class="space-y-2.5 text-xs text-gray-400 font-medium">
                     <li><a href="#beranda" class="hover:text-cyan-300 transition-colors">Beranda</a></li>
-                    <li><a href="#tentang" class="hover:text-cyan-300 transition-colors">Profil Instansi</a></li>
-                    <li><a href="#layanan" class="hover:text-cyan-300 transition-colors">Katalog Layanan</a></li>
+                    <li><a href="#tentang" class="hover:text-cyan-300 transition-colors">Tentang</a></li>
+                    <li><a href="#layanan" class="hover:text-cyan-300 transition-colors">Layanan</a></li>
                     <li><a href="#alur" class="hover:text-cyan-300 transition-colors">Alur Pengajuan</a></li>
                     <li><a href="#tracking" class="hover:text-cyan-300 transition-colors">E-Tracking Tiket</a></li>
                 </ul>
@@ -50,7 +50,7 @@
                     </p>
                     <p class="flex items-center gap-3">
                         <i class="fa-solid fa-phone text-cyan-400 text-sm shrink-0"></i>
-                        <span>(0655) 7551234</span>
+                        <span>0823 6872 3020</span>
                     </p>
                 </div>
             </div>

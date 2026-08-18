@@ -37,19 +37,20 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
                     <div>
                         <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pengajuan</span>
-                        <h3 id="card-id-tiket" class="text-lg md:text-xl font-bold text-white mt-0.5">-</h3>
+                        <h3 id="card-id-tiket" class="text-lg md:text-xl font-bold text-white mt-0.5 font-mono">-</h3>
                         <p id="card-nama-layanan" class="text-xs text-cyan-400 font-medium mt-0.5">-</p>
                     </div>
-                    <div>
+                    <div class="text-right shrink-0">
                         <span id="card-status-terakhir" class="inline-block bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 px-3.5 py-1.5 rounded-full text-xs font-semibold">
                             Sedang Diproses
                         </span>
+                        <p id="card-waktu-status" class="text-[11px] text-slate-500 mt-2">-</p>
                     </div>
                 </div>
 
                 <div class="pt-6">
                     <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-6">Riwayat Progress</h4>
-                    <div id="card-timeline-list" class="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">
+                    <div id="card-timeline-list" class="relative pl-6 space-y-5 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-white/10">
                     </div>
                 </div>
 
@@ -83,7 +84,6 @@
             return;
         }
 
-        // Hapus karakter '#' dari input JS agar tidak merusak URL parameter
         const cleanSearchKey = inputTiket.replace(/#/g, '');
         errorMsg.classList.add('hidden');
 
@@ -111,30 +111,21 @@
             const statusPill = document.getElementById('card-status-terakhir');
             statusPill.textContent = result.data.status || 'Sedang Diproses';
             statusPill.className = `inline-block px-3.5 py-1.5 rounded-full text-xs font-semibold ${statusPillMap[result.data.status] || statusPillMap.default}`;
+            document.getElementById('card-waktu-status').textContent = result.data.waktu_status || '-';
 
             timelineList.innerHTML = '';
-            
             if (result.data.riwayat && result.data.riwayat.length > 0) {
                 result.data.riwayat.forEach((item, index) => {
                     const isLatest = index === 0;
-                    
-                    const itemHTML = `
+                    timelineList.insertAdjacentHTML('beforeend', `
                         <div class="relative">
                             <span class="absolute -left-[23.5px] top-1.5 w-2.5 h-2.5 rounded-full ${isLatest ? 'bg-cyan-400 ring-4 ring-cyan-400/20' : 'bg-slate-600'}"></span>
-                            <div>
-                                <div class="flex items-baseline justify-between gap-2">
-                                    <p class="text-sm font-semibold ${isLatest ? 'text-white' : 'text-slate-400'}">${escHtml(item.judul)}</p>
-                                    <span class="text-[11px] text-slate-500 shrink-0">${escHtml(item.waktu)}</span>
-                                </div>
-                                ${item.pesan_admin ? `
-                                    <div class="bg-white/5 border border-white/5 rounded-xl p-3 mt-2">
-                                        <p class="text-xs text-slate-300 font-normal leading-relaxed font-sans">${escHtml(item.pesan_admin)}</p>
-                                    </div>
-                                ` : ''}
+                            <div class="flex items-baseline justify-between gap-2">
+                                <p class="text-sm font-semibold ${isLatest ? 'text-white' : 'text-slate-400'}">${escHtml(item.judul)}</p>
+                                <span class="text-[11px] text-slate-500 shrink-0">${escHtml(item.waktu)}</span>
                             </div>
                         </div>
-                    `;
-                    timelineList.insertAdjacentHTML('beforeend', itemHTML);
+                    `);
                 });
             }
 

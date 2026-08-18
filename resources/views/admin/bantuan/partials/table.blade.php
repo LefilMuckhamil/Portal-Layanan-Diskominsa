@@ -132,7 +132,7 @@
                             </div>
 
                             <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar flex-1 flex flex-col">
-                                <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" onsubmit="return konfirmasiTolak(this)" class="flex-1 flex flex-col justify-between">
+                                <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" data-no-ajax onsubmit="return konfirmasiTolak(this)" class="flex-1 flex flex-col justify-between">
                                     @csrf
                                     @method('PUT')
 

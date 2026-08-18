@@ -26,11 +26,11 @@
                 <ul class="space-y-4 text-xs text-slate-300">
                     <li class="flex items-start gap-3">
                         <i class="fa-solid fa-location-dot text-cyan-400 text-sm mt-0.5 shrink-0"></i>
-                        <span>Jl. Manek Roo No. 1, Meulaboh, Kabupaten Aceh Barat, Aceh</span>
+                        <span>Jl. Gajah Mada, Meulaboh, Kabupaten Aceh Barat, Aceh</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fa-solid fa-phone text-cyan-400 text-sm shrink-0"></i>
-                        <span>(0655) 7551234</span>
+                        <span>0823 6872 3020</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fa-regular fa-envelope text-cyan-400 text-sm shrink-0"></i>
