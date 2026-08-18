@@ -61,7 +61,13 @@
 
         @if (session('sukses'))
             <div class="mb-3 p-3 bg-green-50 border border-green-100 text-green-600 text-xs rounded-xl font-bold flex items-center gap-2 shadow-sm">
-                <i class="fa-solid fa-circle-check text-sm shrink-0"></i> {{ session('status') }}
+                <i class="fa-solid fa-circle-check text-sm shrink-0"></i> {{ session('sukses') }}
+            </div>
+        @endif
+
+        @if (session('warning'))
+            <div class="mb-3 p-3 bg-amber-50 border border-amber-100 text-amber-600 text-xs rounded-xl font-bold flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-triangle-exclamation text-sm shrink-0"></i> {{ session('warning') }}
             </div>
         @endif
         

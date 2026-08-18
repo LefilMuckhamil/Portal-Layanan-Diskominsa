@@ -19,7 +19,7 @@ class ForgotPasswordController extends Controller
         $request->merge(['phone' => PhoneNumber::normalize($request->phone)]);
 
         $request->validate([
-            'email' => 'required|string',
+            'email' => 'required|string|max:255',
             'phone' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
         ], [
             'email.required' => 'Email atau NIP wajib diisi.',
@@ -31,10 +31,27 @@ class ForgotPasswordController extends Controller
             ->orWhere('nip', $request->email)
             ->first();
 
-        if (! $user || PhoneNumber::normalize($user->no_hp) !== $request->phone) {
+        // Akun tidak ditemukan → respons sukses semu (cegah account enumeration).
+        if (! $user) {
+            return back()->with('sukses', 'Permintaan reset sandi berhasil dikirim! Admin akan memverifikasi dan mengirimkan akses via WhatsApp.');
+        }
+
+        // Nomor WhatsApp tidak cocok dengan akun → error.
+        if (PhoneNumber::normalize($user->no_hp) !== $request->phone) {
             return back()->withErrors([
                 'phone' => 'Nomor WhatsApp tidak terdaftar pada akun tersebut. Gunakan nomor HP yang didaftarkan saat membuat akun.',
             ])->withInput();
+        }
+
+        // Cegah duplikasi: tolak jika ada permohonan pending untuk email/NIP + phone yang sama.
+        $adaPending = DB::table('password_reset_requests')
+            ->where('email_or_nip', $request->email)
+            ->where('phone', $request->phone)
+            ->where('status', 'pending')
+            ->exists();
+
+        if ($adaPending) {
+            return back()->with('warning', 'Permintaan reset sandi untuk akun ini masih dalam antrean verifikasi Admin. Harap tunggu proses selesai.');
         }
 
         DB::table('password_reset_requests')->insert([

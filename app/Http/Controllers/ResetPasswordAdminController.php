@@ -59,8 +59,12 @@ class ResetPasswordAdminController extends Controller
                    ."Kata Sandi Baru: *{$newPassword}*\n\n"
                    .'Silakan masuk dan segera ubah kata sandi Anda pada menu profil demi keamanan.';
 
-        $pesan = urlencode($pesanTeks);
+        $pesan = rawurlencode($pesanTeks);
 
-        return redirect()->away("https://wa.me/{$phone}?text={$pesan}");
+        $waUrl = "https://wa.me/{$phone}?text={$pesan}";
+
+        return response()->view('admin.reset-password.wa-redirect', [
+            'waUrl' => $waUrl,
+        ]);
     }
 }

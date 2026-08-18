@@ -203,8 +203,27 @@ class PortalFlowTest extends TestCase
             'phone' => '081234567890',
         ]);
 
-        $response->assertSessionHasErrors('phone');
+        // Mitigasi account enumeration: respons sukses semu, bukan error.
+        $response->assertSessionHas('sukses');
         $this->assertDatabaseCount('password_reset_requests', 0);
+    }
+
+    public function test_permintaan_reset_sandi_ditolak_saat_masih_ada_permohonan_pending(): void
+    {
+        $this->buatUser('user', 'korban@acehbaratkab.go.id', ['no_hp' => '081234567890']);
+
+        $this->post(route('password.email'), [
+            'email' => 'korban@acehbaratkab.go.id',
+            'phone' => '081234567890',
+        ]);
+
+        $response = $this->post(route('password.email'), [
+            'email' => 'korban@acehbaratkab.go.id',
+            'phone' => '081234567890',
+        ]);
+
+        $response->assertSessionHas('warning');
+        $this->assertDatabaseCount('password_reset_requests', 1);
     }
 
     public function test_permintaan_reset_sandi_berhasil_dengan_no_wa_yang_terdaftar(): void
