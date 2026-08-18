@@ -111,12 +111,25 @@
                             </a>
                         </div>
 
-                        <div class="sm:col-span-5 bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-md flex flex-col justify-center h-full">
-                            <div class="w-8 h-8 rounded-lg bg-cyan-400/20 text-cyan-300 flex items-center justify-center text-sm mb-2.5">
-                                <i class="fa-solid fa-location-dot"></i>
+                        <div class="sm:col-span-5 relative w-full h-full min-h-[190px] rounded-2xl overflow-hidden border border-slate-800 bg-[#071E3D] shadow-lg group">
+                            <iframe 
+                                class="w-full h-full absolute inset-0 border-0 contrast-[1.05] opacity-90 hover:opacity-100 transition-opacity duration-300"
+                                src="https://maps.google.com/maps?q=Dinas%20Komunikasi,%20Informatika%20dan%20Persandian%20Kabupaten%20Aceh%20Barat&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                            <a href="https://maps.google.com/?q=Dinas+Komunikasi+Informatika+dan+Persandian+Kabupaten+Aceh+Barat" 
+                               target="_blank" 
+                               rel="noopener noreferrer" 
+                               class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-sm border border-slate-700 text-white flex items-center justify-center text-xs hover:bg-cyan-500 hover:text-white transition-all shadow-md"
+                               title="Buka di Google Maps">
+                                <i class="fa-solid fa-up-right-from-square"></i>
+                            </a>
+                            <div class="absolute bottom-3 left-3 z-10 bg-slate-950/85 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-slate-800/80 text-xs text-slate-200 flex items-center gap-1.5 shadow-md pointer-events-none">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                                <span class="font-medium text-[11px]">Diskominsa Aceh Barat</span>
                             </div>
-                            <p class="text-xs font-bold text-white">Meulaboh</p>
-                            <p class="text-[11px] text-gray-400 mt-0.5">Kabupaten Aceh Barat</p>
                         </div>
 
                     </div>

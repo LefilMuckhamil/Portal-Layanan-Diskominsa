@@ -81,6 +81,10 @@
                         <a href="#tracking" onclick="document.getElementById('tracking')?.scrollIntoView({ behavior: 'smooth' }); return false;" class="bg-[#1A253A] text-white border border-[#2A3B5A] px-6 py-3.5 rounded-xl font-bold hover:bg-[#202D45] transition-colors text-center text-xs md:text-sm flex items-center justify-center gap-2 cursor-pointer">
                             Lacak Tiket
                         </a>
+
+                        <a href="{{ asset('docs/panduan-portal-layanan.pdf') }}" target="_blank" rel="noopener noreferrer" class="bg-[#1A253A] text-white border border-[#2A3B5A] px-6 py-3.5 rounded-xl font-bold hover:bg-[#202D45] transition-colors text-center text-xs md:text-sm flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-book-open"></i> Panduan Penggunaan Layanan
+                        </a>
                     </div>
                 </div>
             </div>
