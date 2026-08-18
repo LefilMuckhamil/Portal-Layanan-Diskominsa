@@ -67,4 +67,17 @@ class ResetPasswordAdminController extends Controller
             'waUrl' => $waUrl,
         ]);
     }
+
+    public function destroy($id)
+    {
+        $requestData = DB::table('password_reset_requests')->where('id', $id)->first();
+
+        if (! $requestData) {
+            return back()->with('error', 'Pengajuan tidak ditemukan.');
+        }
+
+        DB::table('password_reset_requests')->where('id', $id)->delete();
+
+        return back()->with('sukses', 'Permohonan reset password berhasil dihapus/dibatalkan.');
+    }
 }

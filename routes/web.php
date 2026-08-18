@@ -256,6 +256,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
 
     Route::get('/reset-password-requests', [ResetPasswordAdminController::class, 'index'])->name('admin.reset-password.index');
     Route::post('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'process'])->name('admin.reset-password.process')->middleware('throttle:20,1');
+    Route::delete('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'destroy'])->name('admin.reset-password.destroy');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
     Route::middleware('throttle:20,1')->group(function () {

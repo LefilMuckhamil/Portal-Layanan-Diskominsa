@@ -49,12 +49,18 @@
                             $cleanPhone = preg_replace('/[^0-9]/', '', $req->phone);
                             $waPhone = str_starts_with($cleanPhone, '0') ? '62'.substr($cleanPhone, 1) : (str_starts_with($cleanPhone, '8') ? '62'.$cleanPhone : $cleanPhone);
                         @endphp
-                        <button type="button"
-                            onclick="bukaModalReset('{{ $req->id }}', '{{ e($req->email_or_nip) }}', '{{ e($req->phone) }}', '{{ e($waPhone) }}')"
-                            class="bg-green-600 hover:bg-green-700 active:scale-95 text-white font-extrabold px-3.5 py-2 rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all mx-auto cursor-pointer">
-                            <i class="fa-brands fa-whatsapp text-sm"></i>
-                            Reset & Kirim WA
-                        </button>
+                        <div class="flex items-center justify-center gap-2">
+                            <button type="button"
+                                onclick="bukaModalReset('{{ $req->id }}', '{{ e($req->email_or_nip) }}', '{{ e($req->phone) }}', '{{ e($waPhone) }}')"
+                                class="bg-green-600 hover:bg-green-700 active:scale-95 text-white font-extrabold px-3 py-2 rounded-xl text-[11px] flex items-center gap-1.5 shadow-sm transition-all cursor-pointer">
+                                <i class="fa-brands fa-whatsapp text-xs"></i> Reset
+                            </button>
+                            <button type="button"
+                                onclick="bukaModalHapus('{{ $req->id }}', '{{ e($req->email_or_nip) }}')"
+                                class="bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-extrabold px-3 py-2 rounded-xl text-[11px] flex items-center gap-1.5 shadow-sm transition-all cursor-pointer">
+                                <i class="fa-solid fa-trash text-xs"></i> Hapus
+                            </button>
+                        </div>
                         @else
                         <span class="text-[11px] text-gray-400 font-bold">Sudah Diproses</span>
                         @endif
@@ -108,6 +114,33 @@
     </div>
 </div>
 
+<div id="modal-hapus-reset" class="fixed inset-0 z-[150] hidden items-center justify-center">
+    <div class="absolute inset-0 bg-[#071E3D]/60 backdrop-blur-sm transition-opacity" onclick="tutupModalHapus()"></div>
+    <div class="relative bg-white rounded-2xl p-6 shadow-2xl max-w-md w-full mx-4 z-10 animate-fade-in-down">
+        <div class="flex flex-col items-center text-center">
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-[16px] font-extrabold text-[#071E3D] mb-1">Hapus Permohonan Reset Sandi</h3>
+            <p class="text-[13px] text-gray-500 font-medium mb-5 leading-relaxed">
+                Apakah Anda yakin ingin menghapus permohonan reset sandi untuk<br>
+                <span id="modal-hapus-email" class="font-bold text-rose-600">-</span> ini?
+            </p>
+
+            <form id="form-hapus-reset" method="POST" data-no-ajax class="w-full">
+                @csrf
+                @method('DELETE')
+                <div class="flex gap-3 w-full">
+                    <button type="button" onclick="tutupModalHapus()" class="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[13px] transition-colors cursor-pointer">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-[13px] transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-trash text-xs"></i> Ya, Hapus Permohonan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     function bukaModalReset(id, email, phoneDisplay, waPhone) {
         document.getElementById('modal-email').textContent = email;
@@ -127,12 +160,32 @@
         modal.classList.remove('flex');
     }
 
+    function bukaModalHapus(id, email) {
+        document.getElementById('modal-hapus-email').textContent = email;
+
+        var form = document.getElementById('form-hapus-reset');
+        form.action = '{{ url("/admin/reset-password-requests") }}/' + id;
+
+        var modal = document.getElementById('modal-hapus-reset');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function tutupModalHapus() {
+        var modal = document.getElementById('modal-hapus-reset');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            var modal = document.getElementById('modal-reset-password');
-            if (!modal.classList.contains('hidden')) {
-                tutupModalReset();
-            }
+            ['modal-reset-password', 'modal-hapus-reset'].forEach(function (id) {
+                var modal = document.getElementById(id);
+                if (modal && !modal.classList.contains('hidden')) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
         }
     });
 </script>
