@@ -34,7 +34,7 @@
                     <th class="py-3 px-6">Email</th>
                     <th class="py-3 px-6">NIP</th>
                     <th class="py-3 px-6">Unit Kerja</th>
-                    <th class="py-3 px-6">No. HP</th>
+                    <th class="py-3 px-6">No HP</th>
                     <th class="py-3 px-6">Role</th>
                     <th class="py-3 px-6 text-center">Aksi</th>
                 </tr>
