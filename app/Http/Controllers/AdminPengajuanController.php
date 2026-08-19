@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Concerns\ResolvesPengajuanEmail;
 use App\Models\Pengajuan;
 use App\Models\PengajuanLog;
 use App\Models\User;
+use App\Notifications\TiketDitolakNotification;
+use App\Notifications\TiketSelesaiNotification;
 use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class AdminPengajuanController extends Controller
 {
+    use ResolvesPengajuanEmail;
+
     public function updateProgres(Request $request, $id)
     {
         $request->validate([
@@ -75,6 +82,8 @@ class AdminPengajuanController extends Controller
             'status' => $request->status,
             'catatan_admin' => $request->catatan ?? null,
         ]);
+
+        $this->kirimNotifikasiPerubahanStatus($pengajuan, $statusSebelumnya, $request->catatan);
 
         return back()->with('sukses', 'Update progres dan file hasil sukses disimpan!');
     }
@@ -584,5 +593,31 @@ class AdminPengajuanController extends Controller
         ]);
 
         return back()->with('sukses', 'Pengajuan Pusat Bantuan berhasil ditambahkan manual.');
+    }
+
+    private function kirimNotifikasiPerubahanStatus(Pengajuan $pengajuan, string $statusLama, ?string $catatan): void
+    {
+        $baru = $pengajuan->status;
+
+        if ($statusLama === $baru) {
+            return;
+        }
+
+        try {
+            $targetEmail = $this->resolveTargetEmail($pengajuan);
+            if (! $targetEmail) {
+                return;
+            }
+
+            if ($baru === 'Selesai') {
+                Notification::route('mail', $targetEmail)
+                    ->notify(new TiketSelesaiNotification($pengajuan, $catatan));
+            } elseif ($baru === 'Ditolak') {
+                Notification::route('mail', $targetEmail)
+                    ->notify(new TiketDitolakNotification($pengajuan, $catatan));
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Gagal mengirim notifikasi perubahan status: '.$e->getMessage());
+        }
     }
 }

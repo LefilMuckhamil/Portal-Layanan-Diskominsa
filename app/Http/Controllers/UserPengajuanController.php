@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Concerns\ResolvesPengajuanEmail;
 use App\Models\Pengajuan;
+use App\Notifications\TiketDibuatNotification;
 use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 
 class UserPengajuanController extends Controller
 {
+    use ResolvesPengajuanEmail;
+
     public function storeWebsite(Request $request)
     {
         $dataPengajuan = $request->data_pengajuan;
@@ -60,6 +66,8 @@ class UserPengajuanController extends Controller
             'file_pendukung' => $filePath,
             'data_pengajuan' => $dataPengajuan,
         ]);
+
+        $this->kirimNotifikasiTiketDibuat($pengajuan);
 
         return back()->with('sukses', 'Pengajuan Website Instansi berhasil dikirim!')
             ->with('nomor_tiket', $pengajuan->nomor_tiket);
@@ -114,6 +122,8 @@ class UserPengajuanController extends Controller
             'data_pengajuan' => $dataPengajuan,
         ]);
 
+        $this->kirimNotifikasiTiketDibuat($pengajuan);
+
         return back()->with('sukses', 'Pengajuan Email Resmi berhasil dikirim!')
             ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
@@ -162,6 +172,8 @@ class UserPengajuanController extends Controller
             'data_pengajuan' => $dataPengajuan,
         ]);
 
+        $this->kirimNotifikasiTiketDibuat($pengajuan);
+
         return back()->with('sukses', 'Pengajuan Layanan TTE berhasil dikirim!')
             ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
@@ -202,6 +214,8 @@ class UserPengajuanController extends Controller
             'data_pengajuan' => $request->data_pengajuan,
         ]);
 
+        $this->kirimNotifikasiTiketDibuat($pengajuan);
+
         return back()->with('sukses', 'Pengajuan Cloud Gov berhasil dikirim!')
             ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
@@ -241,7 +255,22 @@ class UserPengajuanController extends Controller
             'data_pengajuan' => $request->data_pengajuan,
         ]);
 
+        $this->kirimNotifikasiTiketDibuat($pengajuan);
+
         return back()->with('sukses', 'Tiket Bantuan berhasil dikirim!')
             ->with('nomor_tiket', $pengajuan->nomor_tiket);
+    }
+
+    private function kirimNotifikasiTiketDibuat(Pengajuan $pengajuan): void
+    {
+        try {
+            $targetEmail = $this->resolveTargetEmail($pengajuan);
+            if ($targetEmail) {
+                Notification::route('mail', $targetEmail)
+                    ->notify(new TiketDibuatNotification($pengajuan));
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Gagal mengirim notifikasi tiket dibuat: '.$e->getMessage());
+        }
     }
 }

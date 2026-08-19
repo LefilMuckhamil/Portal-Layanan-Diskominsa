@@ -13,13 +13,17 @@
                 </p>
 
                 <div class="flex items-center gap-3 pt-2">
-                    <!-- TikTok -->
-                    <a href="https://www.tiktok.com/@diskominsaacehbarat?_r=1&_t=ZS-98zkM6pYTNk" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/40 transition-all" title="TikTok Diskominsa Aceh Barat">
-                        <i class="fa-brands fa-tiktok text-xs"></i>
+                    <!-- Facebook -->
+                    <a href="https://www.facebook.com/pemkab.acehbarat/" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/40 transition-all" title="Facebook Diskominsa Aceh Barat">
+                        <i class="fa-brands fa-facebook-f text-xs"></i>
                     </a>
                     <!-- Instagram -->
                     <a href="https://www.instagram.com/diskominsaacehbarat?igsh=MXQxdGM2MjQ4bWFkNg==" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/40 transition-all" title="Instagram Diskominsa Aceh Barat">
                         <i class="fa-brands fa-instagram text-xs"></i>
+                    </a>
+                    <!-- TikTok -->
+                    <a href="https://www.tiktok.com/@diskominsaacehbarat?_r=1&_t=ZS-98zkM6pYTNk" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/40 transition-all" title="TikTok Diskominsa Aceh Barat">
+                        <i class="fa-brands fa-tiktok text-xs"></i>
                     </a>
                     <!-- YouTube -->
                     <a href="https://www.youtube.com/@pemkabacehbarat" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/40 transition-all" title="YouTube Pemkab Aceh Barat">
