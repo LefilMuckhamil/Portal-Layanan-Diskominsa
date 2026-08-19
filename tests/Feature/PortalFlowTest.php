@@ -134,13 +134,13 @@ class PortalFlowTest extends TestCase
         $pengajuan = Pengajuan::create([
             'user_id' => $user->id,
             'jenis_layanan' => 'Layanan TTE',
-            'status' => 'Proses',
             'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
             'logs' => [
                 ['status' => 'Pending', 'catatan' => 'Pengajuan diterima', 'created_at' => now()->subDay()->toDateTimeString()],
                 ['status' => 'Proses', 'catatan' => 'Sedang diverifikasi', 'created_at' => now()->toDateTimeString()],
             ],
         ]);
+        $pengajuan->forceFill(['status' => 'Proses'])->save();
 
         $response = $this->get(route('track.tiket', ['nomor_tiket' => rawurlencode($pengajuan->nomor_tiket)]));
 

@@ -208,7 +208,7 @@ class AdminPengajuanController extends Controller
         $query = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->with('user');
 
         if ($request->filled('search')) {
-            $search = trim($request->search);
+            $search = addcslashes(trim($request->search), '%_');
             $query->where('nomor_tiket', 'like', "%{$search}%");
         }
 
@@ -281,9 +281,10 @@ class AdminPengajuanController extends Controller
         Pengajuan::create([
             'user_id' => $request->user_id,
             'jenis_layanan' => 'Pembuatan Website',
-            'data_pengajuan' => $dataPengajuan,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'instansi', 'no_hp', 'nama_pimpinan', 'domain',
+            ])->all(),
             'file_pendukung' => $filePath,
-            'status' => 'Pending',
         ]);
 
         return back()->with('sukses', 'Pengajuan Pembuatan Website berhasil ditambahkan manual.');
@@ -294,7 +295,7 @@ class AdminPengajuanController extends Controller
         $query = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->with('user');
 
         if ($request->filled('search')) {
-            $search = trim($request->search);
+            $search = addcslashes(trim($request->search), '%_');
             $query->where('nomor_tiket', 'like', "%{$search}%");
         }
 
@@ -367,9 +368,10 @@ class AdminPengajuanController extends Controller
         Pengajuan::create([
             'user_id' => $request->user_id,
             'jenis_layanan' => 'Pembuatan Email Resmi',
-            'data_pengajuan' => $dataPengajuan,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'instansi', 'no_hp', 'usulan_email',
+            ])->all(),
             'file_pendukung' => $filePath,
-            'status' => 'Pending',
         ]);
 
         return back()->with('sukses', 'Pengajuan Pembuatan Email Resmi berhasil ditambahkan manual.');
@@ -380,7 +382,7 @@ class AdminPengajuanController extends Controller
         $query = Pengajuan::where('jenis_layanan', 'Layanan TTE')->with('user');
 
         if ($request->filled('search')) {
-            $search = trim($request->search);
+            $search = addcslashes(trim($request->search), '%_');
             $query->where('nomor_tiket', 'like', "%{$search}%");
         }
 
@@ -448,9 +450,10 @@ class AdminPengajuanController extends Controller
         Pengajuan::create([
             'user_id' => $request->user_id,
             'jenis_layanan' => 'Layanan TTE',
-            'data_pengajuan' => $dataPengajuan,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'instansi', 'no_hp', 'email', 'alamat',
+            ])->all(),
             'file_pendukung' => $filePath,
-            'status' => 'Pending',
         ]);
 
         return back()->with('sukses', 'Pengajuan Layanan TTE berhasil ditambahkan manual.');
@@ -461,7 +464,7 @@ class AdminPengajuanController extends Controller
         $query = Pengajuan::where('jenis_layanan', 'Cloud Government')->with('user');
 
         if ($request->filled('search')) {
-            $search = trim($request->search);
+            $search = addcslashes(trim($request->search), '%_');
             $query->where('nomor_tiket', 'like', "%{$search}%");
         }
 
@@ -521,9 +524,10 @@ class AdminPengajuanController extends Controller
         Pengajuan::create([
             'user_id' => $request->user_id,
             'jenis_layanan' => 'Cloud Government',
-            'data_pengajuan' => $request->data_pengajuan,
+            'data_pengajuan' => collect($request->data_pengajuan)->only([
+                'nama', 'nip', 'instansi', 'email', 'kapasitas',
+            ])->all(),
             'file_pendukung' => $filePath,
-            'status' => 'Pending',
         ]);
 
         return back()->with('sukses', 'Pengajuan Cloud Government berhasil ditambahkan manual.');
@@ -534,7 +538,7 @@ class AdminPengajuanController extends Controller
         $query = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->with('user');
 
         if ($request->filled('search')) {
-            $search = trim($request->search);
+            $search = addcslashes(trim($request->search), '%_');
             $query->where('nomor_tiket', 'like', "%{$search}%");
         }
 
@@ -593,9 +597,10 @@ class AdminPengajuanController extends Controller
         Pengajuan::create([
             'user_id' => $request->user_id,
             'jenis_layanan' => 'Pusat Bantuan',
-            'data_pengajuan' => $request->data_pengajuan,
+            'data_pengajuan' => collect($request->data_pengajuan)->only([
+                'kategori', 'nama', 'nip', 'email', 'pesan_kendala',
+            ])->all(),
             'file_pendukung' => $filePath,
-            'status' => 'Pending',
         ]);
 
         return back()->with('sukses', 'Pengajuan Pusat Bantuan berhasil ditambahkan manual.');

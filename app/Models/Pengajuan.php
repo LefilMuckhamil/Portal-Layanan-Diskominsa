@@ -12,12 +12,15 @@ class Pengajuan extends Model
     protected $table = 'pengajuan';
 
     protected $fillable = [
-        'nomor_tiket',
         'user_id',
         'jenis_layanan',
-        'status',
         'data_pengajuan',
         'file_pendukung',
+        'logs',
+        'pesan',
+    ];
+
+    protected $hidden = [
         'logs',
         'pesan',
     ];
@@ -44,6 +47,10 @@ class Pengajuan extends Model
     protected static function booted()
     {
         static::creating(function (Pengajuan $pengajuan) {
+            if (is_null($pengajuan->status)) {
+                $pengajuan->status = 'Pending';
+            }
+
             do {
                 $tiket = '#'.static::kodeLayanan($pengajuan->jenis_layanan).'-'.strtoupper(substr(bin2hex(random_bytes(3)), 0, 5));
             } while (static::where('nomor_tiket', $tiket)->exists());

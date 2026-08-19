@@ -163,7 +163,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         }
 
         if ($request->filled('search')) {
-            $query->where('nomor_tiket', 'like', '%'.trim($request->search).'%');
+            $query->where('nomor_tiket', 'like', '%'.addcslashes(trim($request->search), '%_').'%');
         }
 
         if ($request->filled('status')) {
@@ -257,7 +257,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
 
     Route::get('/reset-password-requests', [ResetPasswordAdminController::class, 'index'])->name('admin.reset-password.index');
     Route::post('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'process'])->name('admin.reset-password.process')->middleware('throttle:20,1');
-    Route::delete('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'destroy'])->name('admin.reset-password.destroy');
+    Route::delete('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'destroy'])->name('admin.reset-password.destroy')->middleware('throttle:20,1');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
     Route::middleware('throttle:20,1')->group(function () {

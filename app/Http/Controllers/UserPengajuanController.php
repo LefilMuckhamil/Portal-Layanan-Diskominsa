@@ -62,9 +62,10 @@ class UserPengajuanController extends Controller
         $pengajuan = Pengajuan::create([
             'user_id' => Auth::id(),
             'jenis_layanan' => 'Pembuatan Website',
-            'status' => 'Pending',
             'file_pendukung' => $filePath,
-            'data_pengajuan' => $dataPengajuan,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'instansi', 'no_hp', 'nama_pimpinan', 'domain',
+            ])->all(),
         ]);
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
@@ -117,9 +118,10 @@ class UserPengajuanController extends Controller
         $pengajuan = Pengajuan::create([
             'user_id' => Auth::id(),
             'jenis_layanan' => 'Pembuatan Email Resmi',
-            'status' => 'Pending',
             'file_pendukung' => $filePath,
-            'data_pengajuan' => $dataPengajuan,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'instansi', 'no_hp', 'usulan_email',
+            ])->all(),
         ]);
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
@@ -167,9 +169,10 @@ class UserPengajuanController extends Controller
         $pengajuan = Pengajuan::create([
             'user_id' => Auth::id(),
             'jenis_layanan' => 'Layanan TTE',
-            'status' => 'Pending',
             'file_pendukung' => $filePath,
-            'data_pengajuan' => $dataPengajuan,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'instansi', 'no_hp', 'email', 'alamat',
+            ])->all(),
         ]);
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
@@ -209,9 +212,10 @@ class UserPengajuanController extends Controller
         $pengajuan = Pengajuan::create([
             'user_id' => Auth::id(),
             'jenis_layanan' => 'Cloud Government',
-            'status' => 'Pending',
             'file_pendukung' => $filePath,
-            'data_pengajuan' => $request->data_pengajuan,
+            'data_pengajuan' => collect($request->data_pengajuan)->only([
+                'nama', 'nip', 'instansi', 'email', 'kapasitas',
+            ])->all(),
         ]);
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
@@ -250,9 +254,10 @@ class UserPengajuanController extends Controller
         $pengajuan = Pengajuan::create([
             'user_id' => Auth::id(),
             'jenis_layanan' => 'Pusat Bantuan',
-            'status' => 'Pending',
             'file_pendukung' => $filePath,
-            'data_pengajuan' => $request->data_pengajuan,
+            'data_pengajuan' => collect($request->data_pengajuan)->only([
+                'kategori', 'nama', 'nip', 'email', 'pesan_kendala',
+            ])->all(),
         ]);
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);

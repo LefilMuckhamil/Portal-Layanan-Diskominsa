@@ -223,7 +223,7 @@ function copyTiket(tiket) {
 
                 const senderHtml = isUser
                     ? ''
-                    : '<p class="text-[10px] font-black text-sky-700 mb-0.5">' + (msg.pengirim || 'Admin Diskominsa') + '</p>';
+                    : '<p class="text-[10px] font-black text-sky-700 mb-0.5">' + escapeHtml(msg.pengirim || 'Admin Diskominsa') + '</p>';
 
                 bubble.innerHTML = senderHtml + '<p class="text-[12.5px] font-medium leading-relaxed">' + escapeHtml(msg.isi || '') + '</p>';
 

@@ -8,6 +8,7 @@ use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class AdminUserController extends Controller
@@ -17,7 +18,7 @@ class AdminUserController extends Controller
         $query = User::query();
 
         if ($request->filled('search')) {
-            $search = trim($request->search);
+            $search = addcslashes(trim($request->search), '%_');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
@@ -108,6 +109,9 @@ class AdminUserController extends Controller
             }
         }
 
+        $role = $validated['role'] ?? null;
+        unset($validated['role']);
+
         if ($validated['password'] !== null) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
@@ -115,7 +119,11 @@ class AdminUserController extends Controller
         }
 
         $user->update($validated);
-        $user->forceFill(['role' => $validated['role']])->save();
+
+        if ($role !== $user->role) {
+            $user->forceFill(['role' => $role])->save();
+            Log::info('Admin ID '.auth()->id()." mengubah role User ID {$user->id} menjadi {$role}");
+        }
 
         return back()->with('sukses', 'Data akun '.$user->name.' berhasil diperbarui.');
     }
