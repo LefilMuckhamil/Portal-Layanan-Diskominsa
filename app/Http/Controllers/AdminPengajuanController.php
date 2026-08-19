@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Concerns\ResolvesPengajuanEmail;
 use App\Models\Pengajuan;
 use App\Models\PengajuanLog;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\TiketDitolakNotification;
 use App\Notifications\TiketSelesaiNotification;
@@ -225,15 +226,16 @@ class AdminPengajuanController extends Controller
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('admin.website.partials.table', compact('pengajuans', 'users'))->render(),
+                'html' => view('admin.website.partials.table', compact('pengajuans', 'users', 'chatAktif'))->render(),
             ]);
         }
 
         return view('admin.website.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -310,15 +312,16 @@ class AdminPengajuanController extends Controller
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('admin.email.partials.table', compact('pengajuans', 'users'))->render(),
+                'html' => view('admin.email.partials.table', compact('pengajuans', 'users', 'chatAktif'))->render(),
             ]);
         }
 
         return view('admin.email.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -395,15 +398,16 @@ class AdminPengajuanController extends Controller
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('admin.tte.partials.table', compact('pengajuans', 'users'))->render(),
+                'html' => view('admin.tte.partials.table', compact('pengajuans', 'users', 'chatAktif'))->render(),
             ]);
         }
 
         return view('admin.tte.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -475,15 +479,16 @@ class AdminPengajuanController extends Controller
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('admin.cloud.partials.table', compact('pengajuans', 'users'))->render(),
+                'html' => view('admin.cloud.partials.table', compact('pengajuans', 'users', 'chatAktif'))->render(),
             ]);
         }
 
         return view('admin.cloud.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -547,15 +552,16 @@ class AdminPengajuanController extends Controller
         $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
 
         $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('admin.bantuan.partials.table', compact('pengajuans', 'users'))->render(),
+                'html' => view('admin.bantuan.partials.table', compact('pengajuans', 'users', 'chatAktif'))->render(),
             ]);
         }
 
         return view('admin.bantuan.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users'
+            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
         ));
     }
 

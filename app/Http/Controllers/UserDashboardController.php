@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class UserDashboardController extends Controller
 {
     public function riwayat()
     {
         $pengajuans = Pengajuan::where('user_id', Auth::id())->latest()->get();
-        $chatAktif = Cache::get('chat_global_aktif', true);
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         return view('user.riwayat', compact('pengajuans', 'chatAktif'));
     }
@@ -20,14 +20,14 @@ class UserDashboardController extends Controller
     public function show($id)
     {
         $pengajuan = Pengajuan::where('user_id', Auth::id())->findOrFail($id);
-        $chatAktif = Cache::get('chat_global_aktif', true);
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         return view('user.detail', compact('pengajuan', 'chatAktif'));
     }
 
     public function kirimPesan(Request $request, $id)
     {
-        if (! Cache::get('chat_global_aktif', true)) {
+        if (Setting::get('chat_global_aktif', '1') !== '1') {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'status' => 'error',

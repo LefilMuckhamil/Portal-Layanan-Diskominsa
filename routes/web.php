@@ -11,8 +11,8 @@ use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\UserPengajuanController;
 use App\Http\Middleware\IsAdmin;
 use App\Models\Pengajuan;
+use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -171,7 +171,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $chatAktif = Cache::get('chat_global_aktif', true);
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         $calendarParams = array_filter([
             'search' => $request->input('search'),
@@ -241,18 +241,19 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
     })->name('admin.dashboard.chartData');
 
     Route::get('/pengaturan', function () {
-        $chatAktif = Cache::get('chat_global_aktif', true);
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
 
         return view('admin.pengaturan.index', compact('chatAktif'));
     })->name('admin.pengaturan');
 
     Route::post('/toggle-chat', function () {
-        $statusSekarang = Cache::get('chat_global_aktif', true);
-        Cache::put('chat_global_aktif', ! $statusSekarang);
-        $pesan = ! $statusSekarang ? 'diaktifkan' : 'dinonaktifkan';
+        $statusSekarang = Setting::get('chat_global_aktif', '1');
+        $newStatus = $statusSekarang === '1' ? '0' : '1';
+        Setting::set('chat_global_aktif', $newStatus);
+        $pesan = $newStatus === '1' ? 'diaktifkan' : 'dinonaktifkan';
 
         return back()->with('sukses', "Fitur Global Chat berhasil $pesan!");
-    })->name('admin.toggleChat')->middleware('throttle:20,1');
+    })->name('admin.toggleChat')->middleware('throttle:10,1');
 
     Route::get('/reset-password-requests', [ResetPasswordAdminController::class, 'index'])->name('admin.reset-password.index');
     Route::post('/reset-password-requests/{id}', [ResetPasswordAdminController::class, 'process'])->name('admin.reset-password.process')->middleware('throttle:20,1');

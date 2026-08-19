@@ -22,19 +22,11 @@
             document.getElementById('modal-' + id).classList.add('flex');
         }
         function tutupModalAdmin(id) {
+            if (window.stopChatPolling) window.stopChatPolling();
             document.getElementById('modal-' + id).classList.add('hidden');
             document.getElementById('modal-' + id).classList.remove('flex');
         }
 
-        function bukaModalInfo(id) {
-            document.getElementById('modal-info-' + id).classList.remove('hidden');
-            document.getElementById('modal-info-' + id).classList.add('flex');
-        }
-        function tutupModalInfo(id) {
-            document.getElementById('modal-info-' + id).classList.add('hidden');
-            document.getElementById('modal-info-' + id).classList.remove('flex');
-        }
-        
         function bukaModalDelete(id) {
             document.getElementById('modal-delete-' + id).classList.remove('hidden');
             document.getElementById('modal-delete-' + id).classList.add('flex');
