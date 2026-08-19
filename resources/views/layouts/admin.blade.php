@@ -128,25 +128,36 @@
         });
 
         (function () {
-            let pollTimer = null;
+            var _chatPollTimer = null;
+
+            window.stopChatPolling = function () {
+                if (_chatPollTimer) {
+                    clearInterval(_chatPollTimer);
+                    _chatPollTimer = null;
+                }
+            };
+
+            function isAnyChatModalOpen() {
+                var modals = document.querySelectorAll('[id^="modal-"]:not(#modal-logout):not(#modal-create)');
+                for (var i = 0; i < modals.length; i++) {
+                    if (!modals[i].classList.contains('hidden')) return true;
+                }
+                return false;
+            }
 
             function getChatUrl(id) {
                 return '{{ url("/admin/pengajuan") }}/' + id + '/chat';
             }
 
-            function escapeHtml(str) {
-                const d = document.createElement('div');
-                d.textContent = str;
-                return d.innerHTML;
-            }
-
             function pollVisibleModals() {
+                if (!isAnyChatModalOpen()) return;
+
                 document.querySelectorAll('[id^="modal-"]:not(#modal-logout):not(#modal-create)').forEach(function (modal) {
                     if (modal.classList.contains('hidden')) return;
-                    const id = modal.id.replace('modal-', '');
-                    const chatBox = modal.querySelector('.bg-slate-50.border.border-slate-200\\/80');
+                    var id = modal.id.replace('modal-', '');
+                    var chatBox = modal.querySelector('.bg-slate-50.border.border-slate-200\\/80');
                     if (!chatBox) return;
-                    const currentCount = chatBox.querySelectorAll('.flex.flex-col').length;
+                    var currentCount = chatBox.querySelectorAll('.flex.flex-col').length;
 
                     fetch(getChatUrl(id), {
                         headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
@@ -154,30 +165,30 @@
                     .then(function (r) { return r.json(); })
                     .then(function (data) {
                         if (data.status !== 'success') return;
-                        const pesan = data.pesan || [];
+                        var pesan = data.pesan || [];
                         if (pesan.length <= currentCount) return;
 
-                        const newMessages = pesan.slice(currentCount);
+                        var newMessages = pesan.slice(currentCount);
                         newMessages.forEach(function (msg) {
-                            const isUser = msg.role === 'user';
-                            const wrapper = document.createElement('div');
+                            var isUser = msg.role === 'user';
+                            var wrapper = document.createElement('div');
                             wrapper.className = 'flex flex-col ' + (isUser ? 'items-start' : 'items-end');
 
-                            const bubble = document.createElement('div');
+                            var bubble = document.createElement('div');
                             bubble.className = 'max-w-[85%] px-3 py-1.5 rounded-xl text-[11.5px] ' +
                                 (isUser ? 'bg-white border border-slate-200 text-[#101828] rounded-bl-none shadow-sm' : 'bg-[#16324F] text-white rounded-br-none');
 
-                            const sender = document.createElement('p');
+                            var sender = document.createElement('p');
                             sender.className = 'font-bold text-[9.5px] opacity-80 mb-0.5';
                             sender.textContent = msg.pengirim || '';
 
-                            const isi = document.createElement('p');
+                            var isi = document.createElement('p');
                             isi.className = 'leading-relaxed';
                             isi.textContent = msg.isi || '';
 
                             bubble.append(sender, isi);
 
-                            const waktu = document.createElement('span');
+                            var waktu = document.createElement('span');
                             waktu.className = 'text-[9px] text-[#667085] mt-0.5';
                             waktu.textContent = msg.waktu || '';
 
@@ -191,7 +202,11 @@
                 });
             }
 
-            pollTimer = setInterval(pollVisibleModals, 6000);
+            _chatPollTimer = setInterval(pollVisibleModals, 6000);
+
+            document.addEventListener('submit', function () {
+                window.stopChatPolling();
+            }, true);
         })();
 
         (function () {

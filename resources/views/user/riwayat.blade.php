@@ -415,6 +415,10 @@
                 originalPilihPengajuan(id);
                 startChatPolling(id);
             };
+
+            document.addEventListener('submit', function () {
+                Object.keys(chatPollingIntervals).forEach(function(k) { stopChatPolling(k); });
+            }, true);
         });
     </script>
 @endsection

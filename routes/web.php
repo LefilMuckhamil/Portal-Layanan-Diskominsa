@@ -82,7 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/riwayat-pengajuan', [UserDashboardController::class, 'riwayat'])->name('user.riwayat');
     Route::get('/riwayat-pengajuan/{id}', [UserDashboardController::class, 'show'])->name('user.pengajuan.show');
     Route::post('/riwayat-pengajuan/{id}/pesan', [UserDashboardController::class, 'kirimPesan'])->name('user.pengajuan.pesan')->middleware('throttle:20,1');
-    Route::get('/riwayat-pengajuan/{id}/chat', [UserDashboardController::class, 'getChat'])->name('user.pengajuan.chat');
+    Route::get('/riwayat-pengajuan/{id}/chat', [UserDashboardController::class, 'getChat'])->name('user.pengajuan.chat')->middleware('throttle:60,1');
 
     Route::get('/dokumen/{pengajuan}/{jenis}', [DocumentController::class, 'unduh'])->name('dokumen.unduh');
 });
@@ -285,7 +285,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
             Route::put('/{id}/update', [AdminPengajuanController::class, 'updateProgres'])->name('admin.pengajuan.update');
         });
 
-        Route::get('/{id}/chat', [AdminPengajuanController::class, 'getChat'])->name('admin.pengajuan.chat');
+        Route::get('/{id}/chat', [AdminPengajuanController::class, 'getChat'])->name('admin.pengajuan.chat')->middleware('throttle:60,1');
     });
 
 });

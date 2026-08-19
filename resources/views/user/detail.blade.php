@@ -188,11 +188,12 @@ function copyTiket(tiket) {
 }
 
 (function () {
-    const chatUrl = '{{ route("user.pengajuan.chat", $pengajuan->id) }}';
-    const chatContainer = document.querySelector('.custom-scrollbar');
-    const userPesanCount = @json(count(array_filter($pengajuan->pesan ?? [], fn($p) => ($p['role'] ?? '') === 'user')));
+    var chatUrl = '{{ route("user.pengajuan.chat", $pengajuan->id) }}';
+    var chatContainer = document.querySelector('.custom-scrollbar');
+    var userPesanCount = @json(count(array_filter($pengajuan->pesan ?? [], fn($p) => ($p['role'] ?? '') === 'user')));
 
-    let lastCount = {{ count($pengajuan->pesan ?? []) }};
+    var lastCount = {{ count($pengajuan->pesan ?? []) }};
+    var _detailPollTimer = null;
 
     function pollChat() {
         fetch(chatUrl, {
@@ -246,7 +247,14 @@ function copyTiket(tiket) {
         return d.innerHTML;
     }
 
-    setInterval(pollChat, 6000);
+    _detailPollTimer = setInterval(pollChat, 6000);
+    window._detailPollTimer = _detailPollTimer;
     if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
 })();
+
+document.addEventListener('submit', function (e) {
+    if (e.target.matches('form[action*="pesan"]')) {
+        if (window._detailPollTimer) { clearInterval(window._detailPollTimer); window._detailPollTimer = null; }
+    }
+}, true);
 </script>

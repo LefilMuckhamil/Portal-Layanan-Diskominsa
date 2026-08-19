@@ -5,7 +5,6 @@
 
 @section('content')
     @include('admin.bantuan.partials.statistics')
-
     @include('admin.bantuan.partials.table')
 
     <script>
@@ -44,6 +43,30 @@
             document.getElementById('modal-delete-' + id).classList.add('hidden');
             document.getElementById('modal-delete-' + id).classList.remove('flex');
         }
+
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                bukaModalCreate();
+            });
+        @endif
+
+        function konfirmasiTolak(form) {
+            const status = form.querySelector('select[name="status"]');
+            if (status && status.value === 'Ditolak' && !confirm('Apakah Anda yakin menolak pengajuan ini? Status pengajuan akan menjadi Ditolak.')) {
+                return false;
+            }
+            disableSubmitButton(form);
+            return true;
+        }
+
+        function disableSubmitButton(form) {
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add('opacity-70', 'cursor-not-allowed');
+                btn.innerHTML = 'Memproses... <i class="fa-solid fa-spinner fa-spin ml-2"></i>';
+            }
+        }
     </script>
     
     <style>
@@ -52,5 +75,4 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
-    
 @endsection
