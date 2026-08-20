@@ -307,6 +307,29 @@
                 if (form) fetchTable(form, page);
             }, true);
         })();
+
+        function handleAsnSelected(inputElem, prefix) {
+            var hidden = document.getElementById('user_id_hidden_' + prefix);
+            if (!hidden) return;
+            var val = inputElem.value.trim();
+            if (!val) { hidden.value = ''; return; }
+            var datalist = document.getElementById('list-asn-' + prefix);
+            if (!datalist) return;
+            var matched = null;
+            var opts = datalist.options;
+            for (var i = 0; i < opts.length; i++) {
+                if (opts[i].value === val) { matched = opts[i]; break; }
+            }
+            if (!matched) { hidden.value = ''; return; }
+            hidden.value = matched.getAttribute('data-id') || '';
+            var modal = inputElem.closest('[id^="modal-"]');
+            if (!modal) return;
+            var fields = { nama: 'data-name', nip: 'data-nip', instansi: 'data-instansi', no_hp: 'data-hp', email: 'data-email' };
+            Object.keys(fields).forEach(function (key) {
+                var el = modal.querySelector('[name="data_pengajuan[' + key + ']"]');
+                if (el && matched.getAttribute(fields[key])) el.value = matched.getAttribute(fields[key]);
+            });
+        }
     </script>
 </body>
 </html>

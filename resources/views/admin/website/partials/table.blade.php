@@ -398,24 +398,7 @@
                             <span class="text-[9px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded font-bold">Wajib Diisi</span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3.5">
-                            <div class="col-span-1 md:col-span-2">
-                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih ASN Pemohon <span class="text-rose-500">*</span></label>
-                                <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 relative shadow-sm focus-within:border-indigo-500 transition-all">
-                                    <i class="fa-solid fa-user-check text-indigo-600 text-[13px] mr-2"></i>
-                                    <select name="user_id" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                        <option value="">Silakan Pilih ASN Terdaftar</option>
-                                        @php
-                                            $listUsers = $users ?? \App\Models\User::where('role', '!=', 'admin')->get();
-                                        @endphp
-                                        @forelse($listUsers as $user)
-                                            <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>{{ $user->name }} - {{ $user->nip ?? $user->unit_kerja ?? 'ASN' }}</option>
-                                        @empty
-                                            <option value="" disabled>Belum ada data ASN</option>
-                                        @endforelse
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
-                                </div>
-                            </div>
+                            @include('admin.partials.select-asn', ['prefix' => 'website'])
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pemohon <span class="text-rose-500">*</span></label>
                                 <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Nama lengkap..." class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-indigo-500 shadow-sm transition-all">
