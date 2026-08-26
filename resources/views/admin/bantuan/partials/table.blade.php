@@ -46,7 +46,7 @@
                         $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
                         $badgeColor = match($item->status) {
                             'Pending' => 'bg-amber-50 text-amber-600 border-amber-100',
-                            'Proses' => 'bg-blue-50 text-blue-600 border-blue-100',
+                            'Proses'  => 'bg-blue-50 text-blue-600 border-blue-100',
                             'Selesai' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
                             'Ditolak' => 'bg-rose-50 text-rose-600 border-rose-100',
                             default   => 'bg-gray-50 text-gray-600 border-gray-100'
@@ -137,6 +137,9 @@
             } else {
                 $cleanWa = $rawWa;
             }
+
+            $filePemohon = $item->file_pendukung 
+                ?? ($dataForm['surat_permohonan'] ?? ($dataForm['file'] ?? ($dataForm['berkas'] ?? ($dataForm['dokumen'] ?? ($dataForm['file_persyaratan'] ?? null)))));
         @endphp
 
         <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[150] hidden items-center justify-center">
@@ -224,13 +227,6 @@
                                             <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Rincian Kendala</p>
                                             <p class="text-[11.5px] font-medium text-gray-700 leading-relaxed max-h-20 overflow-y-auto custom-scrollbar">{{ $dataForm['pesan_kendala'] ?? $dataForm['keterangan'] ?? 'Tidak ada rincian tambahan.' }}</p>
                                         </div>
-                                    </div>
-                                </div>
-
-                                        @php
-                                            $filePemohon = $item->file_pendukung 
-                                                ?? ($dataForm['surat_permohonan'] ?? ($dataForm['file'] ?? ($dataForm['berkas'] ?? ($dataForm['dokumen'] ?? ($dataForm['file_persyaratan'] ?? null)))));
-                                        @endphp
 
                                         @if(!empty($filePemohon))
                                             <div class="pt-2.5 border-t border-slate-100">
@@ -242,17 +238,17 @@
                                                         </div>
                                                         <div class="min-w-0">
                                                             <p class="text-[11.5px] font-bold truncate">Surat Permohonan</p>
-                                                            <p class="text-[9px] text-indigo-600 font-medium">Klik untuk melihat / unduh file</p>
+                                                            <p class="text-[9px] text-indigo-600 font-medium">Klik untuk melihat file</p>
                                                         </div>
                                                     </div>
-                                                    <i class="fa-solid fa-download text-xs text-indigo-500 group-hover:text-indigo-800 transition-colors mr-1"></i>
+                                                    <i class="fa-solid fa-arrow-up-right-from-square text-xs text-indigo-500 group-hover:text-indigo-800 transition-colors mr-1"></i>
                                                 </a>
                                             </div>
                                         @else
                                             <div class="pt-2 border-t border-slate-100">
                                                 <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-1">Berkas / Surat Pemohon</p>
                                                 <div class="p-2 rounded-lg border border-dashed border-gray-200 bg-gray-50/70 text-center">
-                                                    <p class="text-[10px] font-medium text-gray-400 italic">Tidak ada berkas diunggah oleh pemohon</p>
+                                                    <p class="text-[10px] font-medium text-gray-400 italic">Tidak ada berkas diunggah</p>
                                                 </div>
                                             </div>
                                         @endif
@@ -484,7 +480,7 @@
                             <div class="col-span-1 md:col-span-2">
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Bukti Kendala (PDF) <span class="text-rose-500">*</span></label>
                                 <label for="admin-file-upload" class="group flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-[#DCE1E8] bg-white hover:border-rose-500 hover:bg-rose-50/40 transition-all px-4 py-2.5 cursor-pointer shadow-sm">
-                                    <input id="admin-file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required
+                                    <input id="admin-file-upload" name="file_persyaratan" type="file" class="sr-only" accept=".pdf" required
                                            onchange="if(this.files && this.files[0]){document.getElementById('admin-file-name').textContent = this.files[0].name + ' (' + (this.files[0].size / 1048576).toFixed(2) + ' MB)'; document.getElementById('admin-file-name').classList.add('text-emerald-700', 'font-bold')}">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-100 group-hover:bg-rose-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
@@ -499,11 +495,6 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Surat / Berkas Permohonan (PDF)</label>
-                        <input type="file" name="file_persyaratan" accept=".pdf" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12px] text-[#101828] font-medium outline-none focus:border-indigo-500 shadow-sm transition-all file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                     </div>
 
                     <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">

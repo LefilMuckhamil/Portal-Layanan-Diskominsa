@@ -488,11 +488,6 @@
                         </div>
                     </div>
 
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Surat / Berkas Permohonan (PDF)</label>
-                        <input type="file" name="file_persyaratan" accept=".pdf" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12px] text-[#101828] font-medium outline-none focus:border-indigo-500 shadow-sm transition-all file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    </div>
-
                     <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">
                         <button type="button" onclick="tutupModalCreate()" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer">Batal</button>
                         <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg cursor-pointer">
