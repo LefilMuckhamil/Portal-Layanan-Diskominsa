@@ -256,7 +256,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
             'data_pengajuan.nama_pimpinan' => 'required|string|max:255',
             'data_pengajuan.domain' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.instansi.required' => 'Kolom Instansi wajib diisi.',
@@ -264,11 +265,17 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
             'data_pengajuan.nama_pimpinan.required' => 'Kolom Nama Pimpinan wajib diisi.',
             'data_pengajuan.domain.required' => 'Kolom Domain wajib diisi.',
+            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
+            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.required_without' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
+            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
+        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
         $filePath = null;
-        if ($request->hasFile('file_pendukung')) {
-            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/website', 'local');
+        if ($uploadedFile) {
+            $filePath = $uploadedFile->store('dokumen_pengajuan/website', 'local');
         }
 
         if (isset($dataPengajuan['domain'])) {
@@ -342,7 +349,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
             'data_pengajuan.usulan_email' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -350,12 +358,17 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp.required' => 'Kolom Nomor HP/WhatsApp wajib diisi.',
             'data_pengajuan.no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
             'data_pengajuan.usulan_email.required' => 'Kolom Usulan Email wajib diisi.',
-            'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
+            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.required_without' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
+            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
+        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
         $filePath = null;
-        if ($request->hasFile('file_pendukung')) {
-            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/email', 'local');
+        if ($uploadedFile) {
+            $filePath = $uploadedFile->store('dokumen_pengajuan/email', 'local');
         }
 
         if (isset($dataPengajuan['usulan_email'])) {
@@ -430,7 +443,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.alamat' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -439,12 +453,17 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
             'data_pengajuan.email.required' => 'Kolom Email wajib diisi.',
             'data_pengajuan.alamat.required' => 'Kolom Alamat wajib diisi.',
-            'file_pendukung.required' => 'Dokumen Persyaratan (PDF) wajib diunggah.',
+            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
+            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.required_without' => 'Dokumen Persyaratan (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
+            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
+        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
         $filePath = null;
-        if ($request->hasFile('file_pendukung')) {
-            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/tte', 'local');
+        if ($uploadedFile) {
+            $filePath = $uploadedFile->store('dokumen_pengajuan/tte', 'local');
         }
 
         Pengajuan::create([
@@ -505,7 +524,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.instansi' => 'required|string|max:255',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.kapasitas' => ['required', 'string', Rule::in(['10GB', '50GB', '100GB'])],
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Penanggung Jawab wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -513,12 +533,17 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.email.required' => 'Kolom Email Aktif wajib diisi.',
             'data_pengajuan.kapasitas.required' => 'Kolom Kapasitas Penyimpanan wajib dipilih.',
             'data_pengajuan.kapasitas.in' => 'Pilihan kapasitas penyimpanan tidak valid.',
-            'file_pendukung.required' => 'Surat Permohonan Cloud (PDF) wajib diunggah.',
+            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
+            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.required_without' => 'Surat Permohonan Cloud (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
+            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
+        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
         $filePath = null;
-        if ($request->hasFile('file_pendukung')) {
-            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/cloud', 'local');
+        if ($uploadedFile) {
+            $filePath = $uploadedFile->store('dokumen_pengajuan/cloud', 'local');
         }
 
         Pengajuan::create([
@@ -579,19 +604,25 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.nip' => 'required|string',
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.pesan_kendala' => 'nullable|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',
             'data_pengajuan.kategori.in' => 'Pilihan kategori tidak valid.',
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
             'data_pengajuan.email.required' => 'Kolom Email Resmi wajib diisi.',
-            'file_pendukung.required' => 'Surat Permohonan / Bukti (PDF) wajib diunggah.',
+            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
+            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.required_without' => 'Surat Permohonan / Bukti (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
+            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
+        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
         $filePath = null;
-        if ($request->hasFile('file_pendukung')) {
-            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/bantuan', 'local');
+        if ($uploadedFile) {
+            $filePath = $uploadedFile->store('dokumen_pengajuan/bantuan', 'local');
         }
 
         Pengajuan::create([

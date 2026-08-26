@@ -227,14 +227,36 @@
                                     </div>
                                 </div>
 
-                                <div class="mt-3.5">
-                                    @if(!empty($item->file_pendukung))
-                                        <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'pendukung']) }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-full bg-[#16324F] hover:bg-[#0F2438] text-white py-2.5 rounded-xl font-bold text-[12px] transition-all shadow-sm">
-                                            <i class="fa-solid fa-file-pdf"></i> Download Lampiran Bukti
-                                        </a>
-                                    @else
-                                        <div class="text-center text-[11px] text-gray-400 italic bg-white py-2.5 rounded-xl border border-dashed border-gray-200">Tidak ada lampiran bukti</div>
-                                    @endif
+                                        @php
+                                            $filePemohon = $item->file_pendukung 
+                                                ?? ($dataForm['surat_permohonan'] ?? ($dataForm['file'] ?? ($dataForm['berkas'] ?? ($dataForm['dokumen'] ?? ($dataForm['file_persyaratan'] ?? null)))));
+                                        @endphp
+
+                                        @if(!empty($filePemohon))
+                                            <div class="pt-2.5 border-t border-slate-100">
+                                                <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Berkas / Surat Pemohon</p>
+                                                <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'pendukung']) }}" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100/70 transition-all text-indigo-900 group shadow-sm">
+                                                    <div class="flex items-center gap-2.5 min-w-0">
+                                                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shrink-0 shadow-sm">
+                                                            <i class="fa-solid fa-file-pdf"></i>
+                                                        </div>
+                                                        <div class="min-w-0">
+                                                            <p class="text-[11.5px] font-bold truncate">Surat Permohonan</p>
+                                                            <p class="text-[9px] text-indigo-600 font-medium">Klik untuk melihat / unduh file</p>
+                                                        </div>
+                                                    </div>
+                                                    <i class="fa-solid fa-download text-xs text-indigo-500 group-hover:text-indigo-800 transition-colors mr-1"></i>
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div class="pt-2 border-t border-slate-100">
+                                                <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-1">Berkas / Surat Pemohon</p>
+                                                <div class="p-2 rounded-lg border border-dashed border-gray-200 bg-gray-50/70 text-center">
+                                                    <p class="text-[10px] font-medium text-gray-400 italic">Tidak ada berkas diunggah oleh pemohon</p>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
@@ -272,7 +294,7 @@
                                                     </div>
                                                     <div class="min-w-0">
                                                         <p id="admin-hasil-name-{{ $item->id }}" class="text-[11.5px] text-[#101828] font-bold group-hover:text-rose-900 truncate">
-                                                            {{ !empty($item->file_hasil) ? 'File Hasil Tersedia' : 'Pilih Berkas PDF Bukti' }}
+                                                            {{ !empty($dataForm['file_hasil']) ? 'File Hasil Tersedia' : 'Pilih Berkas PDF Bukti' }}
                                                         </p>
                                                         <p class="text-[10px] text-[#667085] truncate">Dokumen hasil penanganan</p>
                                                     </div>
@@ -479,10 +501,15 @@
                         </div>
                     </div>
 
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Surat / Berkas Permohonan (PDF)</label>
+                        <input type="file" name="file_persyaratan" accept=".pdf" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12px] text-[#101828] font-medium outline-none focus:border-indigo-500 shadow-sm transition-all file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    </div>
+
                     <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-[#E4E7EC]">
                         <button type="button" onclick="tutupModalCreate()" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer">Batal</button>
                         <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg cursor-pointer">
-                            Simpan Tiket <i class="fa-solid fa-paper-plane text-[11px]"></i>
+                            Simpan Pengajuan <i class="fa-solid fa-paper-plane text-[11px]"></i>
                         </button>
                     </div>
                 </form>
