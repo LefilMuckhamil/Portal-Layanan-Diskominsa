@@ -10,6 +10,7 @@ use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\UserPengajuanController;
 use App\Http\Middleware\IsAdmin;
+use App\Models\KategoriBantuan;
 use App\Models\Pengajuan;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -73,7 +74,9 @@ Route::middleware(['auth'])->group(function () {
             return view('pengajuan.cloud');
         })->name('pengajuan.cloud');
         Route::get('/pengajuan-bantuan', function () {
-            return view('pengajuan.bantuan');
+            return view('pengajuan.bantuan', [
+                'kategoris' => KategoriBantuan::where('is_active', true)->orderBy('id')->get(),
+            ]);
         })->name('pengajuan.bantuan');
 
         Route::middleware('throttle:10,1')->group(function () {

@@ -225,7 +225,7 @@
                                         </div>
                                         <div>
                                             <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Rincian Kendala</p>
-                                            <p class="text-[11.5px] font-medium text-gray-700 leading-relaxed max-h-20 overflow-y-auto custom-scrollbar">{{ $dataForm['pesan_kendala'] ?? $dataForm['keterangan'] ?? 'Tidak ada rincian tambahan.' }}</p>
+                                            <p class="text-[11.5px] font-medium text-gray-700 leading-relaxed max-h-20 overflow-y-auto custom-scrollbar">{{ $dataForm['pesan_kendala'] ?? $dataForm['deskripsi_kendala'] ?? $dataForm['keterangan'] ?? 'Tidak ada rincian tambahan.' }}</p>
                                         </div>
 
                                         @if(!empty($filePemohon))

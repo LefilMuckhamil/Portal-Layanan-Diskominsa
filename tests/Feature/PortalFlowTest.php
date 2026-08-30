@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\KategoriBantuan;
 use App\Models\Pengajuan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -601,22 +602,96 @@ class PortalFlowTest extends TestCase
         $this->assertEmpty($pengajuan->pesan);
     }
 
+    public function test_user_login_berhasil_membuat_pengajuan_bantuan_berstatus_pending(): void
+    {
+        Storage::fake('local');
+
+        $kategori = KategoriBantuan::create([
+            'nama_kategori' => 'Reset Password Email',
+            'is_active' => true,
+        ]);
+
+        $user = $this->buatUser();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $response = $this->post(route('pengajuan.bantuan.store'), [
+            'data_pengajuan' => [
+                'kategori_bantuan_id' => $kategori->id,
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'no_hp' => '081234567890',
+                'email_reset' => 'Pegawai@gmail.com',
+                'deskripsi_kendala' => 'Tidak bisa masuk email resmi.',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('sukses');
+        $response->assertSessionHas('nomor_tiket');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pusat Bantuan',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::where('user_id', $user->id)->first();
+        $this->assertNotNull($pengajuan);
+        $this->assertStringStartsWith('#HLP-', $pengajuan->nomor_tiket);
+        $this->assertSame($kategori->id, $pengajuan->data_pengajuan['kategori_bantuan_id']);
+        $this->assertSame('Reset Password Email', $pengajuan->data_pengajuan['kategori']);
+        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame('pegawai@gmail.com', $pengajuan->data_pengajuan['email_reset']);
+        $this->assertSame('Tidak bisa masuk email resmi.', $pengajuan->data_pengajuan['deskripsi_kendala']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
     public function test_pengajuan_bantuan_ditolak_saat_kategori_tidak_valid(): void
     {
         $user = $this->buatUser();
 
         $response = $this->actingAs($user)->post(route('pengajuan.bantuan.store'), [
             'data_pengajuan' => [
-                'kategori' => 'Kategori Hacker',
+                'kategori_bantuan_id' => 999,
                 'nama' => 'Pegawai Diskominsa',
                 'nip' => '198501012010011001',
-                'email' => 'pegawai@acehbaratkab.go.id',
-                'pesan_kendala' => 'Menguji validasi kategori',
+                'no_hp' => '081234567890',
+                'email_reset' => 'pegawai@gmail.com',
+                'deskripsi_kendala' => 'Menguji validasi kategori',
             ],
             'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
         ]);
 
-        $response->assertSessionHasErrors('data_pengajuan.kategori');
+        $response->assertSessionHasErrors('data_pengajuan.kategori_bantuan_id');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_pengajuan_bantuan_ditolak_saat_email_reset_tidak_valid(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.bantuan.store'), [
+            'data_pengajuan' => [
+                'kategori_bantuan_id' => KategoriBantuan::create([
+                    'nama_kategori' => 'Reset OTP',
+                    'is_active' => true,
+                ])->id,
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'no_hp' => '081234567890',
+                'email_reset' => 'bukan-email',
+                'deskripsi_kendala' => 'Menguji validasi email reset',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.email_reset');
         $this->assertDatabaseCount('pengajuan', 0);
     }
 

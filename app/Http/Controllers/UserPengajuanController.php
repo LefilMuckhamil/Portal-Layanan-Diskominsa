@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Concerns\ResolvesPengajuanEmail;
+use App\Models\KategoriBantuan;
 use App\Models\Pengajuan;
 use App\Notifications\TiketDibuatNotification;
 use App\Support\PhoneNumber;
@@ -13,7 +14,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class UserPengajuanController extends Controller
 {
@@ -433,39 +433,71 @@ class UserPengajuanController extends Controller
 
     public function storeBantuan(Request $request)
     {
+        $dataPengajuan = $request->data_pengajuan;
+
         $request->validate([
             'data_pengajuan' => 'required|array',
             'data_pengajuan.file_hasil' => 'prohibited',
-            'data_pengajuan.kategori' => ['required', 'string', Rule::in(['Reset Password Email'])],
-            'data_pengajuan.nama' => 'required|string|max:255',
-            'data_pengajuan.nip' => 'required|string',
-            'data_pengajuan.email' => 'required|email',
-            'data_pengajuan.pesan_kendala' => 'nullable|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'data_pengajuan.kategori_bantuan_id' => 'required|exists:kategori_bantuan,id',
+            'data_pengajuan.nama' => ['required', 'string', 'max:150', 'regex:/^[a-zA-Z\s\.,]+$/'],
+            'data_pengajuan.nip' => 'required|digits:18',
+            'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^(08|\+628)[0-9]{8,13}$/'],
+            'data_pengajuan.email_reset' => 'required|email:rfc,dns|max:150',
+            'data_pengajuan.deskripsi_kendala' => 'nullable|string|max:1000',
+            'file_pendukung' => 'required|file|mimes:pdf|max:5120',
         ], [
-            'data_pengajuan.kategori.required' => 'Kategori kendala wajib dipilih.',
-            'data_pengajuan.kategori.in' => 'Pilihan kategori tidak valid.',
-            'data_pengajuan.nama.required' => 'Nama pelapor wajib diisi.',
-            'data_pengajuan.nip.required' => 'NIP wajib diisi.',
-            'data_pengajuan.email.required' => 'Email wajib diisi.',
-            'file_pendukung.required' => 'Surat/Bukti Kendala (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file harus PDF.',
+            'data_pengajuan.kategori_bantuan_id.required' => 'Kategori kendala wajib dipilih.',
+            'data_pengajuan.kategori_bantuan_id.exists' => 'Pilihan kategori tidak valid.',
+            'data_pengajuan.nama.required' => 'Kolom Nama Lengkap wajib diisi.',
+            'data_pengajuan.nama.regex' => 'Kolom Nama Lengkap hanya boleh huruf, spasi, titik, dan koma.',
+            'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
+            'data_pengajuan.nip.digits' => 'NIP harus terdiri dari 18 digit angka.',
+            'data_pengajuan.no_hp.required' => 'Kolom Nomor HP/WhatsApp wajib diisi.',
+            'data_pengajuan.no_hp.regex' => 'Format Nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau +628xxxxxxxxxx.',
+            'data_pengajuan.email_reset.required' => 'Kolom Email yang Ingin Direset wajib diisi.',
+            'data_pengajuan.email_reset.email' => 'Format Email yang Ingin Direset tidak valid.',
+            'data_pengajuan.deskripsi_kendala.max' => 'Deskripsi kendala maksimal 1000 karakter.',
+            'file_pendukung.required' => 'Surat Permohonan Bantuan (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
-        $filePath = null;
-        if ($request->hasFile('file_pendukung')) {
-            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/bantuan', 'local');
+        if (isset($dataPengajuan['no_hp'])) {
+            $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
         }
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => Auth::id(),
-            'jenis_layanan' => 'Pusat Bantuan',
-            'file_pendukung' => $filePath,
-            'data_pengajuan' => collect($request->data_pengajuan)->only([
-                'kategori', 'nama', 'nip', 'email', 'pesan_kendala',
-            ])->all(),
-        ]);
+        if (isset($dataPengajuan['email_reset'])) {
+            $dataPengajuan['email_reset'] = Str::lower(trim($dataPengajuan['email_reset']));
+        }
+
+        $kategori = KategoriBantuan::find($dataPengajuan['kategori_bantuan_id']);
+        $dataPengajuan['kategori'] = $kategori?->nama_kategori;
+
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+            $fileName = Str::uuid().'.'.strtolower($file->getClientOriginalExtension());
+            $filePath = $file->storeAs('dokumen_pengajuan/bantuan', $fileName, 'local');
+        }
+
+        try {
+            $pengajuan = DB::transaction(function () use ($dataPengajuan, $filePath) {
+                return Pengajuan::create([
+                    'user_id' => Auth::id(),
+                    'jenis_layanan' => 'Pusat Bantuan',
+                    'file_pendukung' => $filePath,
+                    'data_pengajuan' => collect($dataPengajuan)->only([
+                        'kategori_bantuan_id', 'kategori', 'nama', 'nip', 'no_hp', 'email_reset', 'deskripsi_kendala',
+                    ])->all(),
+                ]);
+            });
+        } catch (\Throwable $e) {
+            if ($filePath) {
+                Storage::disk('local')->delete($filePath);
+            }
+
+            throw $e;
+        }
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
 
