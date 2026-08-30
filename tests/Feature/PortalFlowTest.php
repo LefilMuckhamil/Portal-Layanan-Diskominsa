@@ -189,6 +189,166 @@ class PortalFlowTest extends TestCase
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
 
+    public function test_user_login_berhasil_membuat_pengajuan_cloud_berstatus_pending(): void
+    {
+        Storage::fake('local');
+
+        $user = $this->buatUser();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $response = $this->post(route('pengajuan.cloud.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'email' => 'pegawai@gmail.com',
+                'kapasitas' => '10GB',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('sukses');
+        $response->assertSessionHas('nomor_tiket');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Cloud Government',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::where('user_id', $user->id)->first();
+        $this->assertNotNull($pengajuan);
+        $this->assertStringStartsWith('#CLD-', $pengajuan->nomor_tiket);
+        $this->assertSame('10GB', $pengajuan->data_pengajuan['kapasitas']);
+        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_pengajuan_cloud_ditolak_saat_kapasitas_melebihi_20_karakter(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.cloud.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'email' => 'pegawai@gmail.com',
+                'kapasitas' => str_repeat('A', 21),
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.kapasitas');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_pengajuan_cloud_ditolak_saat_no_hp_tidak_valid(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.cloud.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234',
+                'email' => 'pegawai@gmail.com',
+                'kapasitas' => '10GB',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.no_hp');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_user_login_berhasil_membuat_pengajuan_email_berstatus_pending(): void
+    {
+        Storage::fake('local');
+
+        $user = $this->buatUser();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $response = $this->post(route('pengajuan.email.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'usulan_email' => 'pegawai.diskom',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('sukses');
+        $response->assertSessionHas('nomor_tiket');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Email Resmi',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::where('user_id', $user->id)->first();
+        $this->assertNotNull($pengajuan);
+        $this->assertStringStartsWith('#EML-', $pengajuan->nomor_tiket);
+        $this->assertSame('pegawai.diskom@acehbaratkab.go.id', $pengajuan->data_pengajuan['usulan_email']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_pengajuan_email_ditolak_saat_usulan_email_mengandung_karakter_terlarang(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.email.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'usulan_email' => 'pegawai@evil.com',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.usulan_email');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_pengajuan_email_ditolak_saat_no_hp_tidak_valid(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.email.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '0812',
+                'usulan_email' => 'pegawai.diskom',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.no_hp');
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
     public function test_user_lain_tidak_bisa_mengunduh_file_pengajuan_milik_user_pertama(): void
     {
         Storage::fake('local');
@@ -217,6 +377,69 @@ class PortalFlowTest extends TestCase
             'pengajuan' => $pengajuan->id,
             'jenis' => 'lampiran',
         ]))->assertOk();
+    }
+
+    public function test_user_login_berhasil_membuat_pengajuan_tte_berstatus_pending(): void
+    {
+        Storage::fake('local');
+
+        $user = $this->buatUser();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $response = $this->post(route('pengajuan.tte.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'nik' => '1108070101010001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'email' => 'pegawai@gmail.com',
+                'alamat' => 'Jl. Teuku Umar No. 1, Meulaboh',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('sukses');
+        $response->assertSessionHas('nomor_tiket');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Layanan TTE',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::where('user_id', $user->id)->first();
+        $this->assertNotNull($pengajuan);
+        $this->assertStringStartsWith('#TTE-', $pengajuan->nomor_tiket);
+        $this->assertSame('1108070101010001', $pengajuan->data_pengajuan['nik']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_pengajuan_tte_ditolak_saat_nik_tidak_berjumlah_16_digit(): void
+    {
+        $user = $this->buatUser();
+
+        $response = $this->actingAs($user)->post(route('pengajuan.tte.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'nik' => '11080701010100',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'email' => 'pegawai@gmail.com',
+                'alamat' => 'Jl. Teuku Umar No. 1, Meulaboh',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('data_pengajuan.nik');
+        $this->assertDatabaseCount('pengajuan', 0);
     }
 
     public function test_tracking_tiket_publik_mengembalikan_200_dan_data_json(): void
@@ -397,22 +620,23 @@ class PortalFlowTest extends TestCase
         $this->assertDatabaseCount('pengajuan', 0);
     }
 
-    public function test_pengajuan_cloud_ditolak_saat_kapasitas_tidak_valid(): void
+    public function test_pengajuan_cloud_ditolak_saat_nip_tidak_berjumlah_18_digit(): void
     {
         $user = $this->buatUser();
 
         $response = $this->actingAs($user)->post(route('pengajuan.cloud.store'), [
             'data_pengajuan' => [
                 'nama' => 'Pegawai Diskominsa',
-                'nip' => '198501012010011001',
+                'nip' => '198501012010011',
                 'instansi' => 'Dinas Kominfo',
-                'email' => 'pegawai@acehbaratkab.go.id',
-                'kapasitas' => '999TB',
+                'no_hp' => '081234567890',
+                'email' => 'pegawai@gmail.com',
+                'kapasitas' => '10GB',
             ],
             'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
         ]);
 
-        $response->assertSessionHasErrors('data_pengajuan.kapasitas');
+        $response->assertSessionHasErrors('data_pengajuan.nip');
         $this->assertDatabaseCount('pengajuan', 0);
     }
 

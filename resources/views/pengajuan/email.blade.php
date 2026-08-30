@@ -87,7 +87,7 @@
                     <div class="flex items-center gap-2 mb-0.5">
                         <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
                     </div>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang mengajukan pembuatan akun email.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang mengajukan pembuatan akun email resmi.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
@@ -96,17 +96,15 @@
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP</label>
-                            <input type="text" inputmode="numeric" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" inputmode="numeric" maxlength="18" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP (18 digit)" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Asal Instansi</label>
-                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP</label>
-                            <div class="dk-input flex items-center px-3.5">
-                                <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
-                            </div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP / WhatsApp</label>
+                            <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
@@ -114,19 +112,34 @@
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
                     <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Detail Pengajuan Email</h3>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Detail usulan alamat email resmi dan kelengkapan dokumen.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Detail usulan alamat email dinas dan kelengkapan dokumen.</p>
 
                     <div class="mb-6">
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Usulan Alamat Email</label>
                         <div class="dk-input flex items-center pl-3.5 pr-1.5 py-1.5">
-                            <span class="text-sky-600 text-[14px] mr-2.5"><i class="fa-solid fa-at"></i></span>
                             <input type="text" name="data_pengajuan[usulan_email]" value="{{ old('data_pengajuan.usulan_email') }}" required placeholder="namasaya" class="flex-1 min-w-0 bg-transparent outline-none py-1 text-[13.5px] text-[#101828] font-bold placeholder:font-normal placeholder:text-[#98A2B3]">
-                            <span class="text-[12px] text-[#16324F] bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 ml-1 font-extrabold">@acehbaratkab.go.id</span>
                         </div>
                     </div>
 
+                    <div class="mb-4">
+                        <a href="{{ asset('templates/template_permohonan_email.docx') }}" class="group flex items-center justify-between gap-4 rounded-xl border-2 border-blue-100 bg-gradient-to-r from-blue-50 to-sky-50 hover:from-blue-100 hover:to-sky-100 transition-all px-5 py-4 shadow-sm">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-11 h-11 shrink-0 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-md shadow-blue-600/25">
+                                    <i class="fa-solid fa-file-word"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[13.5px] text-[#101828] font-extrabold">Unduh Template Surat Permohonan <span class="text-blue-700">(.docx)</span></p>
+                                    <p class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format surat resmi siap pakai &middot; lengkapi lalu unggah dalam bentuk PDF</p>
+                                </div>
+                            </div>
+                            <span class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-blue-200 text-blue-700 rounded-xl text-[12.5px] font-bold group-hover:border-blue-400 transition-colors shadow-sm">
+                                <i class="fa-solid fa-download"></i> Unduh
+                            </span>
+                        </a>
+                    </div>
+
                     <div class="mb-2">
-                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Surat Permohonan Pembuatan Email (PDF)</label>
+                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Surat Permohonan (PDF)</label>
                         <label for="file-upload" class="group flex items-center gap-4 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-5 py-4 cursor-pointer shadow-sm">
                             <div class="w-10 h-10 shrink-0 rounded-xl bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
                                 <i class="fa-solid fa-cloud-arrow-up text-[16px]"></i>

@@ -87,20 +87,24 @@
                     <div class="flex items-center gap-2 mb-0.5">
                         <h3 class="text-[15px] font-extrabold text-[#101828]">Data Pemohon</h3>
                     </div>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang bertanggung jawab atas akun cloud.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Informasi pegawai yang bertanggung jawab atas akun penyimpanan cloud.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama</label>
-                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Lengkap</label>
+                            <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan Nama Lengkap" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">NIP</label>
-                            <input type="text" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" inputmode="numeric" maxlength="18" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP (18 digit)" class="dk-input w-full px-3.5 py-2.5 text-[13px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Instansi</label>
-                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinas Komunikasi dan Informatika" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Instansi / Unit Kerja</label>
+                            <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Contoh: Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP / WhatsApp</label>
+                            <input type="text" inputmode="tel" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>
@@ -108,29 +112,34 @@
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
                     <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Spesifikasi Cloud &amp; Dokumen</h3>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Konfigurasi kapasitas penyimpanan cloud dan berkas pengajuan.</p>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Konfigurasi kapasitas penyimpanan cloud dan berkas pengajuan resmi.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Email Resmi (Untuk Aktivasi)</label>
-                            <div class="dk-input flex items-center px-3.5">
-                                <i class="fa-solid fa-envelope text-sky-600 text-[14px] mr-2.5"></i>
-                                <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
-                            </div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Email Resmi Aktif</label>
+                            <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Kapasitas Penyimpanan</label>
-                            <div class="dk-input flex items-center px-3.5 relative">
-                                <i class="fa-solid fa-server text-cyan-700 text-[14px] mr-2.5"></i>
-                                <select name="data_pengajuan[kapasitas]" required class="flex-1 min-w-0 bg-transparent outline-none py-2.5 text-[13.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                    <option value="" disabled {{ old('data_pengajuan.kapasitas') ? '' : 'selected' }}>Pilih Kapasitas</option>
-                                    <option value="10GB" {{ old('data_pengajuan.kapasitas') == '10GB' ? 'selected' : '' }}>10 GB (Standar)</option>
-                                    <option value="50GB" {{ old('data_pengajuan.kapasitas') == '50GB' ? 'selected' : '' }}>50 GB (Menengah)</option>
-                                    <option value="100GB" {{ old('data_pengajuan.kapasitas') == '100GB' ? 'selected' : '' }}>100 GB (Besar)</option>
-                                </select>
-                                <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
-                            </div>
+                            <input type="text" name="data_pengajuan[kapasitas]" value="{{ old('data_pengajuan.kapasitas') }}" required placeholder="Contoh: 10GB / 50GB / 100GB" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <a href="{{ asset('templates/template_permohonan_cloud.docx') }}" class="group flex items-center justify-between gap-4 rounded-xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all px-5 py-4 shadow-sm">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-11 h-11 shrink-0 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-md shadow-blue-600/25">
+                                    <i class="fa-solid fa-file-word"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-[13.5px] text-[#101828] font-extrabold">Unduh Template Surat Permohonan <span class="text-blue-700">(.docx)</span></p>
+                                    <p class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format surat resmi siap pakai &middot; lengkapi lalu unggah dalam bentuk PDF</p>
+                                </div>
+                            </div>
+                            <span class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-blue-200 text-blue-700 rounded-xl text-[12.5px] font-bold group-hover:border-blue-400 transition-colors shadow-sm">
+                                <i class="fa-solid fa-download"></i> Unduh
+                            </span>
+                        </a>
                     </div>
 
                     <div class="mb-2">
