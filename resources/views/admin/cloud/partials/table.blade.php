@@ -274,7 +274,7 @@
                                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih Status Baru <span class="text-rose-500">*</span></label>
                                             <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 relative shadow-sm">
                                                 <i class="fa-solid fa-bars-progress text-sky-600 text-[13px] mr-2"></i>
-                                                <select name="status" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-bold appearance-none cursor-pointer">
+                                                <select name="status" required onchange="toggleHasilUpload(this, {{ $item->id }})" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-bold appearance-none cursor-pointer">
                                                     @foreach(['Pending' => 'PENDING', 'Proses' => 'PROSES', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
                                                         <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
                                                     @endforeach
@@ -283,7 +283,7 @@
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <div id="hasil-upload-{{ $item->id }}" class="{{ $item->status === 'Selesai' ? '' : 'hidden' }}">
                                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Berkas Selesai / Akun (PDF)</label>
                                             <label for="admin-hasil-upload-{{ $item->id }}" class="group flex items-center justify-between gap-2 rounded-xl border-2 border-dashed border-[#DCE1E8] bg-white hover:border-sky-500 hover:bg-sky-50/40 transition-all px-3 py-2 cursor-pointer shadow-sm">
                                                 <div class="flex items-center gap-2 min-w-0">
@@ -292,7 +292,14 @@
                                                     </div>
                                                     <div class="min-w-0">
                                                         <p id="admin-hasil-name-{{ $item->id }}" class="text-[11.5px] text-[#101828] font-bold group-hover:text-sky-900 truncate">
-                                                            {{ !empty($dataForm['file_hasil']) ? 'File Hasil Tersedia' : 'Pilih Berkas PDF Hasil' }}
+                                                            @if(!empty($dataForm['file_hasil']))
+                                                                File Hasil Tersedia
+                                                                <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'hasil']) }}" target="_blank" class="inline-flex items-center gap-1 ml-1.5 text-sky-700 bg-sky-100 hover:bg-sky-200 px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-colors">
+                                                                    <i class="fa-solid fa-eye text-[9px]"></i> Lihat File Hasil
+                                                                </a>
+                                                            @else
+                                                                Pilih Berkas PDF Hasil
+                                                            @endif
                                                         </p>
                                                         <p class="text-[10px] text-[#667085] truncate">Dokumen informasi akses</p>
                                                     </div>

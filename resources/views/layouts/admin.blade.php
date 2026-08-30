@@ -330,6 +330,12 @@
                 if (el && matched.getAttribute(fields[key])) el.value = matched.getAttribute(fields[key]);
             });
         }
+
+        function toggleHasilUpload(select, id) {
+            var box = document.getElementById('hasil-upload-' + id);
+            if (!box) return;
+            box.classList.toggle('hidden', select.value !== 'Selesai');
+        }
     </script>
 </body>
 </html>

@@ -911,4 +911,103 @@ class PortalFlowTest extends TestCase
         $this->assertSame('Selesai', $log['status']);
         $this->assertSame('Subdomain telah diaktifkan.', $log['catatan']);
     }
+
+    public function test_form_pengajuan_terisi_otomatis_data_profil_asn(): void
+    {
+        $user = $this->buatUser('user', 'pegawai@acehbaratkab.go.id', [
+            'name' => 'Nama Lengkap ASN',
+            'nip' => '198501012010011001',
+            'unit_kerja' => 'Dinas Pendidikan',
+            'jabatan' => 'Pranata Komputer',
+            'no_hp' => '081234567890',
+        ]);
+
+        $profilUmum = [
+            'value="Nama Lengkap ASN"',
+            'value="198501012010011001"',
+            'value="081234567890"',
+        ];
+
+        foreach (['pengajuan.website', 'pengajuan.subdomain', 'pengajuan.hosting', 'pengajuan.email', 'pengajuan.tte', 'pengajuan.cloud', 'pengajuan.bantuan'] as $route) {
+            foreach ($profilUmum as $profil) {
+                $this->actingAs($user)->get(route($route))->assertOk()->assertSee($profil, false);
+            }
+        }
+
+        foreach (['pengajuan.email', 'pengajuan.tte', 'pengajuan.cloud'] as $route) {
+            $this->actingAs($user)->get(route($route))->assertOk()->assertSee('value="Dinas Pendidikan"', false);
+        }
+
+        foreach (['pengajuan.website', 'pengajuan.subdomain', 'pengajuan.hosting'] as $route) {
+            $this->actingAs($user)->get(route($route))
+                ->assertOk()
+                ->assertSee('value="Dinas Pendidikan"', false)
+                ->assertSee('value="Pranata Komputer"', false)
+                ->assertSee('value="pegawai@acehbaratkab.go.id"', false);
+        }
+
+        $this->actingAs($user)->get(route('pengajuan.tte'))->assertOk()->assertSee('value="pegawai@acehbaratkab.go.id"', false);
+        $this->actingAs($user)->get(route('pengajuan.cloud'))->assertOk()->assertSee('value="pegawai@acehbaratkab.go.id"', false);
+    }
+
+    public function test_halaman_detail_user_menampilkan_tombol_unduh_berkas_hasil(): void
+    {
+        $user = $this->buatUser();
+
+        $selesai = Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'file_hasil' => 'dokumen_hasil/hasil.pdf'],
+        ]);
+        $selesai->status = 'Selesai';
+        $selesai->save();
+
+        $proses = Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'file_hasil' => 'dokumen_hasil/proses.pdf'],
+        ]);
+        $proses->status = 'Proses';
+        $proses->save();
+
+        $urlUnduh = route('dokumen.unduh', ['pengajuan' => $selesai->id, 'jenis' => 'hasil']);
+
+        $this->actingAs($user)->get(route('user.pengajuan.show', $selesai->id))
+            ->assertOk()
+            ->assertSee('Unduh Berkas Hasil Resmi (PDF)', false)
+            ->assertSee($urlUnduh, false);
+
+        $this->actingAs($user)->get(route('user.pengajuan.show', $proses->id))
+            ->assertOk()
+            ->assertDontSee('Unduh Berkas Hasil Resmi (PDF)', false);
+    }
+
+    public function test_modal_admin_menampilkan_link_lihat_file_hasil_kondisional(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $user = $this->buatUser();
+
+        $selesai = Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'file_hasil' => 'dokumen_hasil/hasil.pdf'],
+        ]);
+        $selesai->status = 'Selesai';
+        $selesai->save();
+
+        $pending = Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Website',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.website.index'))->assertOk();
+
+        $this->assertStringContainsString('id="hasil-upload-'.$selesai->id.'" class=""', $response->getContent());
+        $this->assertStringContainsString('id="hasil-upload-'.$pending->id.'" class="hidden"', $response->getContent());
+
+        $response
+            ->assertSee('Lihat File Hasil', false)
+            ->assertSee(route('dokumen.unduh', ['pengajuan' => $selesai->id, 'jenis' => 'hasil']), false);
+    }
 }

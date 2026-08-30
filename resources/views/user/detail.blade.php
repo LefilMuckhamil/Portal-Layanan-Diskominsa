@@ -86,6 +86,22 @@
                             @endif
                         @endif
                     </div>
+                @if($pengajuan->status === 'Selesai' && !empty($pengajuan->data_pengajuan['file_hasil'] ?? null))
+                    <div class="mt-7 rounded-2xl border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <div class="w-11 h-11 shrink-0 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-600/25">
+                                <i class="fa-solid fa-file-circle-check"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-[14px] text-[#101828] font-extrabold">Berkas Hasil Resmi Tersedia</p>
+                                <p class="text-[12px] text-[#667085] font-medium mt-0.5">Surat balasan/dokumen resmi dari Diskominsa dalam format PDF.</p>
+                            </div>
+                        </div>
+                        <a href="{{ route('dokumen.unduh', ['pengajuan' => $pengajuan->id, 'jenis' => 'hasil']) }}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-[12.5px] font-bold shadow-md shadow-emerald-600/20 transition-all shrink-0">
+                            <i class="fa-solid fa-download"></i> Unduh Berkas Hasil Resmi (PDF)
+                        </a>
+                    </div>
+                    @endif
                 </div>
 
                 <div class="bg-white rounded-2xl p-7 sm:p-9 shadow-[0_2px_8px_rgba(16,24,40,0.04)] border border-[#E4E7EC]">
