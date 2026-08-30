@@ -97,7 +97,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-green-600">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
                     </div>
-                    <input type="tel" name="phone" required maxlength="15" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx"
+                    <input type="tel" name="phone" required maxlength="15" value="{{ old('phone') }}" placeholder="081234567890"
                         class="w-full bg-gray-50/90 border border-gray-200 rounded-xl pl-10 pr-3 py-2.5 text-xs sm:text-sm text-[#071E3D] font-semibold placeholder-gray-400 focus:bg-white focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 outline-none transition-all duration-200">
                 </div>
             </div>

@@ -30,7 +30,7 @@
                         {{ $req->email_or_nip }}
                     </td>
                     <td class="p-3.5 font-medium text-gray-600">
-                        {{ $req->phone }}
+                        {{ \App\Support\PhoneNumber::local($req->phone) }}
                     </td>
                     <td class="p-3.5">
                         @if($req->status == 'pending')
@@ -46,12 +46,11 @@
                     <td class="p-3.5 text-center">
                         @if($req->status == 'pending')
                         @php
-                            $cleanPhone = preg_replace('/[^0-9]/', '', $req->phone);
-                            $waPhone = str_starts_with($cleanPhone, '0') ? '62'.substr($cleanPhone, 1) : (str_starts_with($cleanPhone, '8') ? '62'.$cleanPhone : $cleanPhone);
+                            $waPhone = \App\Support\PhoneNumber::wa($req->phone);
                         @endphp
                         <div class="flex items-center justify-center gap-2">
                             <button type="button"
-                                onclick="bukaModalReset('{{ $req->id }}', '{{ e($req->email_or_nip) }}', '{{ e($req->phone) }}', '{{ e($waPhone) }}')"
+                                onclick="bukaModalReset('{{ $req->id }}', '{{ e($req->email_or_nip) }}', '{{ e(\App\Support\PhoneNumber::local($req->phone)) }}', '{{ e($waPhone) }}')"
                                 class="bg-green-600 hover:bg-green-700 active:scale-95 text-white font-extrabold px-3 py-2 rounded-xl text-[11px] flex items-center gap-1.5 shadow-sm transition-all cursor-pointer">
                                 <i class="fa-brands fa-whatsapp text-xs"></i> Reset
                             </button>

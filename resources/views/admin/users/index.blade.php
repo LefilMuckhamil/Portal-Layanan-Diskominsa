@@ -62,14 +62,7 @@
             <tbody class="divide-y divide-gray-50">
                 @forelse ($users as $item)
                     @php
-                        $rawWa = preg_replace('/[^0-9]/', '', $item->no_hp ?? '');
-                        if (str_starts_with($rawWa, '0')) {
-                            $cleanWa = '62' . substr($rawWa, 1);
-                        } elseif (!str_starts_with($rawWa, '62') && !empty($rawWa)) {
-                            $cleanWa = '62' . $rawWa;
-                        } else {
-                            $cleanWa = $rawWa;
-                        }
+                        $cleanWa = \App\Support\PhoneNumber::wa($item->no_hp);
                     @endphp
                     <tr class="hover:bg-cyan-50/20 transition-colors duration-200">
                         {{-- 1. Nama di atas, NIP di bawah --}}
@@ -87,9 +80,9 @@
                                 <p class="text-[11.5px] text-emerald-600 font-semibold mt-0.5 inline-flex items-center gap-1">
                                     <i class="fa-brands fa-whatsapp text-xs"></i>
                                     @if(!empty($cleanWa))
-                                        <a href="https://wa.me/{{ $cleanWa }}" target="_blank" class="hover:underline">{{ $item->no_hp }}</a>
+                                        <a href="https://wa.me/{{ $cleanWa }}" target="_blank" class="hover:underline">{{ \App\Support\PhoneNumber::local($item->no_hp) }}</a>
                                     @else
-                                        {{ $item->no_hp }}
+                                        {{ \App\Support\PhoneNumber::local($item->no_hp) }}
                                     @endif
                                 </p>
                             @else
@@ -216,7 +209,7 @@
                                         </div>
                                         <div>
                                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">No. HP / WhatsApp <span class="text-rose-500">*</span></label>
-                                            <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $item->no_hp) }}" required placeholder="08xxxxxxxxxx" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-cyan-500 shadow-sm transition-all">
+                                            <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $item->no_hp) }}" required maxlength="15" placeholder="081234567890" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-cyan-500 shadow-sm transition-all">
                                         </div>
                                         <div>
                                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Role <span class="text-rose-500">*</span></label>
@@ -347,7 +340,7 @@
                         <label class="block text-[11.5px] font-bold text-[#344054] mb-1">No. HP / WhatsApp <span class="text-rose-500">*</span></label>
                         <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 shadow-sm focus-within:border-cyan-500 transition-all">
                             <i class="fa-brands fa-whatsapp text-emerald-500 text-[14px] mr-2"></i>
-                            <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp') }}" required placeholder="08xxxxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp') }}" required maxlength="15" placeholder="081234567890" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                     <div>

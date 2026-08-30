@@ -20,11 +20,11 @@ class ForgotPasswordController extends Controller
 
         $request->validate([
             'email' => 'required|string|max:255',
-            'phone' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
+            'phone' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15'],
         ], [
             'email.required' => 'Email atau NIP wajib diisi.',
             'phone.required' => 'Nomor WhatsApp wajib diisi.',
-            'phone.regex' => 'Format nomor WhatsApp tidak valid.',
+            'phone.regex' => 'Nomor WhatsApp harus diawali dengan 08 (contoh: 081234567890).',
         ]);
 
         $user = User::where('email', $request->email)

@@ -104,7 +104,7 @@
                         </div>
                         <div>
                             <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nomor HP / WhatsApp</label>
-                            <input type="text" inputmode="tel" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp', auth()->user()->no_hp ?? '') }}" required placeholder="08xxxxxxxxxx" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <input type="text" inputmode="tel" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp', auth()->user()->no_hp ?? '') }}" required maxlength="15" placeholder="081234567890" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
                 </div>

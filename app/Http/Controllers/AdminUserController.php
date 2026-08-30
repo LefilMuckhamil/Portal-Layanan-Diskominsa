@@ -55,7 +55,7 @@ class AdminUserController extends Controller
             'nip' => ['nullable', 'string', 'max:255', 'unique:users,nip'],
             'unit_kerja' => ['nullable', 'string', 'max:255'],
             'jabatan' => ['nullable', 'string', 'max:255'],
-            'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', 'unique:users,no_hp'],
+            'no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15', 'unique:users,no_hp'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', Rule::in(['admin', 'user'])],
         ], [
@@ -63,7 +63,7 @@ class AdminUserController extends Controller
             'email.unique' => 'Email ini sudah terdaftar di sistem.',
             'nip.unique' => 'NIP ini sudah terdaftar di sistem.',
             'no_hp.unique' => 'Nomor HP ini sudah terdaftar di sistem.',
-            'no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
+            'no_hp.regex' => 'Nomor HP/WhatsApp harus diawali dengan 08 (contoh: 081234567890).',
         ]);
 
         $user = User::create([
@@ -103,7 +103,7 @@ class AdminUserController extends Controller
             'nip' => ['nullable', 'string', 'max:255', Rule::unique('users', 'nip')->ignore($user->id)],
             'unit_kerja' => ['nullable', 'string', 'max:255'],
             'jabatan' => ['nullable', 'string', 'max:255'],
-            'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', Rule::unique('users', 'no_hp')->ignore($user->id)],
+            'no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15', Rule::unique('users', 'no_hp')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8'],
             'role' => ['required', Rule::in(['admin', 'user'])],
             'status_akun' => ['required', Rule::in(['pending', 'aktif', 'ditolak'])],
@@ -112,7 +112,7 @@ class AdminUserController extends Controller
             'email.unique' => 'Email ini sudah terdaftar di sistem.',
             'nip.unique' => 'NIP ini sudah terdaftar di sistem.',
             'no_hp.unique' => 'Nomor HP ini sudah terdaftar di sistem.',
-            'no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
+            'no_hp.regex' => 'Nomor HP/WhatsApp harus diawali dengan 08 (contoh: 081234567890).',
         ]);
 
         if ($validated['role'] !== $user->role) {

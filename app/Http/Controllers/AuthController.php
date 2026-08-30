@@ -72,7 +72,7 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'unit_kerja' => ['required', 'string', 'max:255'],
             'jabatan' => ['required', 'string', 'max:255'],
-            'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', 'unique:users,no_hp'],
+            'no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15', 'unique:users,no_hp'],
 
             'password' => [
                 'required',
@@ -101,7 +101,7 @@ class AuthController extends Controller
             'nip.unique' => 'NIP ini sudah terdaftar di sistem. Silakan gunakan akun yang sudah ada.',
             'nip.regex' => 'Format NIP tidak valid. NIP harus terdiri dari 18 digit angka.',
             'no_hp.required' => 'Nomor HP wajib diisi.',
-            'no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
+            'no_hp.regex' => 'Nomor HP/WhatsApp harus diawali dengan 08 (contoh: 081234567890).',
             'password.min' => 'Kata sandi minimal harus 8 karakter.',
             'password.mixed_case' => 'Kata sandi harus mengandung kombinasi huruf besar dan huruf kecil (contoh: Password123).',
             'password.letters' => 'Kata sandi harus mengandung huruf.',

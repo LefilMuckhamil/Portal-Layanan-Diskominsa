@@ -233,7 +233,7 @@ class PortalFlowTest extends TestCase
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#CLD-', $pengajuan->nomor_tiket);
         $this->assertSame('10GB', $pengajuan->data_pengajuan['kapasitas']);
-        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
@@ -560,7 +560,7 @@ class PortalFlowTest extends TestCase
         $response->assertSessionHas('sukses');
         $this->assertDatabaseHas('password_reset_requests', [
             'email_or_nip' => 'korban@acehbaratkab.go.id',
-            'phone' => '6281234567890',
+            'phone' => '081234567890',
             'status' => 'pending',
         ]);
 
@@ -651,7 +651,7 @@ class PortalFlowTest extends TestCase
         $this->assertStringStartsWith('#HLP-', $pengajuan->nomor_tiket);
         $this->assertSame($kategori->id, $pengajuan->data_pengajuan['kategori_bantuan_id']);
         $this->assertSame('Reset Password Email', $pengajuan->data_pengajuan['kategori']);
-        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
         $this->assertSame('pegawai@gmail.com', $pengajuan->data_pengajuan['email_reset']);
         $this->assertSame('Tidak bisa masuk email resmi.', $pengajuan->data_pengajuan['deskripsi_kendala']);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
@@ -816,7 +816,7 @@ class PortalFlowTest extends TestCase
                 'nip' => '198501012010011001',
                 'email_dinas' => 'pegawai@acehbaratkab.go.id',
                 'email_google' => 'pegawai@gmail.com',
-                'no_hp' => '6281234567890',
+                'no_hp' => '081234567890',
                 'instansi' => 'Dinas Kesehatan',
                 'jabatan' => 'Pranata Komputer',
                 'domain' => 'dinkes.acehbaratkab.go.id',
@@ -834,7 +834,7 @@ class PortalFlowTest extends TestCase
                 'nip' => '198501012010011001',
                 'email_dinas' => 'pegawai@acehbaratkab.go.id',
                 'email_google' => 'pegawai@gmail.com',
-                'no_hp' => '6281234567890',
+                'no_hp' => '081234567890',
                 'instansi' => 'Dinas Kesehatan',
                 'jabatan' => 'Pranata Komputer',
                 'nama_aplikasi' => 'Sistem Informasi Publik',
@@ -893,7 +893,7 @@ class PortalFlowTest extends TestCase
             'data_pengajuan' => [
                 'nama' => 'Pegawai Diskominsa',
                 'nip' => '198501012010011001',
-                'no_hp' => '6281234567890',
+                'no_hp' => '081234567890',
                 'instansi' => 'Dinas Kesehatan',
                 'domain' => 'dinkes.acehbaratkab.go.id',
             ],
@@ -1223,7 +1223,7 @@ class PortalFlowTest extends TestCase
 
         $pengajuan = Pengajuan::latest('id')->first();
         $this->assertStringStartsWith('#CLD-', $pengajuan->nomor_tiket);
-        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
     }
 
     public function test_admin_bantuan_manual_menyimpan_kategori_dari_master(): void
@@ -1260,7 +1260,7 @@ class PortalFlowTest extends TestCase
         $this->assertSame($kategori->id, $pengajuan->data_pengajuan['kategori_bantuan_id']);
         $this->assertSame('Reset OTP', $pengajuan->data_pengajuan['kategori']);
         $this->assertSame('pegawai@gmail.com', $pengajuan->data_pengajuan['email_reset']);
-        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
     }
 
     public function test_registrasi_berhasil_berstatus_pending_dan_tidak_bisa_langsung_login(): void

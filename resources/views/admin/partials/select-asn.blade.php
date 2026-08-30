@@ -23,7 +23,7 @@
                 data-name="{{ $asn->name }}"
                 data-nip="{{ $asn->nip ?? '' }}"
                 data-instansi="{{ $asn->unit_kerja ?? '' }}"
-                data-hp="{{ $asn->no_hp ?? '' }}"
+                data-hp="{{ \App\Support\PhoneNumber::local($asn->no_hp ?? '') }}"
                 data-jabatan="{{ $asn->jabatan ?? '' }}"
                 data-email="{{ $asn->email ?? '' }}"
             >{{ $asn->name }} - {{ $asn->nip ?? $asn->unit_kerja ?? 'ASN' }}</option>

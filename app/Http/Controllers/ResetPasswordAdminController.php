@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -52,8 +53,8 @@ class ResetPasswordAdminController extends Controller
             'updated_at' => now(),
         ]);
 
-        $cleanPhone = preg_replace('/[^0-9]/', '', $user->no_hp);
-        $phone = preg_replace('/^0/', '62', $cleanPhone);
+        // Tautan WhatsApp memerlukan format internasional 62 (tanpa awalan 0).
+        $phone = PhoneNumber::wa($user->no_hp);
 
         $pesanTeks = "Halo {$user->name}, permintaan reset kata sandi Anda pada Portal Layanan Diskominsa telah disetujui.\n\n"
                    ."Kata Sandi Baru: *{$newPassword}*\n\n"

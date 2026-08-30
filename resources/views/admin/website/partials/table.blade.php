@@ -124,14 +124,7 @@
     @foreach ($pengajuans as $item)
         @php
             $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
-            $rawWa = preg_replace('/[^0-9]/', '', $dataForm['no_hp'] ?? '');
-            if (str_starts_with($rawWa, '0')) {
-                $cleanWa = '62' . substr($rawWa, 1);
-            } elseif (!str_starts_with($rawWa, '62') && !empty($rawWa)) {
-                $cleanWa = '62' . $rawWa;
-            } else {
-                $cleanWa = $rawWa;
-            }
+            $cleanWa = \App\Support\PhoneNumber::wa($dataForm['no_hp'] ?? '');
         @endphp
         
         <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[150] hidden items-center justify-center">
@@ -199,7 +192,7 @@
                                     <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">No. HP</p>
                                     @if(!empty($dataForm['no_hp']))
                                         <a href="https://wa.me/{{ $cleanWa }}" target="_blank" class="text-xs font-semibold text-slate-700 hover:text-emerald-600 hover:underline inline-flex items-center gap-1.5">
-                                            <i class="fa-brands fa-whatsapp text-[11px] text-slate-400"></i> {{ $dataForm['no_hp'] }}
+                                            <i class="fa-brands fa-whatsapp text-[11px] text-slate-400"></i> {{ \App\Support\PhoneNumber::local($dataForm['no_hp'] ?? '') }}
                                         </a>
                                     @else
                                         <p class="text-xs font-semibold text-slate-700">-</p>
@@ -261,7 +254,7 @@
                                                         @if(!empty($dataForm['file_hasil']))
                                                             File Hasil Tersedia
                                                             <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'hasil']) }}" target="_blank" class="inline-flex items-center gap-1 ml-1.5 text-indigo-700 bg-indigo-100 hover:bg-indigo-200 px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors">
-                                                                <i class="fa-solid fa-eye text-[9px]"></i> Lihat
+                                                                <i class="fa-solid fa-eye text-[9px]"></i> Lihat File Hasil
                                                             </a>
                                                         @else
                                                             Pilih Berkas PDF Hasil
@@ -423,7 +416,7 @@
                             </div>
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP / WhatsApp <span class="text-rose-500">*</span></label>
-                                <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-indigo-500 shadow-sm transition-all">
+                                <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required maxlength="15" placeholder="081234567890" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-indigo-500 shadow-sm transition-all">
                             </div>
                             <div class="col-span-1 md:col-span-2">
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pimpinan <span class="text-rose-500">*</span></label>
