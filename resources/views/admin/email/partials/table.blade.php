@@ -136,21 +136,22 @@
         
         <div id="modal-{{ $item->id }}" class="fixed inset-0 z-[150] hidden items-center justify-center">
             <div class="absolute inset-0 bg-[#101828]/80 backdrop-blur-sm transition-opacity" onclick="tutupModalAdmin('{{ $item->id }}')"></div>
-            <div class="relative bg-white rounded-[1.75rem] w-full max-w-6xl mx-4 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col animate-fade-in-down">
-                
-                {{-- Header Modal --}}
-                <div class="flex items-center justify-between gap-4 px-6 md:px-8 py-4 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9] shrink-0">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-10 h-10 rounded-xl bg-[#16324F] text-sky-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
-                            <i class="fa-solid fa-pen-to-square"></i>
+            <div class="relative bg-white rounded-3xl w-full max-w-6xl mx-4 my-auto shadow-2xl border border-slate-100 overflow-hidden max-h-[92vh] flex flex-col animate-fade-in-down">
+
+                {{-- HEADER MODAL --}}
+                <div class="p-5 border-b border-slate-100 flex items-center justify-between gap-4 bg-white shrink-0">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="w-11 h-11 rounded-xl bg-[#16324F] text-sky-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20 shrink-0">
+                            <i class="fa-solid fa-envelope"></i>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-[10px] font-bold tracking-[0.16em] text-sky-700 uppercase mb-0.5">Admin Panel</p>
-                            <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Kelola Pengajuan Email</h2>
+                            <h2 class="text-[16px] font-extrabold text-[#101828] leading-tight truncate">Kelola Pengajuan Email</h2>
+                            <p class="text-[11px] text-slate-500 font-medium mt-0.5">Perbarui progres, unggah berkas hasil, dan balas diskusi pemohon.</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-sky-800 bg-sky-50 border border-sky-200 rounded-full px-3 py-1 shrink-0">
+                    <div class="flex items-center gap-3 shrink-0">
+                        <span class="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-sky-800 bg-sky-50 border border-sky-200 rounded-full px-3 py-1.5 shrink-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> {{ $item->nomor_tiket }}
                         </span>
                         <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-500 hover:text-rose-500 hover:bg-rose-50 transition-colors shadow-sm cursor-pointer">
@@ -160,13 +161,15 @@
                 </div>
 
                 {{-- Body Modal --}}
-                <div class="px-6 md:px-8 py-5 overflow-y-auto custom-scrollbar flex-1 flex flex-col">
-                    <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" data-no-ajax onsubmit="return konfirmasiTolak(this)" class="flex-1 flex flex-col justify-between">
+                <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+                    <form method="POST" action="{{ route('admin.pengajuan.update', $item->id) }}" enctype="multipart/form-data" data-no-ajax onsubmit="return konfirmasiTolak(this)">
                         @csrf
                         @method('PUT')
 
+                        <div class="p-6 md:p-8 space-y-6">
+
                         @if ($errors->any())
-                            <div class="mb-4 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3 text-[#B42318] shrink-0">
+                            <div class="rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3 text-[#B42318]">
                                 <div class="flex items-center text-[12px] font-bold mb-1">
                                     <i class="fa-solid fa-circle-exclamation mr-2"></i> Gagal memperbarui data:
                                 </div>
@@ -177,187 +180,145 @@
                                 </ul>
                             </div>
                         @endif
-                                                 
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch flex-1">
-                            
-                            {{-- KOLOM 1: INFORMASI PEMOHON --}}
-                            <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="flex items-center gap-2.5 mb-3.5">
-                                        <div class="w-7 h-7 rounded-full bg-[#16324F] text-white text-[11px] font-black flex items-center justify-center shadow-sm">1</div>
-                                        <h3 class="text-[13.5px] font-extrabold text-[#101828]">Informasi Pemohon</h3>
-                                    </div>
 
-                                    <div class="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2.5 shadow-sm">
-                                        <div>
-                                            <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Nama Pemohon</p>
-                                            <p class="text-[13px] font-extrabold text-[#071E3D]">{{ $dataForm['nama'] ?? $item->user->name ?? '-' }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">NIP</p>
-                                            <p class="text-[12px] font-bold text-[#071E3D]">{{ $dataForm['nip'] ?? $item->user->nip ?? '-' }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Instansi</p>
-                                            <p class="text-[12px] font-bold text-[#071E3D]">{{ $dataForm['instansi'] ?? '-' }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">No. HP / WhatsApp</p>
-                                            @if(!empty($cleanWa))
-                                                <a href="https://wa.me/{{ $cleanWa }}" target="_blank" class="text-[12px] font-bold text-emerald-600 hover:underline inline-flex items-center gap-1.5"><i class="fa-brands fa-whatsapp text-sm"></i> {{ $dataForm['no_hp'] ?? '-' }}</a>
-                                            @else
-                                                <span class="text-[12px] font-bold text-gray-600">{{ $dataForm['no_hp'] ?? '-' }}</span>
-                                            @endif
-                                        </div>
-                                        <div class="bg-sky-50 p-2.5 rounded-lg border border-sky-100">
-                                            <p class="text-[9px] font-bold text-sky-600 uppercase tracking-wider mb-0.5">Usulan Alamat Email</p>
-                                            <p class="text-[12.5px] font-black text-sky-800 break-all">{{ $dataForm['usulan_email'] ?? '-' }}</p>
-                                        </div>
-
-                                        @php
-                                            $filePemohon = $item->file_pendukung 
-                                                ?? ($dataForm['surat_permohonan'] ?? ($dataForm['file'] ?? ($dataForm['berkas'] ?? ($dataForm['dokumen'] ?? ($dataForm['file_persyaratan'] ?? null)))));
-                                        @endphp
-
-                                        @if(!empty($filePemohon))
-                                            <div class="pt-2.5 border-t border-slate-100">
-                                                <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Berkas / Surat Pemohon</p>
-                                                <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'pendukung']) }}" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl border border-indigo-200 bg-indigo-50/50 hover:bg-indigo-100/70 transition-all text-indigo-900 group shadow-sm">
-                                                    <div class="flex items-center gap-2.5 min-w-0">
-                                                        <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shrink-0 shadow-sm">
-                                                            <i class="fa-solid fa-file-pdf"></i>
-                                                        </div>
-                                                        <div class="min-w-0">
-                                                            <p class="text-[11.5px] font-bold truncate">Surat Permohonan</p>
-                                                            <p class="text-[9px] text-indigo-600 font-medium">Klik untuk melihat / unduh file</p>
-                                                        </div>
-                                                    </div>
-                                                    <i class="fa-solid fa-download text-xs text-indigo-500 group-hover:text-indigo-800 transition-colors mr-1"></i>
-                                                </a>
-                                            </div>
-                                        @else
-                                            <div class="pt-2 border-t border-slate-100">
-                                                <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-1">Berkas / Surat Pemohon</p>
-                                                <div class="p-2 rounded-lg border border-dashed border-gray-200 bg-gray-50/70 text-center">
-                                                    <p class="text-[10px] font-medium text-gray-400 italic">Tidak ada berkas diunggah oleh pemohon</p>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
+                        {{-- BAGIAN 1: STRIP PROFIL ASN & BERKAS --}}
+                        <div class="p-5 bg-gradient-to-r from-slate-50 to-slate-100/70 border border-slate-200/80 rounded-2xl flex flex-wrap lg:flex-nowrap items-center justify-between gap-6 shadow-sm">
+                            <div class="min-w-0">
+                                <p class="text-base font-bold text-slate-800 truncate">{{ $dataForm['nama'] ?? $item->user->name ?? 'Pemohon' }}</p>
+                                <p class="text-xs text-slate-500 font-medium mt-0.5 truncate">
+                                    NIP: {{ $dataForm['nip'] ?? $item->user->nip ?? '-' }} &middot; {{ $dataForm['instansi'] ?? 'Instansi' }}
+                                </p>
                             </div>
 
-                            {{-- KOLOM 2: STATUS & HASIL --}}
-                            <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between h-full">
+                            <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
                                 <div>
-                                    <div class="flex items-center justify-between mb-3.5">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-7 h-7 rounded-full bg-[#16324F] text-white text-[11px] font-black flex items-center justify-center shadow-sm">2</div>
-                                            <h3 class="text-[13.5px] font-extrabold text-[#101828]">Status & Hasil</h3>
-                                        </div>
-                                        <span class="text-[9px] bg-sky-100 text-sky-800 border border-sky-200 px-2 py-0.5 rounded-md font-bold">Wajib Diupdate</span>
-                                    </div>
-
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Pilih Status Baru <span class="text-rose-500">*</span></label>
-                                            <div class="bg-white border border-slate-200 rounded-xl flex items-center px-3 relative shadow-sm">
-                                                <i class="fa-solid fa-bars-progress text-sky-600 text-[13px] mr-2"></i>
-                                                <select name="status" required onchange="toggleHasilUpload(this, {{ $item->id }})" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                                    @foreach(['Pending' => 'PENDING', 'Proses' => 'PROSES', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
-                                                        <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
-                                            </div>
-                                        </div>
-
-                                        <div id="hasil-upload-{{ $item->id }}" class="{{ $item->status === 'Selesai' ? '' : 'hidden' }}">
-                                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Berkas / Akun (PDF)</label>
-                                            <label for="admin-hasil-upload-{{ $item->id }}" class="group flex items-center justify-between gap-2 rounded-xl border-2 border-dashed border-[#DCE1E8] bg-white hover:border-sky-500 hover:bg-sky-50/40 transition-all px-3 py-2 cursor-pointer shadow-sm">
-                                                <div class="flex items-center gap-2 min-w-0">
-                                                    <div class="w-7 h-7 shrink-0 rounded-lg bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
-                                                        <i class="fa-solid fa-file-pdf text-[13px]"></i>
-                                                    </div>
-                                                    <div class="min-w-0">
-                                                        <p id="admin-hasil-name-{{ $item->id }}" class="text-[11.5px] text-[#101828] font-bold group-hover:text-sky-900 truncate">
-                                                            @if(!empty($dataForm['file_hasil']))
-                                                                File Hasil Tersedia
-                                                                <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'hasil']) }}" target="_blank" class="inline-flex items-center gap-1 ml-1.5 text-sky-700 bg-sky-100 hover:bg-sky-200 px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-colors">
-                                                                    <i class="fa-solid fa-eye text-[9px]"></i> Lihat File Hasil
-                                                                </a>
-                                                            @else
-                                                                Pilih Berkas PDF Hasil
-                                                            @endif
-                                                        </p>
-                                                        <p class="text-[10px] text-[#667085] truncate">Dokumen informasi akun</p>
-                                                    </div>
-                                                </div>
-                                                <div class="px-2.5 py-1 bg-slate-50 border border-gray-200 rounded-lg text-[10.5px] font-bold text-gray-600 group-hover:border-sky-300 shrink-0">Browse</div>
-                                                <input id="admin-hasil-upload-{{ $item->id }}" name="file_hasil" type="file" class="sr-only" accept=".pdf" onchange="if(this.files && this.files[0]){document.getElementById('admin-hasil-name-{{ $item->id }}').innerText = this.files[0].name; document.getElementById('admin-hasil-name-{{ $item->id }}').classList.add('text-emerald-700')}">
-                                            </label>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Catatan E-Tracking</label>
-                                            <textarea name="catatan" placeholder="Tuliskan catatan progres yang akan muncul di E-Tracking..." class="w-full bg-white border border-slate-200 rounded-xl p-3 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-sky-400 resize-none h-28 shadow-sm">{{ old('catatan') }}</textarea>
-                                        </div>
-                                    </div>
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Email</p>
+                                    <p class="text-xs font-semibold text-slate-700 break-all max-w-[220px]">{{ $dataForm['usulan_email'] ?? '-' }}</p>
                                 </div>
-                            </div>
-
-                            {{-- KOLOM 3: DISKUSI & BALAS PESAN --}}
-                            <div class="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between h-full">
                                 <div>
-                                    <div class="flex items-center gap-2.5 mb-3.5">
-                                        <div class="w-7 h-7 rounded-full bg-[#16324F] text-white text-[11px] font-black flex items-center justify-center shadow-sm">3</div>
-                                        <h3 class="text-[13.5px] font-extrabold text-[#101828]">Diskusi & Balas Pesan</h3>
-                                    </div>
-
-                                    <div id="chat-box-{{ $item->id }}" class="bg-white border border-slate-200 rounded-xl p-3 h-56 overflow-y-auto space-y-2.5 custom-scrollbar shadow-sm">
-                                        @if(!empty($item->pesan) && is_array($item->pesan))
-                                            @foreach($item->pesan as $chat)
-                                                <div class="flex flex-col {{ ($chat['role'] ?? '') === 'admin' ? 'items-end' : 'items-start' }}">
-                                                    <div class="max-w-[85%] px-3 py-1.5 rounded-xl text-[11.5px] {{ ($chat['role'] ?? '') === 'admin' ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-slate-100 border border-slate-200 text-[#101828] rounded-bl-none' }}">
-                                                        <p class="font-bold text-[9.5px] opacity-80 mb-0.5">{{ $chat['pengirim'] ?? 'Pengguna' }}</p>
-                                                        <p class="leading-relaxed">{{ $chat['isi'] ?? '-' }}</p>
-                                                    </div>
-                                                    <span class="text-[9px] text-[#667085] mt-0.5">{{ $chat['waktu'] ?? '' }}</span>
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <div class="flex flex-col items-center justify-center h-full text-slate-400 py-6">
-                                                <i class="fa-regular fa-comments text-2xl mb-1 opacity-40"></i>
-                                                <p class="text-[11.5px] italic">Belum ada obrolan dengan pemohon.</p>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="mt-3">
-                                    @if($chatAktif ?? true)
-                                        <div class="bg-white border border-slate-200 rounded-xl flex items-center px-3 shadow-sm">
-                                            <i class="fa-regular fa-paper-plane text-sky-600 text-[13px] mr-2"></i>
-                                            <input type="text" name="pesan" value="{{ old('pesan') }}" placeholder="Ketik pesan balasan..." class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
-                                        </div>
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">No. HP</p>
+                                    @if(!empty($dataForm['no_hp']))
+                                        <a href="https://wa.me/{{ $cleanWa }}" target="_blank" class="text-xs font-semibold text-slate-700 hover:text-emerald-600 hover:underline inline-flex items-center gap-1.5">
+                                            <i class="fa-brands fa-whatsapp text-[11px] text-slate-400"></i> {{ $dataForm['no_hp'] }}
+                                        </a>
                                     @else
-                                        <div class="bg-rose-50 border border-rose-100 p-2 rounded-xl text-center shadow-sm">
-                                            <p class="text-[11px] font-bold text-rose-500"><i class="fa-solid fa-lock mr-1"></i> Fitur obrolan dinonaktifkan.</p>
+                                        <p class="text-xs font-semibold text-slate-700">-</p>
+                                    @endif
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Layanan</p>
+                                    <span class="px-3.5 py-1.5 bg-sky-100 text-sky-800 rounded-xl text-xs font-bold shadow-sm inline-block">Email Resmi</span>
+                                </div>
+                            </div>
+
+                            @php
+                                $filePemohon = $item->file_pendukung
+                                    ?? ($dataForm['surat_permohonan'] ?? ($dataForm['file'] ?? ($dataForm['berkas'] ?? ($dataForm['dokumen'] ?? ($dataForm['file_persyaratan'] ?? null)))));
+                            @endphp
+                            @if(!empty($filePemohon))
+                                <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'pendukung']) }}" target="_blank" class="px-4 py-2.5 bg-white border border-slate-200 hover:border-sky-500 hover:bg-sky-50/30 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2.5 shadow-sm transition-all shrink-0">
+                                    <i class="fa-solid fa-file-pdf text-sm text-sky-600"></i> Surat Permohonan
+                                    <i class="fa-solid fa-download text-xs text-slate-400"></i>
+                                </a>
+                            @else
+                                <div class="px-4 py-2.5 bg-white border border-dashed border-slate-200 rounded-xl text-xs font-semibold text-slate-400 italic shadow-sm shrink-0">
+                                    <i class="fa-solid fa-folder-open mr-1.5"></i> Tanpa berkas
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- BAGIAN 2: WORKSPACE 2 KOLOM SEIMBANG --}}
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+
+                            {{-- A. KARTU UPDATE STATUS & PROGRES --}}
+                            <div class="bg-slate-50/50 border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full">
+                                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Update Status & Progres</p>
+
+                                <div class="space-y-4 flex-1">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Status Pengajuan <span class="text-rose-500">*</span></label>
+                                        <select name="status" required onchange="toggleHasilUpload(this, {{ $item->id }})" class="w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-sm font-medium focus:ring-2 focus:ring-blue-500 bg-white">
+                                            @foreach(['Pending' => 'PENDING', 'Proses' => 'PROSES', 'Selesai' => 'SELESAI', 'Ditolak' => 'DITOLAK'] as $val => $label)
+                                                <option value="{{ $val }}" @selected($item->status == $val)>{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Catatan E-Tracking</label>
+                                        <textarea name="catatan" rows="4" placeholder="Tuliskan catatan progres yang akan muncul di E-Tracking..." class="w-full rounded-xl border border-slate-300 p-3.5 text-sm focus:ring-2 focus:ring-blue-500 bg-white placeholder:text-slate-400">{{ old('catatan') }}</textarea>
+                                    </div>
+
+                                    <div id="hasil-upload-{{ $item->id }}" class="{{ $item->status === 'Selesai' ? '' : 'hidden' }}">
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Berkas Sertifikat / Akun (PDF)</label>
+                                        <label for="admin-hasil-upload-{{ $item->id }}" class="group flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-slate-200 bg-white hover:border-sky-500 hover:bg-sky-50/40 transition-all px-3 py-2.5 cursor-pointer">
+                                            <div class="flex items-center gap-2.5 min-w-0">
+                                                <div class="w-8 h-8 shrink-0 rounded-lg bg-white group-hover:bg-sky-600 group-hover:text-white border border-slate-200 group-hover:border-sky-600 flex items-center justify-center text-slate-500 transition-colors shadow-sm">
+                                                    <i class="fa-solid fa-file-pdf text-[13px]"></i>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p id="admin-hasil-name-{{ $item->id }}" class="text-[12px] text-[#101828] font-bold group-hover:text-sky-900 truncate">
+                                                        @if(!empty($dataForm['file_hasil']))
+                                                            File Hasil Tersedia
+                                                            <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'hasil']) }}" target="_blank" class="inline-flex items-center gap-1 ml-1.5 text-sky-700 bg-sky-100 hover:bg-sky-200 px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors">
+                                                                <i class="fa-solid fa-eye text-[9px]"></i> Lihat
+                                                            </a>
+                                                        @else
+                                                            Pilih Berkas PDF
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-[10px] text-slate-500">Dokumen sertifikat akun email</p>
+                                                </div>
+                                            </div>
+                                            <div class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[10.5px] font-bold text-gray-600 group-hover:border-sky-300 shrink-0">Browse</div>
+                                            <input id="admin-hasil-upload-{{ $item->id }}" name="file_hasil" type="file" class="sr-only" accept=".pdf" onchange="if(this.files && this.files[0]){document.getElementById('admin-hasil-name-{{ $item->id }}').innerText = this.files[0].name; document.getElementById('admin-hasil-name-{{ $item->id }}').classList.add('text-emerald-700')}">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-semibold rounded-xl text-sm shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer mt-4">
+                                    <i class="fa-solid fa-floppy-disk text-xs"></i> Simpan Perubahan
+                                </button>
+                            </div>
+
+                            {{-- B. KARTU RUANG DISKUSI --}}
+                            <div class="bg-slate-50/50 border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full">
+                                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Ruang Diskusi Pemohon</p>
+
+                                <div id="chat-box-{{ $item->id }}" class="flex-1 min-h-[200px] max-h-[240px] overflow-y-auto p-4 bg-white border border-slate-200 rounded-2xl my-2 space-y-2 text-sm custom-scrollbar">
+                                    @if(!empty($item->pesan) && is_array($item->pesan))
+                                        @foreach($item->pesan as $chat)
+                                            <div class="flex flex-col {{ ($chat['role'] ?? '') === 'admin' ? 'items-end' : 'items-start' }}">
+                                                <div class="max-w-[85%] px-3 py-1.5 rounded-xl text-[11.5px] {{ ($chat['role'] ?? '') === 'admin' ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-slate-100 border border-slate-200 text-[#101828] rounded-bl-none' }}">
+                                                    <p class="font-bold text-[9.5px] opacity-80 mb-0.5">{{ $chat['pengirim'] ?? 'Pengguna' }}</p>
+                                                    <p class="leading-relaxed">{{ $chat['isi'] ?? '-' }}</p>
+                                                </div>
+                                                <span class="text-[9px] text-[#667085] mt-0.5">{{ $chat['waktu'] ?? '' }}</span>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="flex flex-col items-center justify-center h-full text-slate-400">
+                                            <i class="fa-regular fa-comments text-2xl mb-1 opacity-40"></i>
+                                            <p class="text-sm italic">Belum ada obrolan dengan pemohon.</p>
                                         </div>
                                     @endif
                                 </div>
+
+                                @if($chatAktif ?? true)
+                                    <div class="flex gap-2 mt-2">
+                                        <input type="text" name="pesan" value="{{ old('pesan') }}" placeholder="Ketik pesan balasan..." class="flex-1 min-w-0 rounded-xl border border-slate-300 py-2.5 px-3.5 text-sm focus:ring-2 focus:ring-blue-500 bg-white placeholder:text-slate-400">
+                                        <button type="submit" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all cursor-pointer shrink-0">
+                                            <i class="fa-solid fa-paper-plane text-xs"></i> Kirim
+                                        </button>
+                                    </div>
+                                @else
+                                    <div class="bg-rose-50 border border-rose-100 p-2 rounded-xl text-center shadow-sm mt-2">
+                                        <p class="text-[11px] font-bold text-rose-500"><i class="fa-solid fa-lock mr-1"></i> Fitur obrolan dinonaktifkan.</p>
+                                    </div>
+                                @endif
                             </div>
 
                         </div>
-
-                        {{-- Footer Action Buttons --}}
-                        <div class="flex items-center justify-end gap-3 mt-5 pt-3.5 border-t border-[#E4E7EC] shrink-0">
-                            <button type="button" onclick="tutupModalAdmin('{{ $item->id }}')" class="px-5 py-2.5 rounded-xl text-[12.5px] font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer">
-                                Batal
-                            </button>
-                            <button type="submit" class="inline-flex items-center gap-2 bg-[#16324F] hover:bg-[#0F2438] active:scale-95 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all shadow-md shadow-[#16324F]/20 hover:shadow-lg cursor-pointer">
-                                Simpan Perubahan <i class="fa-solid fa-floppy-disk text-[11px]"></i>
-                            </button>
                         </div>
                     </form>
                 </div>

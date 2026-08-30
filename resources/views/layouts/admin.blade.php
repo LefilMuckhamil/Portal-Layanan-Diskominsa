@@ -11,12 +11,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
+    <script>
+        // Kunci state sidebar instan sebelum DOM dirender agar tidak ada layout shift saat pindah halaman.
+        (function () {
+            try {
+                if (localStorage.getItem('sidebar_collapsed') === 'true') {
+                    document.documentElement.classList.add('sidebar-is-collapsed');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
     <style>
         body { font-family: 'Outfit', sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Kunci lebar sidebar instan saat collapsed, tanpa menunggu JS */
+        @media (min-width: 1024px) {
+            body.sidebar-collapsed #adminSidebar {
+                width: 5rem !important;
+            }
+        }
+
+        /* Matikan semua transisi selama initial load agar tidak ada animasi shrink/flash */
+        .preload *,
+        .preload *::before,
+        .preload *::after {
+            -webkit-transition: none !important;
+            -moz-transition: none !important;
+            -ms-transition: none !important;
+            -o-transition: none !important;
+            transition: none !important;
+        }
 
         /* Sidebar collapsible - hanya berlaku pada layar desktop (lg ke atas) */
         @media (min-width: 1024px) {
@@ -67,7 +96,14 @@
         }
     </style>
 </head>
-<body class="bg-[#f4f7f6] text-gray-800 h-screen flex overflow-hidden selection:bg-cyan-300 selection:text-[#071E3D]">
+<body class="preload bg-[#f4f7f6] text-gray-800 h-screen flex overflow-hidden selection:bg-cyan-300 selection:text-[#071E3D]">
+
+    <script>
+        // Sinkronkan state dari <html> ke <body> sebelum sidebar pertama kali dirender.
+        if (document.documentElement.classList.contains('sidebar-is-collapsed')) {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    </script>
 
     <div id="sidebarBackdrop" onclick="closeSidebar()" class="fixed inset-0 bg-[#071E3D]/60 backdrop-blur-sm z-30 hidden lg:hidden transition-opacity duration-300 opacity-0 pointer-events-none"></div>
 
@@ -132,10 +168,11 @@
 
         function setSidebarCollapsed(collapsed, persist) {
             document.body.classList.toggle('sidebar-collapsed', collapsed);
+            document.documentElement.classList.toggle('sidebar-is-collapsed', collapsed);
             sidebar.classList.toggle('lg:w-20', collapsed);
             sidebar.classList.toggle('lg:w-64', !collapsed);
             if (persist) {
-                try { localStorage.setItem('sidebar_state', collapsed ? 'collapsed' : 'open'); } catch (e) {}
+                try { localStorage.setItem('sidebar_collapsed', collapsed ? 'true' : 'false'); } catch (e) {}
             }
         }
 
@@ -168,9 +205,18 @@
         }
 
         (function () {
-            let saved = null;
-            try { saved = localStorage.getItem('sidebar_state'); } catch (e) {}
-            setSidebarCollapsed(saved === 'collapsed', false);
+            // State diambil langsung dari localStorage (selaras dengan script <head>),
+            // bukan default 'true' lalu di-override — mencegah flash/glitch saat pindah halaman.
+            let collapsed = document.documentElement.classList.contains('sidebar-is-collapsed');
+            if (!collapsed) {
+                try { collapsed = localStorage.getItem('sidebar_collapsed') === 'true'; } catch (e) {}
+            }
+            setSidebarCollapsed(collapsed, false);
+
+            // Aktifkan kembali transisi setelah halaman selesai diload.
+            window.addEventListener('load', function () {
+                document.body.classList.remove('preload');
+            });
 
             window.addEventListener('resize', () => {
                 if (window.innerWidth >= 1024) {
