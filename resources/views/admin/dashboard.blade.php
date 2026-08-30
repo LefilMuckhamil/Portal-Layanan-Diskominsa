@@ -4,7 +4,7 @@
 @section('header_subtitle', 'Pantau seluruh statistik dan pengajuan layanan secara real-time.')
 
 @section('content')
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 lg:gap-6">
         
         <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
             <div class="flex justify-between items-start mb-3">
@@ -17,6 +17,36 @@
                 <div class="flex items-end gap-2">
                     <h3 class="text-3xl font-extrabold text-[#071E3D] leading-none">{{ $countWeb ?? 0 }}</h3>
                     <span class="text-[10px] font-bold text-indigo-500 mb-1">Ajuan</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-11 h-11 rounded-2xl bg-violet-50 text-violet-500 flex items-center justify-center text-lg group-hover:scale-110 group-hover:bg-violet-500 group-hover:text-white transition-all duration-300">
+                    <i class="fa-solid fa-eject"></i>
+                </div>
+            </div>
+            <div>
+                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1">Subdomain</p>
+                <div class="flex items-end gap-2">
+                    <h3 class="text-3xl font-extrabold text-[#071E3D] leading-none">{{ $countSubdomain ?? 0 }}</h3>
+                    <span class="text-[10px] font-bold text-violet-500 mb-1">Ajuan</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-50 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-3">
+                <div class="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-lg group-hover:scale-110 group-hover:bg-teal-500 group-hover:text-white transition-all duration-300">
+                    <i class="fa-solid fa-server"></i>
+                </div>
+            </div>
+            <div>
+                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-1">Hosting</p>
+                <div class="flex items-end gap-2">
+                    <h3 class="text-3xl font-extrabold text-[#071E3D] leading-none">{{ $countHosting ?? 0 }}</h3>
+                    <span class="text-[10px] font-bold text-teal-600 mb-1">Ajuan</span>
                 </div>
             </div>
         </div>
@@ -194,7 +224,7 @@
                         datasets: [{
                             label: 'Jumlah Pengajuan',
                             data: initChartData.volume,
-                            backgroundColor: ['#818cf8', '#22d3ee', '#34d399', '#38bdf8', '#fb7185'],
+                            backgroundColor: ['#818cf8', '#a78bfa', '#14b8a6', '#22d3ee', '#34d399', '#38bdf8', '#fb7185'],
                             borderRadius: 8,
                             borderSkipped: false
                         }]

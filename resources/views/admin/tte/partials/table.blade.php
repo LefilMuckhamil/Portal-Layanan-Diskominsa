@@ -198,6 +198,10 @@
                                             <p class="text-[12px] font-bold text-[#071E3D]">{{ $dataForm['nip'] ?? $item->user->nip ?? '-' }}</p>
                                         </div>
                                         <div>
+                                            <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">NIK</p>
+                                            <p class="text-[12px] font-bold text-[#071E3D]">{{ $dataForm['nik'] ?? '-' }}</p>
+                                        </div>
+                                        <div>
                                             <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Instansi</p>
                                             <p class="text-[12px] font-bold text-[#071E3D]">{{ $dataForm['instansi'] ?? '-' }}</p>
                                         </div>

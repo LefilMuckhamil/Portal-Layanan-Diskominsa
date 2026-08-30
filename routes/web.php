@@ -139,6 +139,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         };
 
         $countWeb = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countSubdomain = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countHosting = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting')->when($dateMulai || $dateSelesai, $dateScope)->count();
         $countEmail = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->when($dateMulai || $dateSelesai, $dateScope)->count();
         $countTTE = Pengajuan::where('jenis_layanan', 'Layanan TTE')->when($dateMulai || $dateSelesai, $dateScope)->count();
         $countCloud = Pengajuan::where('jenis_layanan', 'Cloud Government')->when($dateMulai || $dateSelesai, $dateScope)->count();
@@ -150,8 +152,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
             ->pluck('total', 'status');
 
         $chartData = [
-            'layanan' => ['Website', 'Email Resmi', 'TTE', 'Cloud Gov', 'Bantuan'],
-            'volume' => [$countWeb, $countEmail, $countTTE, $countCloud, $countBantuan],
+            'layanan' => ['Website', 'Subdomain', 'Hosting', 'Email Resmi', 'TTE', 'Cloud Gov', 'Bantuan'],
+            'volume' => [$countWeb, $countSubdomain, $countHosting, $countEmail, $countTTE, $countCloud, $countBantuan],
             'status' => [
                 'Pending' => (int) $statusCounts->get('Pending', 0),
                 'Proses' => (int) $statusCounts->get('Proses', 0),
@@ -200,7 +202,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         }
 
         return view('admin.dashboard', compact(
-            'countWeb', 'countEmail', 'countTTE', 'countCloud', 'countBantuan',
+            'countWeb', 'countSubdomain', 'countHosting', 'countEmail', 'countTTE', 'countCloud', 'countBantuan',
             'pengajuans', 'chatAktif', 'chartData', 'dateMulai', 'dateSelesai', 'tanggal', 'calendarParams'
         ));
     })->name('admin.dashboard');
@@ -223,6 +225,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         };
 
         $countWeb = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countSubdomain = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countHosting = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting')->when($dateMulai || $dateSelesai, $dateScope)->count();
         $countEmail = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->when($dateMulai || $dateSelesai, $dateScope)->count();
         $countTTE = Pengajuan::where('jenis_layanan', 'Layanan TTE')->when($dateMulai || $dateSelesai, $dateScope)->count();
         $countCloud = Pengajuan::where('jenis_layanan', 'Cloud Government')->when($dateMulai || $dateSelesai, $dateScope)->count();
@@ -234,8 +238,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
             ->pluck('total', 'status');
 
         $chartData = [
-            'layanan' => ['Website', 'Email Resmi', 'TTE', 'Cloud Gov', 'Bantuan'],
-            'volume' => [$countWeb, $countEmail, $countTTE, $countCloud, $countBantuan],
+            'layanan' => ['Website', 'Subdomain', 'Hosting', 'Email Resmi', 'TTE', 'Cloud Gov', 'Bantuan'],
+            'volume' => [$countWeb, $countSubdomain, $countHosting, $countEmail, $countTTE, $countCloud, $countBantuan],
             'status' => [
                 'Pending' => (int) $statusCounts->get('Pending', 0),
                 'Proses' => (int) $statusCounts->get('Proses', 0),
@@ -278,6 +282,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
     });
 
     Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index');
+    Route::get('/layanan-subdomain', [AdminPengajuanController::class, 'subdomain'])->name('admin.subdomain.index');
+    Route::get('/layanan-hosting', [AdminPengajuanController::class, 'hosting'])->name('admin.hosting.index');
     Route::get('/email-resmi', [AdminPengajuanController::class, 'emailResmi'])->name('admin.email.index');
     Route::get('/layanan-tte', [AdminPengajuanController::class, 'layananTte'])->name('admin.tte.index');
     Route::get('/layanan-cloud', [AdminPengajuanController::class, 'layananCloud'])->name('admin.cloud.index');

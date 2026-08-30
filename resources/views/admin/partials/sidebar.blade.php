@@ -20,13 +20,32 @@
             <span class="text-[13px]">Dashboard Overview</span>
         </a>
 
-        <a href="{{ route('admin.website.index') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.website.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group hover:translate-x-1">
-            <i class="fa-solid fa-laptop-code w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
-            <div class="flex flex-col leading-tight">
-                <span class="text-[13px]">Teknis & Digital</span>
-                <span class="text-[10px] text-gray-400">Website</span>
+        @php
+            $teknisAktif = request()->routeIs('admin.website.*', 'admin.subdomain.*', 'admin.hosting.*');
+        @endphp
+
+        <div class="rounded-xl overflow-hidden {{ $teknisAktif ? 'bg-cyan-500/10' : '' }} transition-colors duration-300">
+            <button type="button" id="toggleTeknisDigital" class="w-full flex items-center gap-3 px-4 py-3 {{ $teknisAktif ? 'text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group cursor-pointer">
+                <i class="fa-solid fa-laptop-code w-5 text-center group-hover:text-cyan-400 transition-colors shrink-0"></i>
+                <div class="flex flex-col leading-tight flex-1 min-w-0 text-left">
+                    <span class="text-[13px]">Teknis & Digital</span>
+                    <span class="text-[10px] text-gray-400">Website / Subdomain / Hosting</span>
+                </div>
+                <i id="chevronTeknisDigital" class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-300 shrink-0 {{ $teknisAktif ? 'rotate-180' : '' }}"></i>
+            </button>
+
+            <div id="submenuTeknisDigital" class="px-4 pb-3 space-y-1 {{ $teknisAktif ? '' : 'hidden' }}">
+                <a href="{{ route('admin.website.index') }}" class="flex items-center gap-3 pl-8 pr-4 py-2.5 {{ request()->routeIs('admin.website.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 text-[12.5px]">
+                    <i class="fa-solid fa-globe w-4 text-center shrink-0"></i> Website
+                </a>
+                <a href="{{ route('admin.subdomain.index') }}" class="flex items-center gap-3 pl-8 pr-4 py-2.5 {{ request()->routeIs('admin.subdomain.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 text-[12.5px]">
+                    <i class="fa-solid fa-eject w-4 text-center shrink-0"></i> Subdomain
+                </a>
+                <a href="{{ route('admin.hosting.index') }}" class="flex items-center gap-3 pl-8 pr-4 py-2.5 {{ request()->routeIs('admin.hosting.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 text-[12.5px]">
+                    <i class="fa-solid fa-server w-4 text-center shrink-0"></i> Hosting
+                </a>
             </div>
-        </a>
+        </div>
 
         <a href="{{ route('admin.email.index') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('admin.email.*') ? 'bg-cyan-500/10 text-cyan-400 font-semibold' : 'text-gray-300 hover:text-white hover:bg-white/5 font-medium' }} rounded-xl transition-all duration-300 group hover:translate-x-1">
             <i class="fa-solid fa-envelope-circle-check w-5 text-center group-hover:text-cyan-400 transition-colors"></i>
@@ -94,4 +113,18 @@
             </button>
         </form>
     </div>
+
+    <script>
+        (function () {
+            const btn = document.getElementById('toggleTeknisDigital');
+            const sub = document.getElementById('submenuTeknisDigital');
+            const chev = document.getElementById('chevronTeknisDigital');
+            if (!btn || !sub || !chev) return;
+
+            btn.addEventListener('click', function () {
+                sub.classList.toggle('hidden');
+                chev.classList.toggle('rotate-180');
+            });
+        })();
+    </script>
 </aside>

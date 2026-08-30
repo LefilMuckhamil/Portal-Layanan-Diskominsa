@@ -793,4 +793,122 @@ class PortalFlowTest extends TestCase
         $response->assertSessionHas('error');
         $this->assertSame('admin', $admin->fresh()->role);
     }
+
+    public function test_admin_dapat_mengakses_halaman_index_subdomain_dan_hosting(): void
+    {
+        Storage::fake('local');
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $user = $this->buatUser();
+
+        Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Subdomain',
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '6281234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'domain' => 'dinkes.acehbaratkab.go.id',
+                'ip_address' => '103.10.10.1',
+                'nama_aplikasi' => 'Sistem Informasi Publik',
+            ],
+            'file_pendukung' => 'dokumen_pengajuan/subdomain/surat.pdf',
+        ]);
+
+        Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Hosting',
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '6281234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'nama_aplikasi' => 'Sistem Informasi Publik',
+                'runtime' => 'PHP',
+                'database_type' => 'MySQL',
+                'storage_quota' => '10GB',
+                'domain_terkait' => 'dinkes.acehbaratkab.go.id',
+            ],
+            'file_pendukung' => 'dokumen_pengajuan/hosting/surat.pdf',
+        ]);
+
+        $this->actingAs($admin)->get(route('admin.subdomain.index'))
+            ->assertOk()
+            ->assertSee('dinkes.acehbaratkab.go.id')
+            ->assertSee('Sistem Informasi Publik');
+
+        $this->actingAs($admin)->get(route('admin.hosting.index'))
+            ->assertOk()
+            ->assertSee('PHP')
+            ->assertSee('MySQL')
+            ->assertSee('10GB');
+    }
+
+    public function test_dashboard_menampilkan_hitungan_subdomain_dan_hosting(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $user = $this->buatUser();
+
+        Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Subdomain',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'domain' => 'sub.acehbaratkab.go.id'],
+        ]);
+        Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Hosting',
+            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'nama_aplikasi' => 'SIAP'],
+        ]);
+
+        $this->actingAs($admin)->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertViewHas('countSubdomain', 1)
+            ->assertViewHas('countHosting', 1);
+    }
+
+    public function test_admin_dapat_memperbarui_progres_pengajuan_subdomain(): void
+    {
+        Storage::fake('local');
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $user = $this->buatUser();
+
+        $pengajuan = Pengajuan::create([
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Subdomain',
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'no_hp' => '6281234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'domain' => 'dinkes.acehbaratkab.go.id',
+            ],
+        ]);
+
+        $response = $this->actingAs($admin)->put(route('admin.pengajuan.update', $pengajuan->id), [
+            'status' => 'Selesai',
+            'catatan' => 'Subdomain telah diaktifkan.',
+            'pesan' => 'Subdomain Anda sudah aktif.',
+            'file_hasil' => UploadedFile::fake()->create('hasil.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHas('sukses');
+
+        $this->assertSame('Selesai', $pengajuan->fresh()->status);
+        $this->assertStringStartsWith('dokumen_hasil/', $pengajuan->fresh()->data_pengajuan['file_hasil']);
+        Storage::disk('local')->assertExists($pengajuan->fresh()->data_pengajuan['file_hasil']);
+
+        $latest = $pengajuan->fresh();
+        $logs = $latest->logs;
+        $log = end($logs);
+        $this->assertSame('Selesai', $log['status']);
+        $this->assertSame('Subdomain telah diaktifkan.', $log['catatan']);
+    }
 }

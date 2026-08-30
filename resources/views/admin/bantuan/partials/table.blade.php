@@ -71,11 +71,11 @@
                             <span class="text-[13px] font-bold text-[#071E3D] capitalize">
                                 {{ str_replace('_', ' ', $item->jenis_layanan) }}
                             </span>
-                            @if(!empty($dataForm['email']))
-                                <p class="text-[11px] text-cyan-700 font-bold mt-0.5">
-                                    {{ $dataForm['email'] }}
-                                </p>
-                            @endif
+@if(!empty($dataForm['email_reset'] ?? $dataForm['email'] ?? null))
+                                    <p class="text-[11px] text-sky-600 font-medium mt-0.5">
+                                        {{ $dataForm['email_reset'] ?? $dataForm['email'] }}
+                                    </p>
+                                @endif
                             @if(!empty($dataForm['kategori']))
                                 <p class="text-[11px] text-rose-600 font-bold mt-0.5">
                                     {{ $dataForm['kategori'] }}
@@ -206,8 +206,8 @@
                                             <p class="text-[12px] font-bold text-[#071E3D]">{{ $dataForm['nip'] ?? $item->user->nip ?? '-' }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email Resmi</p>
-                                            <p class="text-[12px] font-bold text-[#071E3D] break-all">{{ $dataForm['email'] ?? '-' }}</p>
+                                            <p class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Email yang Direset</p>
+                                            <p class="text-[12px] font-bold text-[#071E3D] break-all">{{ $dataForm['email_reset'] ?? $dataForm['email'] ?? '-' }}</p>
                                         </div>
                                         @if(!empty($dataForm['no_hp']))
                                         <div>

@@ -235,7 +235,7 @@ class AdminPengajuanController extends Controller
         }
 
         return view('admin.website.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -329,7 +329,7 @@ class AdminPengajuanController extends Controller
         }
 
         return view('admin.email.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -422,7 +422,7 @@ class AdminPengajuanController extends Controller
         }
 
         return view('admin.tte.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -510,7 +510,7 @@ class AdminPengajuanController extends Controller
         }
 
         return view('admin.cloud.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
@@ -558,6 +558,78 @@ class AdminPengajuanController extends Controller
         return back()->with('sukses', 'Pengajuan Cloud Government berhasil ditambahkan manual.');
     }
 
+    public function subdomain(Request $request)
+    {
+        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain')->with('user');
+
+        if ($request->filled('search')) {
+            $search = addcslashes(trim($request->search), '%_');
+            $query->where('nomor_tiket', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->paginate(10);
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain');
+
+        $total = (clone $baseQuery)->count();
+        $pending = (clone $baseQuery)->where('status', 'Pending')->count();
+        $proses = (clone $baseQuery)->where('status', 'Proses')->count();
+        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+
+        $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.subdomain.partials.table', compact('pengajuans', 'users', 'chatAktif'))->render(),
+            ]);
+        }
+
+        return view('admin.subdomain.index', compact(
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users', 'chatAktif'
+        ));
+    }
+
+    public function hosting(Request $request)
+    {
+        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting')->with('user');
+
+        if ($request->filled('search')) {
+            $search = addcslashes(trim($request->search), '%_');
+            $query->where('nomor_tiket', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pengajuans = $query->latest()->paginate(10);
+        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting');
+
+        $total = (clone $baseQuery)->count();
+        $pending = (clone $baseQuery)->where('status', 'Pending')->count();
+        $proses = (clone $baseQuery)->where('status', 'Proses')->count();
+        $selesai = (clone $baseQuery)->where('status', 'Selesai')->count();
+        $ditolak = (clone $baseQuery)->where('status', 'Ditolak')->count();
+
+        $users = User::where('role', '!=', 'admin')->select('id', 'name', 'nip')->get();
+        $chatAktif = Setting::get('chat_global_aktif', '1') === '1';
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.hosting.partials.table', compact('pengajuans', 'users', 'chatAktif'))->render(),
+            ]);
+        }
+
+        return view('admin.hosting.index', compact(
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users', 'chatAktif'
+        ));
+    }
+
     public function layananBantuan(Request $request)
     {
         $query = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->with('user');
@@ -590,7 +662,7 @@ class AdminPengajuanController extends Controller
         }
 
         return view('admin.bantuan.index', compact(
-            'pengajuans', 'total', 'pending', 'proses', 'ditolak', 'users', 'chatAktif'
+            'pengajuans', 'total', 'pending', 'proses', 'selesai', 'ditolak', 'users', 'chatAktif'
         ));
     }
 
