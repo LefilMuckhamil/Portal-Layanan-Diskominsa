@@ -63,6 +63,8 @@ class Pengajuan extends Model
     {
         return match ($jenis) {
             'Pembuatan Website', 'pembuatan_website' => 'WEB',
+            'Pembuatan Subdomain', 'pembuatan_subdomain' => 'SUB',
+            'Pembuatan Hosting', 'pembuatan_hosting' => 'HST',
             'Pembuatan Email Resmi', 'pembuatan_email' => 'EML',
             'Layanan TTE', 'layanan_tte' => 'TTE',
             'Cloud Government', 'cloud_government' => 'CLD',

@@ -1,6 +1,6 @@
 @extends('layouts.user')
 
-@section('title', 'Pengajuan Website Instansi')
+@section('title', 'Pengajuan Hosting & Server')
 
 @section('content')
 
@@ -51,16 +51,16 @@
 
         <div class="flex items-center justify-between gap-4 px-7 md:px-10 py-6 border-b border-[#E4E7EC] bg-gradient-to-r from-[#F8FAFC] to-[#F1F5F9]">
             <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 rounded-xl bg-[#16324F] text-cyan-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
-                    <i class="fa-solid fa-globe"></i>
+                <div class="w-11 h-11 rounded-xl bg-[#16324F] text-indigo-400 flex items-center justify-center text-lg shadow-md shadow-[#16324F]/20">
+                    <i class="fa-solid fa-server"></i>
                 </div>
                 <div>
-                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-cyan-700 uppercase mb-0.5">Diskominsa &middot; Layanan Digital</p>
-                    <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pengajuan Website Instansi</h2>
+                    <p class="text-[10.5px] font-bold tracking-[0.16em] text-indigo-700 uppercase mb-0.5">Diskominsa &middot; Layanan Digital</p>
+                    <h2 class="text-[19px] font-extrabold text-[#101828] leading-tight">Pengajuan Hosting &amp; Server</h2>
                 </div>
             </div>
             <span class="hidden sm:inline-flex items-center gap-1.5 text-[11.5px] font-bold text-[#16324F] bg-white rounded-xl px-3.5 py-1.5 shrink-0 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>Website
+                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>Hosting
             </span>
         </div>
 
@@ -79,7 +79,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('pengajuan.website.store') }}" method="POST" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
+            <form action="{{ route('pengajuan.hosting.store') }}" method="POST" enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
                 @csrf
 
                 <div class="relative dk-rail pl-11">
@@ -115,8 +115,8 @@
 
                 <div class="relative pl-11">
                     <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-[#16324F] text-white text-[12.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
-                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Data Instansi &amp; Kebutuhan Sistem</h3>
-                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Detail instansi, pimpinan, dan kebutuhan sistem website yang diajukan.</p>
+                    <h3 class="text-[15px] font-extrabold text-[#101828] mb-0.5">Data Instansi &amp; Kebutuhan Hosting</h3>
+                    <p class="text-[12.5px] text-[#667085] font-medium mb-6">Detail instansi, jabatan, dan spesifikasi web server / database / storage yang diinginkan.</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                         <div>
@@ -128,27 +128,39 @@
                             <input type="text" name="data_pengajuan[jabatan]" value="{{ old('data_pengajuan.jabatan') }}" required placeholder="Contoh: Pranata Komputer / Pengelola IT" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Pimpinan Instansi</label>
-                            <input type="text" name="data_pengajuan[nama_pimpinan]" value="{{ old('data_pengajuan.nama_pimpinan') }}" required placeholder="Masukkan nama pimpinan instansi" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Aplikasi / Sistem</label>
+                            <input type="text" name="data_pengajuan[nama_aplikasi]" value="{{ old('data_pengajuan.nama_aplikasi') }}" required placeholder="Contoh: SIAP - Sistem Informasi App" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                         <div>
-                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Nama Website Usulan</label>
-                            <input type="text" name="data_pengajuan[nama_website]" value="{{ old('data_pengajuan.nama_website') }}" required placeholder="Contoh: Website Resmi Dinas Kesehatan" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Bahasa Pemrograman</label>
+                            <input type="text" name="data_pengajuan[runtime]" value="{{ old('data_pengajuan.runtime') }}" required placeholder="Contoh: PHP 8.2 / Node.js / Python / HTML" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Database</label>
+                            <input type="text" name="data_pengajuan[database_type]" value="{{ old('data_pengajuan.database_type') }}" required placeholder="Contoh: MySQL / PostgreSQL / Tidak butuh" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+                        <div>
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Kebutuhan Storage</label>
+                            <input type="text" name="data_pengajuan[storage_quota]" value="{{ old('data_pengajuan.storage_quota') }}" required placeholder="Contoh: 5 GB / 10 GB" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Domain Terkait <span class="text-[11px] font-semibold text-slate-400">(opsional)</span></label>
+                            <input type="text" name="data_pengajuan[domain_terkait]" value="{{ old('data_pengajuan.domain_terkait') }}" placeholder="Contoh: dinkes.acehbaratkab.go.id" class="dk-input w-full px-3.5 py-2.5 text-[13.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <a href="{{ asset('docs/template-surat-permohonan-website.docx') }}" class="group flex items-center justify-between gap-4 rounded-xl border-2 border-sky-100 bg-gradient-to-r from-sky-50 to-cyan-50 hover:from-sky-100 hover:to-cyan-100 transition-all px-5 py-4 shadow-sm">
+                        <a href="{{ asset('docs/template-surat-permohonan-hosting.docx') }}" class="group flex items-center justify-between gap-4 rounded-xl border-2 border-indigo-100 bg-gradient-to-r from-indigo-50 to-violet-50 hover:from-indigo-100 hover:to-violet-100 transition-all px-5 py-4 shadow-sm">
                             <div class="flex items-center gap-4 min-w-0">
-                                <div class="w-11 h-11 shrink-0 rounded-xl bg-sky-600 text-white flex items-center justify-center text-lg shadow-md shadow-sky-600/25">
+                                <div class="w-11 h-11 shrink-0 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md shadow-indigo-600/25">
                                     <i class="fa-solid fa-file-word"></i>
                                 </div>
                                 <div class="min-w-0">
-                                    <p class="text-[13.5px] text-[#101828] font-extrabold">Unduh Template Surat Permohonan <span class="text-sky-700">(.docx)</span></p>
+                                    <p class="text-[13.5px] text-[#101828] font-extrabold">Unduh Template Surat Permohonan <span class="text-indigo-700">(.docx)</span></p>
                                     <p class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format surat resmi siap pakai &middot; lengkapi lalu unggah dalam bentuk PDF</p>
                                 </div>
                             </div>
-                            <span class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-sky-200 text-sky-700 rounded-xl text-[12.5px] font-bold group-hover:border-sky-400 transition-colors shadow-sm">
+                            <span class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-indigo-200 text-indigo-700 rounded-xl text-[12.5px] font-bold group-hover:border-indigo-400 transition-colors shadow-sm">
                                 <i class="fa-solid fa-download"></i> Unduh
                             </span>
                         </a>
@@ -156,15 +168,15 @@
 
                     <div class="mb-2">
                         <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Surat Permohonan Resmi (PDF)</label>
-                        <label for="file-upload" class="group flex items-center gap-4 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-5 py-4 cursor-pointer shadow-sm">
+                        <label for="hosting-file-upload" class="group flex items-center gap-4 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-5 py-4 cursor-pointer shadow-sm">
                             <div class="w-10 h-10 shrink-0 rounded-xl bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
                                 <i class="fa-solid fa-cloud-arrow-up text-[16px]"></i>
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-[13.5px] text-[#101828] font-bold group-hover:text-sky-900">Klik untuk memilih berkas <span class="font-medium text-[#667085]">atau tarik file ke sini</span></p>
-                                <p id="file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Surat Permohonan &middot; Format PDF &middot; Maksimal 5MB</p>
+                                <p id="hosting-file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Surat Permohonan &middot; Format PDF &middot; Maksimal 5MB</p>
                             </div>
-                            <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="if (this.files && this.files[0]) { document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold'); }">
+                            <input id="hosting-file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="if (this.files && this.files[0]) { document.getElementById('hosting-file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('hosting-file-name').classList.add('text-emerald-700', 'font-bold'); }">
                         </label>
                         @error('file_pendukung')
                             <p class="text-[12px] font-semibold text-red-600 mt-2"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>

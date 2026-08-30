@@ -72,10 +72,13 @@ class PortalFlowTest extends TestCase
             'data_pengajuan' => [
                 'nama' => 'Pegawai Diskominsa',
                 'nip' => '198501012010011001',
-                'instansi' => 'Dinas Kesehatan',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
                 'no_hp' => '081234567890',
-                'nama_pimpinan' => 'Dr. Andi Wijaya',
-                'domain' => 'dinkes',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'nama_pimpinan' => 'dr. H. A. Rahman',
+                'nama_website' => 'Website Resmi Dinas Kesehatan',
             ],
             'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
         ]);
@@ -93,7 +96,96 @@ class PortalFlowTest extends TestCase
         $pengajuan = Pengajuan::where('user_id', $user->id)->first();
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#WEB-', $pengajuan->nomor_tiket);
-        $this->assertSame('dinkes.go.id', $pengajuan->data_pengajuan['domain']);
+        $this->assertSame('Website Resmi Dinas Kesehatan', $pengajuan->data_pengajuan['nama_website']);
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_user_login_berhasil_membuat_pengajuan_subdomain_berstatus_pending(): void
+    {
+        Storage::fake('local');
+
+        $user = $this->buatUser();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $response = $this->post(route('pengajuan.subdomain.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '081234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'domain' => 'dinkes',
+                'ip_address' => '103.10.10.5',
+                'nama_aplikasi' => 'SIAP - Sistem Informasi App',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('sukses');
+        $response->assertSessionHas('nomor_tiket');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Subdomain',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::where('user_id', $user->id)->first();
+        $this->assertNotNull($pengajuan);
+        $this->assertStringStartsWith('#SUB-', $pengajuan->nomor_tiket);
+        $this->assertSame('dinkes.acehbaratkab.go.id', $pengajuan->data_pengajuan['domain']);
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_user_login_berhasil_membuat_pengajuan_hosting_berstatus_pending(): void
+    {
+        Storage::fake('local');
+
+        $user = $this->buatUser();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $response = $this->post(route('pengajuan.hosting.store'), [
+            'data_pengajuan' => [
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '081234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'nama_aplikasi' => 'SIAP - Sistem Informasi App',
+                'runtime' => 'PHP 8.2',
+                'database_type' => 'MySQL/MariaDB',
+                'storage_quota' => '5 GB',
+                'domain_terkait' => 'dinkes.acehbaratkab.go.id',
+            ],
+            'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('sukses');
+        $response->assertSessionHas('nomor_tiket');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $user->id,
+            'jenis_layanan' => 'Pembuatan Hosting',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::where('user_id', $user->id)->first();
+        $this->assertNotNull($pengajuan);
+        $this->assertStringStartsWith('#HST-', $pengajuan->nomor_tiket);
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
 
@@ -349,10 +441,13 @@ class PortalFlowTest extends TestCase
             'data_pengajuan' => [
                 'nama' => 'Pegawai Diskominsa',
                 'nip' => '198501012010011001',
-                'instansi' => 'Dinas Kesehatan',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
                 'no_hp' => 'no-hp-salah',
-                'nama_pimpinan' => 'Dr. Andi Wijaya',
-                'domain' => 'dinkes',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'nama_pimpinan' => 'dr. H. A. Rahman',
+                'nama_website' => 'Website Resmi Dinas Kesehatan',
             ],
             'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),
         ]);
@@ -369,10 +464,13 @@ class PortalFlowTest extends TestCase
             'data_pengajuan' => [
                 'nama' => 'Pegawai Diskominsa',
                 'nip' => '198501012010011001',
-                'instansi' => 'Dinas Kesehatan',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
                 'no_hp' => '081234567890',
-                'nama_pimpinan' => 'Dr. Andi Wijaya',
-                'domain' => 'dinkes',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'nama_pimpinan' => 'dr. H. A. Rahman',
+                'nama_website' => 'Website Resmi Dinas Kesehatan',
                 'file_hasil' => 'dokumen_hasil/hasil-rahasia.pdf',
             ],
             'file_pendukung' => UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf'),

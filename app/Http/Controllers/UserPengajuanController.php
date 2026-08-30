@@ -28,21 +28,32 @@ class UserPengajuanController extends Controller
             'data_pengajuan' => 'required|array',
             'data_pengajuan.file_hasil' => 'prohibited',
             'data_pengajuan.nama' => 'required|string|max:255',
-            'data_pengajuan.nip' => 'required|string',
-            'data_pengajuan.instansi' => 'required|string|max:255',
+            'data_pengajuan.nip' => ['required', 'string', 'regex:/^[0-9]{18}$/'],
+            'data_pengajuan.email_dinas' => ['required', 'email', 'regex:/^[^@\s]+@acehbaratkab\.go\.id$/'],
+            'data_pengajuan.email_google' => ['required', 'email', 'regex:/^[^@\s]+@gmail\.com$/'],
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
+            'data_pengajuan.instansi' => 'required|string|max:255',
+            'data_pengajuan.jabatan' => 'required|string|max:255',
             'data_pengajuan.nama_pimpinan' => 'required|string|max:255',
-            'data_pengajuan.domain' => 'required|string',
+            'data_pengajuan.nama_website' => 'required|string|max:255',
             'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
-            'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
+            'data_pengajuan.nama.required' => 'Kolom Nama Lengkap wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
-            'data_pengajuan.instansi.required' => 'Kolom Instansi wajib diisi.',
-            'data_pengajuan.no_hp.required' => 'Kolom Nomor HP wajib diisi.',
+            'data_pengajuan.nip.regex' => 'NIP harus terdiri dari 18 digit angka.',
+            'data_pengajuan.email_dinas.required' => 'Kolom Email Dinas wajib diisi.',
+            'data_pengajuan.email_dinas.email' => 'Format Email Dinas tidak valid.',
+            'data_pengajuan.email_dinas.regex' => 'Email Dinas harus menggunakan domain @acehbaratkab.go.id.',
+            'data_pengajuan.email_google.required' => 'Kolom Email Alternatif wajib diisi.',
+            'data_pengajuan.email_google.email' => 'Format Email Alternatif tidak valid.',
+            'data_pengajuan.email_google.regex' => 'Email Alternatif harus menggunakan domain @gmail.com.',
+            'data_pengajuan.no_hp.required' => 'Kolom Nomor HP/WhatsApp wajib diisi.',
             'data_pengajuan.no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
-            'data_pengajuan.nama_pimpinan.required' => 'Kolom Nama Pimpinan wajib diisi.',
-            'data_pengajuan.domain.required' => 'Kolom Nama Domain wajib diisi.',
-            'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'data_pengajuan.instansi.required' => 'Kolom Instansi / Unit Kerja wajib diisi.',
+            'data_pengajuan.jabatan.required' => 'Kolom Jabatan Operator wajib diisi.',
+            'data_pengajuan.nama_pimpinan.required' => 'Kolom Nama Pimpinan Instansi wajib diisi.',
+            'data_pengajuan.nama_website.required' => 'Kolom Nama Website Usulan wajib diisi.',
+            'file_pendukung.required' => 'Surat Permohonan Resmi (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
@@ -52,25 +63,160 @@ class UserPengajuanController extends Controller
             $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/website', 'local');
         }
 
-        if (isset($dataPengajuan['domain'])) {
-            $domainInput = trim($dataPengajuan['domain']);
-            $dataPengajuan['domain'] = str_contains($domainInput, '.go.id')
-                                    ? $domainInput
-                                    : $domainInput.'.go.id';
-        }
-
         $pengajuan = Pengajuan::create([
             'user_id' => Auth::id(),
             'jenis_layanan' => 'Pembuatan Website',
             'file_pendukung' => $filePath,
             'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'instansi', 'no_hp', 'nama_pimpinan', 'domain',
+                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
+                'jabatan', 'nama_pimpinan', 'nama_website',
             ])->all(),
         ]);
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
 
         return back()->with('sukses', 'Pengajuan Website Instansi berhasil dikirim!')
+            ->with('nomor_tiket', $pengajuan->nomor_tiket);
+    }
+
+    public function storeSubdomain(Request $request)
+    {
+        $dataPengajuan = $request->data_pengajuan;
+        if (isset($dataPengajuan['no_hp'])) {
+            $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
+            $request->merge(['data_pengajuan' => $dataPengajuan]);
+        }
+
+        $request->validate([
+            'data_pengajuan' => 'required|array',
+            'data_pengajuan.file_hasil' => 'prohibited',
+            'data_pengajuan.nama' => 'required|string|max:255',
+            'data_pengajuan.nip' => ['required', 'string', 'regex:/^[0-9]{18}$/'],
+            'data_pengajuan.email_dinas' => ['required', 'email', 'regex:/^[^@\s]+@acehbaratkab\.go\.id$/'],
+            'data_pengajuan.email_google' => ['required', 'email', 'regex:/^[^@\s]+@gmail\.com$/'],
+            'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
+            'data_pengajuan.instansi' => 'required|string|max:255',
+            'data_pengajuan.jabatan' => 'required|string|max:255',
+            'data_pengajuan.domain' => 'required|string|max:255',
+            'data_pengajuan.ip_address' => ['required', 'ip'],
+            'data_pengajuan.nama_aplikasi' => 'required|string|max:255',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+        ], [
+            'data_pengajuan.nama.required' => 'Kolom Nama Lengkap wajib diisi.',
+            'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
+            'data_pengajuan.nip.regex' => 'NIP harus terdiri dari 18 digit angka.',
+            'data_pengajuan.email_dinas.required' => 'Kolom Email Dinas wajib diisi.',
+            'data_pengajuan.email_dinas.email' => 'Format Email Dinas tidak valid.',
+            'data_pengajuan.email_dinas.regex' => 'Email Dinas harus menggunakan domain @acehbaratkab.go.id.',
+            'data_pengajuan.email_google.required' => 'Kolom Email Alternatif wajib diisi.',
+            'data_pengajuan.email_google.email' => 'Format Email Alternatif tidak valid.',
+            'data_pengajuan.email_google.regex' => 'Email Alternatif harus menggunakan domain @gmail.com.',
+            'data_pengajuan.no_hp.required' => 'Kolom Nomor HP/WhatsApp wajib diisi.',
+            'data_pengajuan.no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
+            'data_pengajuan.instansi.required' => 'Kolom Instansi / Unit Kerja wajib diisi.',
+            'data_pengajuan.jabatan.required' => 'Kolom Jabatan Operator wajib diisi.',
+            'data_pengajuan.domain.required' => 'Kolom Nama Subdomain Usulan wajib diisi.',
+            'data_pengajuan.ip_address.required' => 'Kolom IP Address Server Tujuan wajib diisi.',
+            'data_pengajuan.ip_address.ip' => 'Format IP Address Server Tujuan tidak valid.',
+            'data_pengajuan.nama_aplikasi.required' => 'Kolom Nama Sistem / Aplikasi wajib diisi.',
+            'file_pendukung.required' => 'Surat Permohonan Resmi (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
+            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+        ]);
+
+        if (isset($dataPengajuan['domain'])) {
+            $domainInput = strtolower(trim($dataPengajuan['domain']));
+            $dataPengajuan['domain'] = str_contains($domainInput, '.go.id')
+                                    ? $domainInput
+                                    : $domainInput.'.acehbaratkab.go.id';
+        }
+
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/subdomain', 'local');
+        }
+
+        $pengajuan = Pengajuan::create([
+            'user_id' => Auth::id(),
+            'jenis_layanan' => 'Pembuatan Subdomain',
+            'file_pendukung' => $filePath,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
+                'jabatan', 'domain', 'ip_address', 'nama_aplikasi',
+            ])->all(),
+        ]);
+
+        $this->kirimNotifikasiTiketDibuat($pengajuan);
+
+        return back()->with('sukses', 'Pengajuan Subdomain berhasil dikirim!')
+            ->with('nomor_tiket', $pengajuan->nomor_tiket);
+    }
+
+    public function storeHosting(Request $request)
+    {
+        $dataPengajuan = $request->data_pengajuan;
+        if (isset($dataPengajuan['no_hp'])) {
+            $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
+            $request->merge(['data_pengajuan' => $dataPengajuan]);
+        }
+
+        $request->validate([
+            'data_pengajuan' => 'required|array',
+            'data_pengajuan.file_hasil' => 'prohibited',
+            'data_pengajuan.nama' => 'required|string|max:255',
+            'data_pengajuan.nip' => ['required', 'string', 'regex:/^[0-9]{18}$/'],
+            'data_pengajuan.email_dinas' => ['required', 'email', 'regex:/^[^@\s]+@acehbaratkab\.go\.id$/'],
+            'data_pengajuan.email_google' => ['required', 'email', 'regex:/^[^@\s]+@gmail\.com$/'],
+            'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16'],
+            'data_pengajuan.instansi' => 'required|string|max:255',
+            'data_pengajuan.jabatan' => 'required|string|max:255',
+            'data_pengajuan.nama_aplikasi' => 'required|string|max:255',
+            'data_pengajuan.runtime' => 'required|string|max:255',
+            'data_pengajuan.database_type' => 'required|string|max:255',
+            'data_pengajuan.storage_quota' => 'required|string|max:255',
+            'data_pengajuan.domain_terkait' => 'nullable|string|max:255',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+        ], [
+            'data_pengajuan.nama.required' => 'Kolom Nama Lengkap wajib diisi.',
+            'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
+            'data_pengajuan.nip.regex' => 'NIP harus terdiri dari 18 digit angka.',
+            'data_pengajuan.email_dinas.required' => 'Kolom Email Dinas wajib diisi.',
+            'data_pengajuan.email_dinas.email' => 'Format Email Dinas tidak valid.',
+            'data_pengajuan.email_dinas.regex' => 'Email Dinas harus menggunakan domain @acehbaratkab.go.id.',
+            'data_pengajuan.email_google.required' => 'Kolom Email Alternatif wajib diisi.',
+            'data_pengajuan.email_google.email' => 'Format Email Alternatif tidak valid.',
+            'data_pengajuan.email_google.regex' => 'Email Alternatif harus menggunakan domain @gmail.com.',
+            'data_pengajuan.no_hp.required' => 'Kolom Nomor HP/WhatsApp wajib diisi.',
+            'data_pengajuan.no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
+            'data_pengajuan.instansi.required' => 'Kolom Instansi / Unit Kerja wajib diisi.',
+            'data_pengajuan.jabatan.required' => 'Kolom Jabatan Operator wajib diisi.',
+            'data_pengajuan.nama_aplikasi.required' => 'Kolom Nama Aplikasi / Sistem wajib diisi.',
+            'data_pengajuan.runtime.required' => 'Kolom Bahasa Pemrograman wajib diisi.',
+            'data_pengajuan.database_type.required' => 'Kolom Database wajib diisi.',
+            'data_pengajuan.storage_quota.required' => 'Kolom Kebutuhan Storage wajib diisi.',
+            'file_pendukung.required' => 'Surat Permohonan Resmi (PDF) wajib diunggah.',
+            'file_pendukung.mimes' => 'Format file surat harus PDF.',
+            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+        ]);
+
+        $filePath = null;
+        if ($request->hasFile('file_pendukung')) {
+            $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/hosting', 'local');
+        }
+
+        $pengajuan = Pengajuan::create([
+            'user_id' => Auth::id(),
+            'jenis_layanan' => 'Pembuatan Hosting',
+            'file_pendukung' => $filePath,
+            'data_pengajuan' => collect($dataPengajuan)->only([
+                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
+                'jabatan', 'nama_aplikasi', 'runtime', 'database_type', 'storage_quota', 'domain_terkait',
+            ])->all(),
+        ]);
+
+        $this->kirimNotifikasiTiketDibuat($pengajuan);
+
+        return back()->with('sukses', 'Pengajuan Hosting & Server berhasil dikirim!')
             ->with('nomor_tiket', $pengajuan->nomor_tiket);
     }
 

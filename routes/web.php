@@ -57,6 +57,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pengajuan-website', function () {
             return view('pengajuan.website');
         })->name('pengajuan.website');
+        Route::get('/pengajuan-subdomain', function () {
+            return view('pengajuan.subdomain');
+        })->name('pengajuan.subdomain');
+        Route::get('/pengajuan-hosting', function () {
+            return view('pengajuan.hosting');
+        })->name('pengajuan.hosting');
         Route::get('/pengajuan-email', function () {
             return view('pengajuan.email');
         })->name('pengajuan.email');
@@ -72,6 +78,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::middleware('throttle:10,1')->group(function () {
             Route::post('/pengajuan-website/store', [UserPengajuanController::class, 'storeWebsite'])->name('pengajuan.website.store');
+            Route::post('/pengajuan-subdomain/store', [UserPengajuanController::class, 'storeSubdomain'])->name('pengajuan.subdomain.store');
+            Route::post('/pengajuan-hosting/store', [UserPengajuanController::class, 'storeHosting'])->name('pengajuan.hosting.store');
             Route::post('/pengajuan/email/store', [UserPengajuanController::class, 'storeEmail'])->name('pengajuan.email.store');
             Route::post('/pengajuan/tte/store', [UserPengajuanController::class, 'storeTte'])->name('pengajuan.tte.store');
             Route::post('/pengajuan/cloud/store', [UserPengajuanController::class, 'storeCloud'])->name('pengajuan.cloud.store');

@@ -17,9 +17,28 @@
         ::-webkit-scrollbar-track { background: #e2e8f0; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-down {
+            animation: fadeInDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="text-slate-900 antialiased min-h-screen flex flex-col">
+
+    @php
+        $isWebsiteActive = request()->routeIs('pengajuan.website', 'pengajuan.subdomain', 'pengajuan.hosting');
+    @endphp
 
     <nav class="bg-white shadow-md border-b-2 border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,9 +54,47 @@
                 </div>
 
                 <div class="hidden md:flex items-center space-x-2">
-                    <a href="{{ route('pengajuan.website') }}" class="{{ request()->routeIs('pengajuan.website') ? 'bg-[#071E3D] text-white font-extrabold shadow-md' : 'text-slate-700 hover:bg-slate-100 hover:text-[#071E3D] font-bold' }} px-4 py-2.5 rounded-xl text-[14px] transition-all duration-200 flex items-center gap-2">
-                        <i class="fa-solid fa-globe text-base"></i> Website
-                    </a>
+                    <div class="relative" id="website-menu" onmouseenter="openWebsiteDropdown()" onmouseleave="closeWebsiteDropdown()">
+                        <button type="button" onclick="toggleWebsiteDropdown(event)" class="{{ $isWebsiteActive ? 'bg-[#071E3D] text-white font-extrabold shadow-md' : 'text-slate-700 hover:bg-slate-100 hover:text-[#071E3D] font-bold' }} px-4 py-2.5 rounded-xl text-[14px] transition-all duration-200 flex items-center gap-2">
+                            <i class="fa-solid fa-globe text-base"></i> Website
+                            <i class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-200" id="website-chevron"></i>
+                        </button>
+
+                        <div id="website-dropdown" class="hidden absolute left-0 top-full pt-2 animate-fade-in-down z-50">
+                            <div class="bg-white rounded-2xl shadow-[0_20px_50px_rgba(7,30,61,0.15)] border border-slate-100 py-2 origin-top-left w-[300px]">
+                                <p class="px-5 pt-2 pb-1.5 text-[10.5px] font-black uppercase tracking-[0.14em] text-slate-400">Layanan Website</p>
+                                <a href="{{ route('pengajuan.website') }}" class="{{ request()->routeIs('pengajuan.website') ? 'bg-cyan-50 border-l-4 border-cyan-600 text-cyan-800' : 'text-slate-700 hover:bg-slate-100' }} border-l-4 border-transparent flex items-center gap-3.5 px-5 py-3 transition-colors duration-150">
+                                    <div class="w-9 h-9 shrink-0 rounded-xl bg-cyan-50 text-cyan-600 border border-cyan-200 flex items-center justify-center shadow-sm">
+                                        <i class="fa-solid fa-globe text-[16px]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[13.5px] font-extrabold leading-tight">Pengajuan Website</p>
+                                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Permohonan rancang bangun website instansi</p>
+                                    </div>
+                                </a>
+                                <div class="mx-5 my-1 border-t border-slate-100"></div>
+                                <a href="{{ route('pengajuan.subdomain') }}" class="{{ request()->routeIs('pengajuan.subdomain') ? 'bg-cyan-50 border-l-4 border-cyan-600 text-cyan-800' : 'text-slate-700 hover:bg-slate-100' }} border-l-4 border-transparent flex items-center gap-3.5 px-5 py-3 transition-colors duration-150">
+                                    <div class="w-9 h-9 shrink-0 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center shadow-sm">
+                                        <i class="fa-solid fa-link text-[16px]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[13.5px] font-extrabold leading-tight">Pengajuan Subdomain</p>
+                                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Permohonan registrasi subdomain &amp; konfigurasi DNS</p>
+                                    </div>
+                                </a>
+                                <div class="mx-5 my-1 border-t border-slate-100"></div>
+                                <a href="{{ route('pengajuan.hosting') }}" class="{{ request()->routeIs('pengajuan.hosting') ? 'bg-cyan-50 border-l-4 border-cyan-600 text-cyan-800' : 'text-slate-700 hover:bg-slate-100' }} border-l-4 border-transparent flex items-center gap-3.5 px-5 py-3 transition-colors duration-150">
+                                    <div class="w-9 h-9 shrink-0 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 flex items-center justify-center shadow-sm">
+                                        <i class="fa-solid fa-server text-[15px]"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-[13.5px] font-extrabold leading-tight">Pengajuan Hosting</p>
+                                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Permohonan alokasi web server, database &amp; storage</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="{{ route('pengajuan.email') }}" class="{{ request()->routeIs('pengajuan.email') ? 'bg-[#071E3D] text-white font-extrabold shadow-md' : 'text-slate-700 hover:bg-slate-100 hover:text-[#071E3D] font-bold' }} px-4 py-2.5 rounded-xl text-[14px] transition-all duration-200 flex items-center gap-2">
                         <i class="fa-solid fa-envelope text-base"></i> Email
                     </a>
@@ -95,7 +152,13 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-200 px-4 pt-3 pb-5 space-y-2 shadow-lg">
             <p class="text-[11px] font-black uppercase text-slate-400 px-3 pt-1">Pilih Layanan Formulir</p>
             <a href="{{ route('pengajuan.website') }}" class="{{ request()->routeIs('pengajuan.website') ? 'bg-[#071E3D] text-white font-extrabold' : 'text-slate-700 hover:bg-slate-100 font-bold' }} block px-4 py-3 rounded-xl text-[14px] transition-all flex items-center gap-3">
-                <i class="fa-solid fa-globe text-base w-5"></i> Web Desa
+                <i class="fa-solid fa-globe text-base w-5"></i> Pengajuan Website
+            </a>
+            <a href="{{ route('pengajuan.subdomain') }}" class="{{ request()->routeIs('pengajuan.subdomain') ? 'bg-[#071E3D] text-white font-extrabold' : 'text-slate-700 hover:bg-slate-100 font-bold' }} block px-4 py-3 rounded-xl text-[14px] transition-all flex items-center gap-3">
+                <i class="fa-solid fa-link text-base w-5"></i> Pengajuan Subdomain
+            </a>
+            <a href="{{ route('pengajuan.hosting') }}" class="{{ request()->routeIs('pengajuan.hosting') ? 'bg-[#071E3D] text-white font-extrabold' : 'text-slate-700 hover:bg-slate-100 font-bold' }} block px-4 py-3 rounded-xl text-[14px] transition-all flex items-center gap-3">
+                <i class="fa-solid fa-server text-base w-5"></i> Pengajuan Hosting
             </a>
             <a href="{{ route('pengajuan.email') }}" class="{{ request()->routeIs('pengajuan.email') ? 'bg-[#071E3D] text-white font-extrabold' : 'text-slate-700 hover:bg-slate-100 font-bold' }} block px-4 py-3 rounded-xl text-[14px] transition-all flex items-center gap-3">
                 <i class="fa-solid fa-envelope text-base w-5"></i> Email Resmi
@@ -168,6 +231,8 @@
             e.stopPropagation();
             const mobileMenu = document.getElementById('mobile-menu');
             const userDropdown = document.getElementById('user-dropdown');
+            const websiteDropdown = document.getElementById('website-dropdown');
+            websiteDropdown.classList.add('hidden');
             userDropdown.classList.add('hidden');
             mobileMenu.classList.toggle('hidden');
         }
@@ -176,13 +241,37 @@
             e.stopPropagation();
             const userDropdown = document.getElementById('user-dropdown');
             const mobileMenu = document.getElementById('mobile-menu');
+            const websiteDropdown = document.getElementById('website-dropdown');
             mobileMenu.classList.add('hidden');
+            websiteDropdown.classList.add('hidden');
             userDropdown.classList.toggle('hidden');
+        }
+
+        function toggleWebsiteDropdown(e) {
+            e.stopPropagation();
+            const websiteDropdown = document.getElementById('website-dropdown');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const userDropdown = document.getElementById('user-dropdown');
+            mobileMenu.classList.add('hidden');
+            userDropdown.classList.add('hidden');
+            websiteDropdown.classList.toggle('hidden');
+        }
+
+        function openWebsiteDropdown() {
+            const websiteDropdown = document.getElementById('website-dropdown');
+            document.getElementById('user-dropdown').classList.add('hidden');
+            document.getElementById('mobile-menu').classList.add('hidden');
+            websiteDropdown.classList.remove('hidden');
+        }
+
+        function closeWebsiteDropdown() {
+            document.getElementById('website-dropdown').classList.add('hidden');
         }
 
         window.addEventListener('click', function () {
             document.getElementById('mobile-menu').classList.add('hidden');
             document.getElementById('user-dropdown').classList.add('hidden');
+            document.getElementById('website-dropdown').classList.add('hidden');
         });
     </script>
 
