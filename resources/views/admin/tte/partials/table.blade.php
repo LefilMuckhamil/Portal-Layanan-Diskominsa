@@ -447,12 +447,21 @@
                                 <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Contoh: Budi Santoso, S.Kom" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
                             </div>
                             <div>
-                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP <span class="text-rose-500">*</span></label>
-                                <input type="text" inputmode="numeric" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
+                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP</label>
+                                <input type="text" inputmode="numeric" name="data_pengajuan[nip]" id="nip-field-tte" value="{{ old('data_pengajuan.nip') }}" maxlength="17" placeholder="Masukkan NIP (opsional, maksimal 17 digit)..." class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
+                                <input type="hidden" name="data_pengajuan[perketat_nip]" id="nip-ketat-val-tte" value="0">
+                                <label class="inline-flex items-center gap-1.5 mt-1.5 text-[10.5px] font-semibold text-[#475467] cursor-pointer select-none">
+                                    <input type="checkbox" id="nip-ketat-tte" class="accent-blue-600 w-3 h-3 rounded" onchange="toggleNipKetat(this, 'tte')">
+                                    Perketat NIP (18 digit wajib)
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIK <span class="text-rose-500">*</span></label>
+                                <input type="text" inputmode="numeric" name="data_pengajuan[nik]" value="{{ old('data_pengajuan.nik') }}" required maxlength="16" placeholder="Masukkan NIK 16 digit..." class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
                             </div>
                             <div class="col-span-1 md:col-span-2">
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Instansi <span class="text-rose-500">*</span></label>
-                                <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinas Kesehatan" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
+                                <input type="text" name="data_pengajuan[instansi]" value="{{ old('data_pengajuan.instansi') }}" required placeholder="Dinas Kesehatan" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
                             </div>
                         </div>
                     </div>
@@ -464,21 +473,15 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP / WhatsApp <span class="text-rose-500">*</span></label>
-                                <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 shadow-sm focus-within:border-blue-500 transition-all">
-                                    <i class="fa-brands fa-whatsapp text-emerald-500 text-[14px] mr-2"></i>
-                                    <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
-                                </div>
+                                <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
                             </div>
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Email Aktif <span class="text-rose-500">*</span></label>
-                                <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 shadow-sm focus-within:border-blue-500 transition-all">
-                                    <i class="fa-solid fa-envelope text-blue-600 text-[13px] mr-2"></i>
-                                    <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
-                                </div>
+                                <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
                             </div>
                             <div class="col-span-1 md:col-span-2">
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Alamat Domisili <span class="text-rose-500">*</span></label>
-                                <input type="text" name="data_pengajuan[alamat]" value="{{ old('data_pengajuan.alamat') }}" required placeholder="Masukkan alamat domisili lengkap..." class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
+                                <input type="text" name="data_pengajuan[alamat]" value="{{ old('data_pengajuan.alamat') }}" required placeholder="Masukkan alamat domisili lengkap..." class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
                             </div>
                             <div class="col-span-1 md:col-span-2">
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Dokumen Persyaratan (PDF) <span class="text-rose-500">*</span></label>

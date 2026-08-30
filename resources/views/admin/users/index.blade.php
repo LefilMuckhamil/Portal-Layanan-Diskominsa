@@ -26,15 +26,37 @@
         </div>
     </div>
 
+    <div class="px-6 py-3 border-b border-gray-100 flex flex-wrap items-center gap-2">
+        @php
+            $aktifFilter = request('status_akun');
+            $totalAkun = array_sum($statusCounts->all());
+        @endphp
+        @foreach (['' => ['label' => 'Semua', 'count' => $totalAkun], 'pending' => ['label' => 'Menunggu Verifikasi', 'count' => $statusCounts->get('pending', 0)], 'aktif' => ['label' => 'Aktif', 'count' => $statusCounts->get('aktif', 0)], 'ditolak' => ['label' => 'Ditolak', 'count' => $statusCounts->get('ditolak', 0)]] as $key => $tab)
+            @php
+                $isAktif = $aktifFilter === $key;
+                $url = route('admin.users.index', array_filter([
+                    'status_akun' => $key,
+                    'search' => request('search'),
+                ], fn ($v) => $v !== '' && $v !== null));
+            @endphp
+            <a href="{{ $url }}"
+               class="px-4 py-1.5 rounded-full border text-[11.5px] font-bold transition-colors inline-flex items-center gap-1.5 {{ $isAktif ? 'bg-[#071E3D] text-white border-[#071E3D] shadow-sm' : 'bg-white text-gray-500 border-gray-200 hover:border-cyan-300 hover:text-cyan-600' }}">
+                {{ $tab['label'] }}
+                <span class="text-[10px] px-1.5 py-0.5 rounded-full {{ $isAktif ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400' }}">{{ $tab['count'] }}</span>
+            </a>
+        @endforeach
+    </div>
+
     <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse min-w-[800px]">
+        <table class="w-full text-left border-collapse table-auto min-w-[900px]">
             <thead class="bg-gray-50/50 border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-400 font-bold">
                 <tr>
-                    <th class="py-3.5 px-6">Pegawai ASN</th>
-                    <th class="py-3.5 px-6">Kontak</th>
-                    <th class="py-3.5 px-6">Instansi & Jabatan</th>
-                    <th class="py-3.5 px-6">Role</th>
-                    <th class="py-3.5 px-6 text-center">Aksi</th>
+                    <th class="py-3.5 px-6 w-[24%]">Pegawai ASN</th>
+                    <th class="py-3.5 px-6 w-[22%]">Kontak</th>
+                    <th class="py-3.5 px-6 w-[22%]">Instansi & Jabatan</th>
+                    <th class="py-3.5 px-6 w-[10%] text-center whitespace-nowrap">Role</th>
+                    <th class="py-3.5 px-6 w-[12%] text-center whitespace-nowrap">Status</th>
+                    <th class="py-3.5 px-6 w-[10%] text-center whitespace-nowrap">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -82,7 +104,7 @@
                         </td>
 
                         {{-- 4. Role --}}
-                        <td class="py-4 px-6">
+                        <td class="py-4 px-6 text-center whitespace-nowrap">
                             @if($item->role === 'admin')
                                 <span class="px-3 py-1.5 rounded-lg border text-[10px] font-extrabold uppercase tracking-wider bg-violet-50 text-violet-600 border-violet-100">
                                     Admin
@@ -94,17 +116,56 @@
                             @endif
                         </td>
 
-                        {{-- 5. Aksi --}}
-                        <td class="py-4 px-6 text-center space-x-1 whitespace-nowrap">
-                            <button type="button" onclick="bukaModalEdit('{{ $item->id }}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-cyan-50 hover:text-cyan-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm cursor-pointer" title="Edit Akun">
-                                <i class="fa-solid fa-pen text-xs"></i>
-                            </button>
-                            <form id="form-delete-{{ $item->id }}" action="{{ route('admin.users.destroy', $item->id) }}" method="POST" class="inline-block" data-no-ajax>
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" onclick="bukaModalDelete('{{ $item->id }}', {{ Js::from($item->name) }})" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-600 border border-gray-200 transition-colors inline-flex items-center justify-center shadow-sm cursor-pointer" title="Hapus Akun">
-                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                        {{-- 5. Status --}}
+                        <td class="py-4 px-6 text-center whitespace-nowrap">
+                            @if($item->role === 'admin')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-100 text-slate-700">
+                                    Sistem
+                                </span>
+                            @elseif($item->status_akun === 'pending')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-amber-100 text-amber-800 border border-amber-200">
+                                    Menunggu Verifikasi
+                                </span>
+                            @elseif($item->status_akun === 'aktif')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    Aktif
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-rose-100 text-rose-800 border border-rose-200">
+                                    Ditolak
+                                </span>
+                            @endif
+                        </td>
+
+                        {{-- 6. Aksi --}}
+                        <td class="py-4 px-6 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center gap-1.5">
+                                @if($item->role !== 'admin' && $item->status_akun === 'pending')
+                                    <button type="button" onclick="document.getElementById('form-aktivasi-{{ $item->id }}').submit()" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors cursor-pointer" title="Setujui Verifikasi">
+                                        <i class="fa-solid fa-check text-xs"></i>
+                                    </button>
+                                    <button type="button" onclick="document.getElementById('form-tolak-{{ $item->id }}').submit()" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors cursor-pointer" title="Tolak Verifikasi">
+                                        <i class="fa-solid fa-xmark text-xs"></i>
+                                    </button>
+                                @endif
+                                <button type="button" onclick="bukaModalEdit('{{ $item->id }}')" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors cursor-pointer" title="Edit Akun">
+                                    <i class="fa-solid fa-pen text-xs"></i>
                                 </button>
+                                <form id="form-delete-{{ $item->id }}" action="{{ route('admin.users.destroy', $item->id) }}" method="POST" class="inline-block" data-no-ajax>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" onclick="bukaModalDelete('{{ $item->id }}', {{ Js::from($item->name) }})" class="p-1.5 rounded-lg bg-gray-50 text-gray-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer" title="Hapus Akun">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            {{-- Form tersembunyi untuk aksi verifikasi (dikirim langsung dari tombol Setujui / Tolak) --}}
+                            <form id="form-aktivasi-{{ $item->id }}" action="{{ route('admin.users.aktivasi', $item->id) }}" method="POST" class="hidden" data-no-ajax>
+                                @csrf
+                            </form>
+                            <form id="form-tolak-{{ $item->id }}" action="{{ route('admin.users.tolak', $item->id) }}" method="POST" class="hidden" data-no-ajax>
+                                @csrf
                             </form>
                         </td>
                     </tr>
@@ -204,9 +265,10 @@
                             </div>
                         </div>
                     </div>
-                @empty
+
+                    @empty
                     <tr>
-                        <td colspan="5" class="py-12 text-center">
+                        <td colspan="6" class="py-12 text-center">
                             <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <i class="fa-solid fa-user-slash text-2xl text-gray-300"></i>
                             </div>

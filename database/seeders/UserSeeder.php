@@ -22,6 +22,12 @@ class UserSeeder extends Seeder
         ]);
 
         // role tidak ada di $fillable sehingga harus di-forceFill
-        $user->forceFill(['role' => 'admin'])->save();
+        // Admin default otomatis berstatus 'aktif' agar tidak terkunci.
+        $user->forceFill([
+            'role' => 'admin',
+            'status_akun' => 'aktif',
+            'approved_at' => now(),
+            'approved_by' => $user->id,
+        ])->save();
     }
 }

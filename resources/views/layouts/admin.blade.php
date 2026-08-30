@@ -324,7 +324,7 @@
             hidden.value = matched.getAttribute('data-id') || '';
             var modal = inputElem.closest('[id^="modal-"]');
             if (!modal) return;
-            var fields = { nama: 'data-name', nip: 'data-nip', instansi: 'data-instansi', no_hp: 'data-hp', email: 'data-email' };
+            var fields = { nama: 'data-name', nip: 'data-nip', instansi: 'data-instansi', no_hp: 'data-hp', email: 'data-email', email_dinas: 'data-email', jabatan: 'data-jabatan' };
             Object.keys(fields).forEach(function (key) {
                 var el = modal.querySelector('[name="data_pengajuan[' + key + ']"]');
                 if (el && matched.getAttribute(fields[key])) el.value = matched.getAttribute(fields[key]);
@@ -335,6 +335,16 @@
             var box = document.getElementById('hasil-upload-' + id);
             if (!box) return;
             box.classList.toggle('hidden', select.value !== 'Selesai');
+        }
+
+        function toggleNipKetat(cb, prefix) {
+            var val = document.getElementById('nip-ketat-val-' + prefix);
+            var nip = document.getElementById('nip-field-' + prefix);
+            if (!val || !nip) return;
+            val.value = cb.checked ? '1' : '0';
+            nip.required = cb.checked;
+            nip.maxLength = cb.checked ? 18 : 17;
+            nip.placeholder = cb.checked ? 'Masukkan NIP 18 digit...' : 'Masukkan NIP (opsional, maksimal 17 digit)...';
         }
     </script>
 </body>

@@ -17,6 +17,10 @@ class AdminUserController extends Controller
     {
         $query = User::query();
 
+        if ($request->filled('status_akun') && in_array($request->status_akun, ['pending', 'aktif', 'ditolak'], true)) {
+            $query->where('status_akun', $request->status_akun);
+        }
+
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
             $query->where(function ($q) use ($search) {
@@ -27,9 +31,14 @@ class AdminUserController extends Controller
             });
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(10);
+        $statusCounts = User::query()
+            ->selectRaw('status_akun, count(*) as total')
+            ->groupBy('status_akun')
+            ->pluck('total', 'status_akun');
 
-        return view('admin.users.index', compact('users'));
+        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('admin.users.index', compact('users', 'statusCounts'));
     }
 
     public function store(Request $request)
@@ -67,7 +76,13 @@ class AdminUserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        $user->forceFill(['role' => $validated['role']])->save();
+        $user->forceFill([
+            'role' => $validated['role'],
+            // Akun yang dibuat langsung oleh admin dianggap sudah terverifikasi.
+            'status_akun' => 'aktif',
+            'approved_at' => now(),
+            'approved_by' => Auth::id(),
+        ])->save();
 
         return back()->with('sukses', 'Akun '.$user->name.' berhasil dibuat.');
     }
@@ -126,6 +141,52 @@ class AdminUserController extends Controller
         }
 
         return back()->with('sukses', 'Data akun '.$user->name.' berhasil diperbarui.');
+    }
+
+    public function aktivasi($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id === Auth::id()) {
+            return back()->with('error', 'Anda tidak dapat mengubah status verifikasi akun Anda sendiri.');
+        }
+
+        if ($user->role === 'admin') {
+            return back()->with('error', 'Status verifikasi tidak berlaku untuk akun administrator.');
+        }
+
+        $user->forceFill([
+            'status_akun' => 'aktif',
+            'approved_at' => now(),
+            'approved_by' => Auth::id(),
+        ])->save();
+
+        Log::info('Admin ID '.auth()->id()." mengaktivasi User ID {$user->id}");
+
+        return back()->with('sukses', 'Akun '.$user->name.' berhasil diaktivasi.');
+    }
+
+    public function tolak($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id === Auth::id()) {
+            return back()->with('error', 'Anda tidak dapat mengubah status verifikasi akun Anda sendiri.');
+        }
+
+        if ($user->role === 'admin') {
+            return back()->with('error', 'Status verifikasi tidak berlaku untuk akun administrator.');
+        }
+
+        $user->forceFill([
+            'status_akun' => 'ditolak',
+            'approved_at' => now(),
+            'approved_by' => Auth::id(),
+        ])->save();
+
+        Log::info('Admin ID '.auth()->id()." menolak User ID {$user->id}");
+
+        return back()->with('sukses', 'Akun '.$user->name.' berhasil ditolak.');
     }
 
     public function destroy($id)

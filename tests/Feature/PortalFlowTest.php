@@ -18,6 +18,10 @@ class PortalFlowTest extends TestCase
 
     private function buatUser(string $role = 'user', string $email = 'pegawai@acehbaratkab.go.id', array $attrs = []): User
     {
+        // status_akun tidak fillable sehingga diekstrak & di-set via forceFill.
+        $statusAkun = $attrs['status_akun'] ?? 'aktif';
+        unset($attrs['status_akun']);
+
         $user = User::create(array_merge([
             'name' => 'Pegawai Diskominsa',
             'email' => $email,
@@ -29,7 +33,9 @@ class PortalFlowTest extends TestCase
         ], $attrs));
 
         if ($role === 'admin') {
-            $user->forceFill(['role' => 'admin'])->save();
+            $user->forceFill(['role' => 'admin', 'status_akun' => 'aktif'])->save();
+        } else {
+            $user->forceFill(['status_akun' => $statusAkun])->save();
         }
 
         return $user;
@@ -1009,5 +1015,377 @@ class PortalFlowTest extends TestCase
         $response
             ->assertSee('Lihat File Hasil', false)
             ->assertSee(route('dokumen.unduh', ['pengajuan' => $selesai->id, 'jenis' => 'hasil']), false);
+    }
+
+    public function test_admin_berhasil_menambah_pengajuan_subdomain_manual(): void
+    {
+        Storage::fake('local');
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $pemohon = $this->buatUser('user', 'pegawai2@acehbaratkab.go.id');
+
+        $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeSubdomain'), [
+            'user_id' => $pemohon->id,
+            'jenis_layanan' => 'Pembuatan Subdomain',
+            'data_pengajuan' => [
+                'perketat_nip' => '1',
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '081234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'domain' => 'dinkes',
+                'ip_address' => '103.10.10.5',
+                'nama_aplikasi' => 'SIAP - Sistem Informasi App',
+            ],
+            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHas('sukses');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $pemohon->id,
+            'jenis_layanan' => 'Pembuatan Subdomain',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::latest('id')->first();
+        $this->assertStringStartsWith('#SUB-', $pengajuan->nomor_tiket);
+        $this->assertSame('dinkes.acehbaratkab.go.id', $pengajuan->data_pengajuan['domain']);
+        $this->assertSame('Dinas Kesehatan', $pengajuan->data_pengajuan['instansi']);
+        $this->assertArrayNotHasKey('perketat_nip', $pengajuan->data_pengajuan);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_admin_berhasil_menambah_pengajuan_hosting_manual(): void
+    {
+        Storage::fake('local');
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $pemohon = $this->buatUser('user', 'pegawai2@acehbaratkab.go.id');
+
+        $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeHosting'), [
+            'user_id' => $pemohon->id,
+            'jenis_layanan' => 'Pembuatan Hosting',
+            'data_pengajuan' => [
+                'perketat_nip' => '1',
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '081234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'nama_aplikasi' => 'Sistem Informasi Publik',
+                'runtime' => 'PHP/Laravel',
+                'database_type' => 'MySQL',
+                'storage_quota' => '10GB',
+                'domain_terkait' => 'dinkes.acehbaratkab.go.id',
+            ],
+            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHas('sukses');
+
+        $this->assertDatabaseHas('pengajuan', [
+            'user_id' => $pemohon->id,
+            'jenis_layanan' => 'Pembuatan Hosting',
+            'status' => 'Pending',
+        ]);
+
+        $pengajuan = Pengajuan::latest('id')->first();
+        $this->assertStringStartsWith('#HST-', $pengajuan->nomor_tiket);
+        $this->assertSame('PHP/Laravel', $pengajuan->data_pengajuan['runtime']);
+        $this->assertSame('MySQL', $pengajuan->data_pengajuan['database_type']);
+        $this->assertSame('10GB', $pengajuan->data_pengajuan['storage_quota']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
+        Storage::disk('local')->assertExists($pengajuan->file_pendukung);
+    }
+
+    public function test_admin_subdomain_ditolak_saat_perketat_nip_dan_email_tidak_valid(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $pemohon = $this->buatUser('user', 'pegawai2@acehbaratkab.go.id');
+
+        $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeSubdomain'), [
+            'user_id' => $pemohon->id,
+            'data_pengajuan' => [
+                'perketat_nip' => '1',
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011',
+                'email_dinas' => 'pegawai@gmail.com',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '081234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'domain' => 'dinkes',
+                'ip_address' => '103.10.10.5',
+                'nama_aplikasi' => 'SIAP',
+            ],
+            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors(['data_pengajuan.nip', 'data_pengajuan.email_dinas']);
+        $this->assertDatabaseCount('pengajuan', 0);
+    }
+
+    public function test_admin_website_manual_menerima_nip_perketat_nonaktif_dan_menyimpan_field_baru(): void
+    {
+        Storage::fake('local');
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $pemohon = $this->buatUser('user', 'pegawai2@acehbaratkab.go.id');
+
+        $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeWebsite'), [
+            'user_id' => $pemohon->id,
+            'data_pengajuan' => [
+                'perketat_nip' => '0',
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011',
+                'email_dinas' => 'pegawai@acehbaratkab.go.id',
+                'email_google' => 'pegawai@gmail.com',
+                'no_hp' => '081234567890',
+                'instansi' => 'Dinas Kesehatan',
+                'jabatan' => 'Pranata Komputer',
+                'nama_pimpinan' => 'dr. H. A. Rahman',
+                'nama_website' => 'Website Resmi Dinas Kesehatan',
+            ],
+            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHas('sukses');
+
+        $pengajuan = Pengajuan::latest('id')->first();
+        $this->assertStringStartsWith('#WEB-', $pengajuan->nomor_tiket);
+        $this->assertSame('Website Resmi Dinas Kesehatan', $pengajuan->data_pengajuan['nama_website']);
+        $this->assertSame('pegawai@acehbaratkab.go.id', $pengajuan->data_pengajuan['email_dinas']);
+        $this->assertSame('Pranata Komputer', $pengajuan->data_pengajuan['jabatan']);
+        $this->assertSame('198501012010011', $pengajuan->data_pengajuan['nip']);
+        $this->assertArrayNotHasKey('domain', $pengajuan->data_pengajuan);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
+    }
+
+    public function test_admin_tte_manual_menyimpan_nik(): void
+    {
+        Storage::fake('local');
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $pemohon = $this->buatUser('user', 'pegawai2@acehbaratkab.go.id');
+
+        $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeTte'), [
+            'user_id' => $pemohon->id,
+            'data_pengajuan' => [
+                'perketat_nip' => '1',
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'nik' => '1108070101010001',
+                'instansi' => 'Dinas Kesehatan',
+                'no_hp' => '081234567890',
+                'email' => 'pegawai@acehbaratkab.go.id',
+                'alamat' => 'Jl. Teuku Umar No. 1, Meulaboh',
+            ],
+            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHas('sukses');
+
+        $pengajuan = Pengajuan::latest('id')->first();
+        $this->assertStringStartsWith('#TTE-', $pengajuan->nomor_tiket);
+        $this->assertSame('1108070101010001', $pengajuan->data_pengajuan['nik']);
+    }
+
+    public function test_admin_cloud_manual_menyimpan_no_hp(): void
+    {
+        Storage::fake('local');
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $pemohon = $this->buatUser('user', 'pegawai2@acehbaratkab.go.id');
+
+        $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeCloud'), [
+            'user_id' => $pemohon->id,
+            'data_pengajuan' => [
+                'perketat_nip' => '1',
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'instansi' => 'Dinas Kominfo',
+                'no_hp' => '081234567890',
+                'email' => 'pegawai@acehbaratkab.go.id',
+                'kapasitas' => '10GB',
+            ],
+            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHas('sukses');
+
+        $pengajuan = Pengajuan::latest('id')->first();
+        $this->assertStringStartsWith('#CLD-', $pengajuan->nomor_tiket);
+        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+    }
+
+    public function test_admin_bantuan_manual_menyimpan_kategori_dari_master(): void
+    {
+        Storage::fake('local');
+
+        $kategori = KategoriBantuan::create([
+            'nama_kategori' => 'Reset OTP',
+            'is_active' => true,
+        ]);
+
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $pemohon = $this->buatUser('user', 'pegawai2@acehbaratkab.go.id');
+
+        $response = $this->actingAs($admin)->post(route('admin.bantuan.store'), [
+            'user_id' => $pemohon->id,
+            'jenis_layanan' => 'Pusat Bantuan',
+            'data_pengajuan' => [
+                'perketat_nip' => '1',
+                'kategori_bantuan_id' => $kategori->id,
+                'nama' => 'Pegawai Diskominsa',
+                'nip' => '198501012010011001',
+                'no_hp' => '081234567890',
+                'email_reset' => 'Pegawai@gmail.com',
+                'deskripsi_kendala' => 'Tidak bisa masuk email resmi.',
+            ],
+            'file_persyaratan' => UploadedFile::fake()->create('bukti.pdf', 500, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHas('sukses');
+
+        $pengajuan = Pengajuan::latest('id')->first();
+        $this->assertStringStartsWith('#HLP-', $pengajuan->nomor_tiket);
+        $this->assertSame($kategori->id, $pengajuan->data_pengajuan['kategori_bantuan_id']);
+        $this->assertSame('Reset OTP', $pengajuan->data_pengajuan['kategori']);
+        $this->assertSame('pegawai@gmail.com', $pengajuan->data_pengajuan['email_reset']);
+        $this->assertSame('6281234567890', $pengajuan->data_pengajuan['no_hp']);
+    }
+
+    public function test_registrasi_berhasil_berstatus_pending_dan_tidak_bisa_langsung_login(): void
+    {
+        $response = $this->post(route('register.process'), [
+            'name' => 'Pegawai Baru <script>alert("xss")</script>',
+            'unit_kerja' => 'Dinas Kominfo',
+            'jabatan' => 'Analis',
+            'no_hp' => '081234567899',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
+            'nip' => '198501012010011002',
+            'email' => 'pegawaibaru@acehbaratkab.go.id',
+        ]);
+
+        $response->assertRedirect(route('login'));
+        $response->assertSessionHas('info');
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'pegawaibaru@acehbaratkab.go.id',
+            'role' => 'user',
+            'status_akun' => 'pending',
+        ]);
+
+        $user = User::where('email', 'pegawaibaru@acehbaratkab.go.id')->first();
+        $this->assertNotNull($user);
+        // Sanitasi anti-XSS: konten <script> dibuang.
+        $this->assertSame('Pegawai Baru', $user->name);
+
+        $login = $this->post('/login', [
+            'email' => 'pegawaibaru@acehbaratkab.go.id',
+            'password' => 'Password123',
+        ]);
+        $login->assertRedirect(route('login'));
+        $login->assertSessionHas('error');
+        $this->assertGuest();
+    }
+
+    public function test_login_pending_dan_ditolak_ditendang_kembali_ke_login(): void
+    {
+        $this->buatUser('user', 'pending@acehbaratkab.go.id', ['status_akun' => 'pending']);
+        $this->buatUser('user', 'ditolak@acehbaratkab.go.id', ['status_akun' => 'ditolak']);
+
+        foreach ([
+            ['pending@acehbaratkab.go.id', 'belum diaktivasi'],
+            ['ditolak@acehbaratkab.go.id', 'ditolak'],
+        ] as [$email, $fragment]) {
+            $response = $this->post('/login', [
+                'email' => $email,
+                'password' => 'password123',
+            ]);
+
+            $response->assertRedirect(route('login'));
+            $response->assertSessionHas('error', function ($pesan) use ($fragment) {
+                return is_string($pesan) && str_contains($pesan, $fragment);
+            });
+            $this->assertGuest();
+        }
+    }
+
+    public function test_middleware_akun_aktif_memutus_sesi_user_yang_dinonaktifkan(): void
+    {
+        $pending = $this->buatUser('user', 'pending2@acehbaratkab.go.id', ['status_akun' => 'pending']);
+
+        $this->actingAs($pending)->get(route('user.riwayat'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHas('error');
+
+        $this->assertGuest();
+    }
+
+    public function test_admin_menyetujui_akun_pending_sehingga_user_bisa_login(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $calon = $this->buatUser('user', 'calon@acehbaratkab.go.id', ['status_akun' => 'pending']);
+
+        $this->actingAs($admin)->post(route('admin.users.aktivasi', $calon->id))
+            ->assertSessionHas('sukses');
+
+        $calon->refresh();
+        $this->assertSame('aktif', $calon->status_akun);
+        $this->assertNotNull($calon->approved_at);
+        $this->assertSame($admin->id, $calon->approved_by);
+
+        // Keluar dari sesi admin lalu login sebagai user yang baru diaktivasi.
+        $this->post(route('logout'));
+
+        $this->post('/login', [
+            'email' => 'calon@acehbaratkab.go.id',
+            'password' => 'password123',
+        ])->assertRedirect('/');
+
+        $this->assertAuthenticatedAs($calon);
+    }
+
+    public function test_admin_menolak_akun_pending_sehingga_user_tidak_bisa_login(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $calon = $this->buatUser('user', 'ditolak2@acehbaratkab.go.id', ['status_akun' => 'pending']);
+
+        $this->actingAs($admin)->post(route('admin.users.tolak', $calon->id))
+            ->assertSessionHas('sukses');
+
+        $calon->refresh();
+        $this->assertSame('ditolak', $calon->status_akun);
+        $this->assertSame($admin->id, $calon->approved_by);
+
+        $this->post(route('logout'));
+
+        $this->post('/login', [
+            'email' => 'ditolak2@acehbaratkab.go.id',
+            'password' => 'password123',
+        ])->assertRedirect(route('login'))->assertSessionHas('error');
+
+        $this->assertGuest();
+    }
+
+    public function test_admin_tidak_dapat_mengubah_status_verifikasi_akun_sendiri(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+
+        $this->actingAs($admin)->post(route('admin.users.tolak', $admin->id))
+            ->assertSessionHas('error');
+        $this->actingAs($admin)->post(route('admin.users.aktivasi', $admin->id))
+            ->assertSessionHas('error');
+
+        $this->assertSame('aktif', $admin->fresh()->status_akun);
     }
 }

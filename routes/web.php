@@ -35,7 +35,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', function () {
         return view('auth.login');
     })->name('login');
-    Route::post('/login', [AuthController::class, 'authenticate'])->middleware('throttle:5,1');
+    Route::post('/login', [AuthController::class, 'authenticate']);
 
     Route::get('/register', function () {
         return view('auth.register');
@@ -51,7 +51,7 @@ Route::middleware('guest')->group(function () {
 | 3. Authenticated User Routes (Khusus ASN / User Login)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'akun.aktif'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::prefix('layanan')->group(function () {
@@ -103,7 +103,7 @@ Route::middleware(['auth'])->group(function () {
 | 4. Admin Routes (Khusus Administrator Diskominsa)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'akun.aktif', IsAdmin::class])->prefix('admin')->group(function () {
 
     Route::get('/dashboard', function (Request $request) {
         $request->validate([
@@ -279,6 +279,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
         Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
         Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
         Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::post('/users/{id}/aktivasi', [AdminUserController::class, 'aktivasi'])->name('admin.users.aktivasi');
+        Route::post('/users/{id}/tolak', [AdminUserController::class, 'tolak'])->name('admin.users.tolak');
     });
 
     Route::get('/teknis-digital/website', [AdminPengajuanController::class, 'website'])->name('admin.website.index');
@@ -290,6 +292,11 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->group(function () 
     Route::get('/layanan-bantuan', [AdminPengajuanController::class, 'layananBantuan'])->name('admin.bantuan.index');
 
     Route::get('/pengajuan/export', [AdminPengajuanController::class, 'export'])->name('admin.pengajuan.export')->middleware('throttle:5,1');
+
+    Route::middleware('throttle:20,1')->group(function () {
+        Route::post('/pengajuan-subdomain/store', [AdminPengajuanController::class, 'storeSubdomain'])->name('admin.pengajuan.storeSubdomain');
+        Route::post('/pengajuan-hosting/store', [AdminPengajuanController::class, 'storeHosting'])->name('admin.pengajuan.storeHosting');
+    });
 
     Route::prefix('pengajuan')->group(function () {
         Route::middleware('throttle:20,1')->group(function () {

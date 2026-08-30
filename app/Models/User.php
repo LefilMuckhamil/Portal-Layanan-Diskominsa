@@ -20,6 +20,29 @@ class User extends Authenticatable
         'no_hp',
     ];
 
+    // status_akun/approved_at/approved_by sengaja TIDAK masuk $fillable (anti mass-assignment).
+    // Status verifikasi hanya boleh diubah lewat forceFill() atau AdminUserController.
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_AKTIF = 'aktif';
+
+    public const STATUS_DITOLAK = 'ditolak';
+
+    public function isStatusAktif(): bool
+    {
+        return $this->status_akun === self::STATUS_AKTIF;
+    }
+
+    public function isStatusPending(): bool
+    {
+        return $this->status_akun === self::STATUS_PENDING;
+    }
+
+    public function isStatusDitolak(): bool
+    {
+        return $this->status_akun === self::STATUS_DITOLAK;
+    }
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -30,6 +53,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'approved_at' => 'datetime',
         ];
     }
 }

@@ -6,8 +6,9 @@ use App\Models\User;
 use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -22,29 +23,44 @@ class AuthController extends Controller
         // Normalisasi email sebelum autentikasi agar konsisten terlepas dari kapitalisasi/spasi.
         $request->merge(['email' => strtolower(trim($request->email))]);
 
-        $key = 'login_attempt_'.strtolower($request->email);
-        if (Cache::get($key, 0) >= 5) {
+        // Rate limiting anti brute force: maksimal 5 percobaan gagal per menit per email + IP.
+        $throttleKey = 'login:'.strtolower($request->email).'|'.$request->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $menit = (int) ceil(RateLimiter::availableIn($throttleKey) / 60);
+
             return back()->withErrors([
-                'email' => 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.',
+                'email' => "Terlalu banyak percobaan login. Coba lagi dalam {$menit} menit.",
             ])->onlyInput('email');
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $user = User::where('email', $request->email)->first();
 
-            $request->session()->regenerate();
-            $user = Auth::user();
-            Cache::forget($key);
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            RateLimiter::hit($throttleKey, 60);
 
-            return $user->role === 'admin'
-                ? redirect()->route('admin.dashboard')
-                : redirect()->intended('/');
+            return back()->withErrors([
+                'email' => 'Maaf, Email atau Password Anda salah.',
+            ])->onlyInput('email');
         }
 
-        Cache::put($key, Cache::get($key, 0) + 1, now()->addMinutes(15));
+        RateLimiter::clear($throttleKey);
 
-        return back()->withErrors([
-            'email' => 'Maaf, Email atau Password Anda salah.',
-        ])->onlyInput('email');
+        // Gate status akun: pending/ditolak tidak diizinkan masuk.
+        if ($user->status_akun === User::STATUS_PENDING) {
+            return redirect()->route('login')->with('error', 'Akun ASN Anda belum diaktivasi. Menunggu verifikasi Administrator Diskominsa.');
+        }
+
+        if ($user->status_akun === User::STATUS_DITOLAK) {
+            return redirect()->route('login')->with('error', 'Pendaftaran akun Anda ditolak. Silakan hubungi Diskominsa untuk klarifikasi.');
+        }
+
+        Auth::login($user);
+        // Mencegah session fixation.
+        $request->session()->regenerate();
+
+        return $user->role === 'admin'
+            ? redirect()->route('admin.dashboard')
+            : redirect()->intended('/');
     }
 
     // register
@@ -57,51 +73,77 @@ class AuthController extends Controller
             'unit_kerja' => ['required', 'string', 'max:255'],
             'jabatan' => ['required', 'string', 'max:255'],
             'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', 'unique:users,no_hp'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)->letters()->numbers()->mixedCase(),
+            ],
 
             'nip' => [
                 'required',
                 'string',
-                'size:18',
+                'regex:/^[0-9]{18}$/',
                 'unique:users,nip',
             ],
 
             'email' => [
                 'required',
                 'string',
-                'email',
+                'email:rfc,dns',
                 'max:255',
                 'unique:users,email',
-                'regex:/^[^@]+@acehbaratkab\.go\.id$/i',
+                'ends_with:@acehbaratkab.go.id',
             ],
         ], [
-            'email.regex' => 'Pendaftaran wajib menggunakan email resmi @acehbaratkab.go.id.',
-            'email.unique' => 'Email ini sudah terdaftar di sistem.',
-            'nip.unique' => 'NIP ini sudah terdaftar. Silakan gunakan NIP Anda yang sebenarnya.',
-            'nip.size' => 'NIP harus berjumlah tepat 18 digit.',
+            'email.ends_with' => 'Email harus menggunakan domain resmi @acehbaratkab.go.id.',
+            'email.unique' => 'Alamat email dinas ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.',
+            'nip.unique' => 'NIP ini sudah terdaftar di sistem. Silakan gunakan akun yang sudah ada.',
+            'nip.regex' => 'Format NIP tidak valid. NIP harus terdiri dari 18 digit angka.',
             'no_hp.required' => 'Nomor HP wajib diisi.',
             'no_hp.regex' => 'Format nomor HP/WhatsApp tidak valid. Gunakan format 08xxxxxxxxxx atau 62xxxxxxxxxx.',
+            'password.min' => 'Kata sandi minimal harus 8 karakter.',
+            'password.mixed_case' => 'Kata sandi harus mengandung kombinasi huruf besar dan huruf kecil (contoh: Password123).',
+            'password.letters' => 'Kata sandi harus mengandung huruf.',
+            'password.numbers' => 'Kata sandi harus mengandung setidaknya satu angka.',
             'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'password.uncompromised' => 'Kata sandi ini terlalu mudah ditebak. Gunakan kombinasi huruf, angka, dan huruf kapital.',
         ]);
 
         // normalisasi email ke huruf kecil sebelum disimpan
         $request->merge(['email' => strtolower(trim($request->email))]);
 
-        // sve ke db
+        // Sanitasi anti-XSS pada teks bebas sebelum disimpan.
+        // strip_tags tidak membuang isi <script>, jadi tag script dihapus eksplisit terlebih dahulu.
+        $sanitize = fn (string $value): string => trim(strip_tags(preg_replace('#<script\b[^>]*>.*?</script>#is', '', trim($value))));
+
+        $name = $sanitize($request->name);
+        $unitKerja = $sanitize($request->unit_kerja);
+        $jabatan = $sanitize($request->jabatan);
+
+        // Whitelist fillable eksplisit — hanya field aman yang boleh di-mass-assignment.
         $user = User::create([
-            'name' => $request->name,
+            'name' => $name,
             'nip' => $request->nip,
-            'unit_kerja' => $request->unit_kerja,
-            'jabatan' => $request->jabatan,
+            'unit_kerja' => $unitKerja,
+            'jabatan' => $jabatan,
             'no_hp' => $request->no_hp,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // role tidak boleh di-mass-assignment; tetapkan eksplisit setelah create
-        $user->forceFill(['role' => 'user'])->save();
+        // Anti privilege escalation & mass assignment:
+        // role WAJIB 'user' dan status_akun WAJIB 'pending' (bukan dari input user).
+        $user->forceFill([
+            'role' => 'user',
+            'status_akun' => 'pending',
+        ])->save();
 
-        return redirect()->route('login')->with('sukses', 'Akun berhasil didaftarkan! Silakan masuk menggunakan email dan kata sandi Anda.');
+        // JANGAN login otomatis — akun harus diverifikasi admin terlebih dahulu.
+        // Bersihkan sesi register untuk mencegah fixation.
+        $request->session()->regenerate();
+
+        return redirect()->route('login')->with('info', 'Pendaftaran berhasil! Akun ASN Anda sedang dalam proses verifikasi oleh Administrator Diskominsa.');
     }
 
     // logout

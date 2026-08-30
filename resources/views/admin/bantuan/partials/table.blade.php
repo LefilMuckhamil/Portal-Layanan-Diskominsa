@@ -437,30 +437,34 @@
                             @include('admin.partials.select-asn', ['prefix' => 'bantuan'])
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Kategori Kendala <span class="text-rose-500">*</span></label>
-                                <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 relative shadow-sm focus-within:border-rose-500 transition-all">
-                                    <i class="fa-solid fa-layer-group text-rose-500 text-[13px] mr-2"></i>
-                                    <select name="data_pengajuan[kategori]" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                        <option value="" disabled selected>Pilih Kategori</option>
-                                        <option value="Reset Password Email" @selected(old('data_pengajuan.kategori') == 'Reset Password Email')>Reset Password Email</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
-                                </div>
+                                <select name="data_pengajuan[kategori_bantuan_id]" required class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer outline-none focus:border-rose-500 shadow-sm transition-all">
+                                    <option value="" disabled selected>Pilih Kategori</option>
+                                    @foreach ($kategoriBantuans as $kb)
+                                        <option value="{{ $kb->id }}" @selected((string) old('data_pengajuan.kategori_bantuan_id') === (string) $kb->id)>{{ $kb->nama_kategori }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Jenis Layanan</label>
-                                <div class="bg-slate-100 border border-slate-200 rounded-xl flex items-center px-3 shadow-sm">
-                                    <i class="fa-solid fa-server text-gray-400 text-[13px] mr-2"></i>
-                                    <input type="text" value="Pusat Bantuan" readonly class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-gray-500 font-bold cursor-not-allowed">
-                                    <input type="hidden" name="jenis_layanan" value="Pusat Bantuan">
-                                </div>
+                                <input type="text" value="Pusat Bantuan" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-[12.5px] text-gray-500 font-bold cursor-not-allowed outline-none">
+                                <input type="hidden" name="jenis_layanan" value="Pusat Bantuan">
                             </div>
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Pemohon <span class="text-rose-500">*</span></label>
-                                <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-rose-500 shadow-sm transition-all">
+                                <input type="text" name="data_pengajuan[nama]" value="{{ old('data_pengajuan.nama') }}" required placeholder="Masukkan nama" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-rose-500 shadow-sm transition-all">
                             </div>
                             <div>
-                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP Pemohon <span class="text-rose-500">*</span></label>
-                                <input type="text" inputmode="numeric" name="data_pengajuan[nip]" value="{{ old('data_pengajuan.nip') }}" required placeholder="Masukkan NIP" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-rose-500 shadow-sm transition-all">
+                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP Pemohon</label>
+                                <input type="text" inputmode="numeric" name="data_pengajuan[nip]" id="nip-field-bantuan" value="{{ old('data_pengajuan.nip') }}" maxlength="17" placeholder="Masukkan NIP (opsional, maksimal 17 digit)..." class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-rose-500 shadow-sm transition-all">
+                                <input type="hidden" name="data_pengajuan[perketat_nip]" id="nip-ketat-val-bantuan" value="0">
+                                <label class="inline-flex items-center gap-1.5 mt-1.5 text-[10.5px] font-semibold text-[#475467] cursor-pointer select-none">
+                                    <input type="checkbox" id="nip-ketat-bantuan" class="accent-rose-600 w-3 h-3 rounded" onchange="toggleNipKetat(this, 'bantuan')">
+                                    Perketat NIP (18 digit wajib)
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nomor HP / WhatsApp <span class="text-rose-500">*</span></label>
+                                <input type="tel" inputmode="numeric" name="data_pengajuan[no_hp]" value="{{ old('data_pengajuan.no_hp') }}" required placeholder="08xxxxxxxxxx" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-rose-500 shadow-sm transition-all">
                             </div>
                         </div>
                     </div>
@@ -471,18 +475,12 @@
                         <h3 class="text-[14px] font-extrabold text-[#101828] mb-3">Berkas Lampiran</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="col-span-1 md:col-span-2">
-                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Email Resmi Kendala <span class="text-rose-500">*</span></label>
-                                <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 shadow-sm focus-within:border-rose-500 transition-all">
-                                    <i class="fa-solid fa-envelope-open-text text-sky-600 text-[13px] mr-2"></i>
-                                    <input type="email" name="data_pengajuan[email]" value="{{ old('data_pengajuan.email') }}" required placeholder="email@acehbaratkab.go.id" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
-                                </div>
+                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Email yang Ingin Direset <span class="text-rose-500">*</span></label>
+                                <input type="email" name="data_pengajuan[email_reset]" value="{{ old('data_pengajuan.email_reset') }}" required placeholder="email@acehbaratkab.go.id" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-rose-500 shadow-sm transition-all">
                             </div>
                             <div class="col-span-1 md:col-span-2">
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Deskripsi Kendala</label>
-                                <div class="bg-white border border-slate-300 rounded-xl flex items-start px-3 shadow-sm focus-within:border-rose-500 transition-all">
-                                    <i class="fa-solid fa-comment-dots text-amber-500 text-[13px] mr-2 mt-2.5"></i>
-                                    <textarea name="data_pengajuan[pesan_kendala]" rows="3" placeholder="Jelaskan kendala yang dialami secara singkat (opsional)" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] resize-none">{{ old('data_pengajuan.pesan_kendala') }}</textarea>
-                                </div>
+                                <textarea name="data_pengajuan[deskripsi_kendala]" rows="3" placeholder="Jelaskan kendala yang dialami secara singkat (opsional)" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-rose-500 shadow-sm transition-all resize-none">{{ old('data_pengajuan.deskripsi_kendala') }}</textarea>
                             </div>
                             <div class="col-span-1 md:col-span-2">
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Bukti Kendala (PDF) <span class="text-rose-500">*</span></label>

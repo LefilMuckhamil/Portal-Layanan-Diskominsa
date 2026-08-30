@@ -12,6 +12,15 @@
     @include('admin.subdomain.partials.table', ['users' => $users])
 
     <script>
+        function bukaModalCreate() {
+            document.getElementById('modal-create').classList.remove('hidden');
+            document.getElementById('modal-create').classList.add('flex');
+        }
+        function tutupModalCreate() {
+            document.getElementById('modal-create').classList.add('hidden');
+            document.getElementById('modal-create').classList.remove('flex');
+        }
+
         function bukaModalAdmin(id) {
             document.getElementById('modal-' + id).classList.remove('hidden');
             document.getElementById('modal-' + id).classList.add('flex');
@@ -29,6 +38,13 @@
             document.getElementById('modal-delete-' + id).classList.add('hidden');
             document.getElementById('modal-delete-' + id).classList.remove('flex');
         }
+
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                bukaModalCreate();
+            });
+        @endif
+
         function konfirmasiTolak(form) {
             const status = form.querySelector('select[name="status"]');
             if (status && status.value === 'Ditolak' && !confirm('Apakah Anda yakin menolak pengajuan ini? Status pengajuan akan menjadi Ditolak.')) {
