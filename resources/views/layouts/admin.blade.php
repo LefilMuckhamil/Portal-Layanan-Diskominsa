@@ -17,6 +17,54 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Sidebar collapsible - hanya berlaku pada layar desktop (lg ke atas) */
+        @media (min-width: 1024px) {
+            body.sidebar-collapsed #adminSidebar .sidebar-label,
+            body.sidebar-collapsed #adminSidebar .sidebar-sub,
+            body.sidebar-collapsed #adminSidebar .sidebar-group-text,
+            body.sidebar-collapsed #adminSidebar .sidebar-chevron,
+            body.sidebar-collapsed #adminSidebar .menu-section-title,
+            body.sidebar-collapsed #adminSidebar .logo-text,
+            body.sidebar-collapsed #adminSidebar .logout-label {
+                display: none !important;
+            }
+
+            body.sidebar-collapsed #adminSidebar .sidebar-link,
+            body.sidebar-collapsed #adminSidebar #toggleTeknisDigital {
+                justify-content: center !important;
+                gap: 0 !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            body.sidebar-collapsed #adminSidebar .sidebar-icon {
+                margin: 0 !important;
+            }
+
+            body.sidebar-collapsed #adminSidebar a,
+            body.sidebar-collapsed #adminSidebar #toggleTeknisDigital {
+                transform: none !important;
+            }
+
+            /* Grup akordeon: tampilkan submenu sebagai ikon terpusat saat tertutup */
+            body.sidebar-collapsed #adminSidebar #submenuTeknisDigital {
+                display: block !important;
+                padding: 6px 0 10px;
+            }
+
+            body.sidebar-collapsed #adminSidebar #submenuTeknisDigital .sidebar-link {
+                justify-content: center !important;
+                gap: 0 !important;
+            }
+
+            /* Header logo: hanya tampilkan ikon, pusatkan */
+            body.sidebar-collapsed #adminSidebar .sidebar-header {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-[#f4f7f6] text-gray-800 h-screen flex overflow-hidden selection:bg-cyan-300 selection:text-[#071E3D]">
@@ -25,7 +73,7 @@
 
     @include('admin.partials.sidebar')
 
-    <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden transition-all duration-300 ease-in-out">
     
         @include('admin.partials.navbar')
 
@@ -78,7 +126,30 @@
         const sidebar = document.getElementById('adminSidebar');
         const backdrop = document.getElementById('sidebarBackdrop');
 
+        function isDesktopSidebar() {
+            return window.innerWidth >= 1024;
+        }
+
+        function setSidebarCollapsed(collapsed, persist) {
+            document.body.classList.toggle('sidebar-collapsed', collapsed);
+            sidebar.classList.toggle('lg:w-20', collapsed);
+            sidebar.classList.toggle('lg:w-64', !collapsed);
+            if (persist) {
+                try { localStorage.setItem('sidebar_state', collapsed ? 'collapsed' : 'open'); } catch (e) {}
+            }
+        }
+
+        function toggleSidebar() {
+            if (isDesktopSidebar()) {
+                setSidebarCollapsed(!document.body.classList.contains('sidebar-collapsed'), true);
+            } else {
+                const isOpen = sidebar.classList.contains('translate-x-0') || sidebar.classList.contains('lg:translate-x-0');
+                if (isOpen) { closeSidebar(); } else { openSidebar(); }
+            }
+        }
+
         function openSidebar() {
+            if (isDesktopSidebar()) return;
             sidebar.classList.remove('-translate-x-full');
             sidebar.classList.add('translate-x-0');
             backdrop.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
@@ -87,6 +158,7 @@
         }
 
         function closeSidebar() {
+            if (isDesktopSidebar()) return;
             sidebar.classList.add('-translate-x-full');
             sidebar.classList.remove('translate-x-0');
             backdrop.classList.add('opacity-0', 'pointer-events-none');
@@ -95,11 +167,55 @@
             document.body.style.overflow = '';
         }
 
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) {
-                closeSidebar();
+        (function () {
+            let saved = null;
+            try { saved = localStorage.getItem('sidebar_state'); } catch (e) {}
+            setSidebarCollapsed(saved === 'collapsed', false);
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    document.body.style.overflow = '';
+                    backdrop.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+                }
+            });
+        })();
+
+        (function () {
+            let sidebarTooltip = null;
+
+            function showSidebarTooltip(el) {
+                if (!document.body.classList.contains('sidebar-collapsed') || window.innerWidth < 1024) return;
+                const txt = el.getAttribute('data-tooltip');
+                if (!txt) return;
+                hideSidebarTooltip();
+                sidebarTooltip = document.createElement('span');
+                sidebarTooltip.className = 'fixed z-[60] px-3 py-1.5 rounded-lg bg-[#16324F] text-white text-[12px] font-bold shadow-xl whitespace-nowrap pointer-events-none border border-white/10';
+                sidebarTooltip.textContent = txt;
+                document.body.appendChild(sidebarTooltip);
+                const r = el.getBoundingClientRect();
+                let left = r.right + 12;
+                const maxLeft = window.innerWidth - sidebarTooltip.offsetWidth - 12;
+                if (left > maxLeft) left = r.left - sidebarTooltip.offsetWidth - 12;
+                sidebarTooltip.style.left = left + 'px';
+                sidebarTooltip.style.top = (r.top + r.height / 2 - sidebarTooltip.offsetHeight / 2) + 'px';
             }
-        });
+
+            function hideSidebarTooltip() {
+                if (sidebarTooltip) {
+                    sidebarTooltip.remove();
+                    sidebarTooltip = null;
+                }
+            }
+
+            document.addEventListener('mouseover', (e) => {
+                const link = e.target.closest('#adminSidebar [data-tooltip]');
+                if (link) showSidebarTooltip(link);
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                if (e.target.closest('#adminSidebar [data-tooltip]')) hideSidebarTooltip();
+            });
+        })();
 
         function copyTiket(tiket) {
             navigator.clipboard.writeText(tiket).then(() => {

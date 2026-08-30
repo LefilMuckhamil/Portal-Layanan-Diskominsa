@@ -216,24 +216,26 @@
                                         </div>
                                         <div>
                                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">No. HP / WhatsApp <span class="text-rose-500">*</span></label>
-                                            <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 shadow-sm focus-within:border-cyan-500 transition-all">
-                                                <i class="fa-brands fa-whatsapp text-emerald-500 text-[14px] mr-2"></i>
-                                                <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $item->no_hp) }}" required placeholder="08xxxxxxxxxx" class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3]">
-                                            </div>
+                                            <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $item->no_hp) }}" required placeholder="08xxxxxxxxxx" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-cyan-500 shadow-sm transition-all">
                                         </div>
                                         <div>
                                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Role <span class="text-rose-500">*</span></label>
-                                            <div class="bg-white border border-slate-300 rounded-xl flex items-center px-3 relative shadow-sm focus-within:border-cyan-500 transition-all">
-                                                <select name="role" required class="flex-1 min-w-0 bg-transparent outline-none py-2 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer">
-                                                    <option value="user" @selected($item->role === 'user')>User</option>
-                                                    <option value="admin" @selected($item->role === 'admin')>Admin</option>
-                                                </select>
-                                                <i class="fa-solid fa-chevron-down text-xs text-[#667085] pointer-events-none ml-2"></i>
-                                            </div>
+                                            <select name="role" required class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-bold shadow-sm focus:border-cyan-500 outline-none transition-all">
+                                                <option value="user" @selected($item->role === 'user')>User</option>
+                                                <option value="admin" @selected($item->role === 'admin')>Admin</option>
+                                            </select>
                                         </div>
-                                        <div class="col-span-1 md:col-span-2">
+                                        <div>
                                             <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Password Baru</label>
                                             <input type="password" name="password" placeholder="Kosongkan jika tidak ingin mengubah password" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-cyan-500 shadow-sm transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-700 mb-1">Status Akun <span class="text-rose-500">*</span></label>
+                                            <select id="status_akun-{{ $item->id }}" name="status_akun" data-status="{{ $item->status_akun }}" class="w-full rounded-xl border border-gray-300 py-2.5 px-3 text-sm focus:ring-2 focus:ring-blue-500 bg-white">
+                                                <option value="aktif" @selected($item->status_akun === 'aktif')>Aktif</option>
+                                                <option value="pending" @selected($item->status_akun === 'pending')>Menunggu Verifikasi</option>
+                                                <option value="ditolak" @selected($item->status_akun === 'ditolak')>Ditolak</option>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -388,6 +390,10 @@
     function bukaModalEdit(id) {
         document.getElementById('modal-edit-' + id).classList.remove('hidden');
         document.getElementById('modal-edit-' + id).classList.add('flex');
+        const statusAkun = document.getElementById('status_akun-' + id);
+        if (statusAkun) {
+            statusAkun.value = statusAkun.dataset.status;
+        }
     }
     function tutupModalEdit(id) {
         document.getElementById('modal-edit-' + id).classList.add('hidden');

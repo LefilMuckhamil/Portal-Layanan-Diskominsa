@@ -106,6 +106,7 @@ class AdminUserController extends Controller
             'no_hp' => ['required', 'string', 'regex:/^(\+62|62|08)[0-9]{8,13}$/', 'min:10', 'max:16', Rule::unique('users', 'no_hp')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8'],
             'role' => ['required', Rule::in(['admin', 'user'])],
+            'status_akun' => ['required', Rule::in(['pending', 'aktif', 'ditolak'])],
         ], [
             'email.regex' => 'Email wajib menggunakan domain resmi @acehbaratkab.go.id.',
             'email.unique' => 'Email ini sudah terdaftar di sistem.',
@@ -125,19 +126,36 @@ class AdminUserController extends Controller
         }
 
         $role = $validated['role'] ?? null;
-        unset($validated['role']);
+        $statusAkun = $validated['status_akun'] ?? null;
+        unset($validated['role'], $validated['status_akun']);
 
-        if ($validated['password'] !== null) {
-            $validated['password'] = Hash::make($validated['password']);
+        // Self-Guard: admin yang sedang login tidak boleh mengunci status akunnya sendiri.
+        if ($user->id === Auth::id()) {
+            $statusAkun = 'aktif';
+        }
+
+        $password = $validated['password'] ?? null;
+
+        if ($password !== null) {
+            $validated['password'] = Hash::make($password);
         } else {
             unset($validated['password']);
         }
 
         $user->update($validated);
 
-        if ($role !== $user->role) {
+        if ($role !== null && $role !== $user->role) {
             $user->forceFill(['role' => $role])->save();
             Log::info('Admin ID '.auth()->id()." mengubah role User ID {$user->id} menjadi {$role}");
+        }
+
+        if ($statusAkun !== null && $statusAkun !== $user->status_akun) {
+            $user->forceFill([
+                'status_akun' => $statusAkun,
+                'approved_at' => now(),
+                'approved_by' => Auth::id(),
+            ])->save();
+            Log::info('Admin ID '.auth()->id()." mengubah status akun User ID {$user->id} menjadi {$statusAkun}");
         }
 
         return back()->with('sukses', 'Data akun '.$user->name.' berhasil diperbarui.');

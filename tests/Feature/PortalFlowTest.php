@@ -794,6 +794,7 @@ class PortalFlowTest extends TestCase
             'email' => 'admin@acehbaratkab.go.id',
             'no_hp' => '081234567890',
             'role' => 'user',
+            'status_akun' => 'aktif',
         ]);
 
         $response->assertSessionHas('error');
@@ -1385,6 +1386,38 @@ class PortalFlowTest extends TestCase
             ->assertSessionHas('error');
         $this->actingAs($admin)->post(route('admin.users.aktivasi', $admin->id))
             ->assertSessionHas('error');
+
+        $this->assertSame('aktif', $admin->fresh()->status_akun);
+    }
+
+    public function test_admin_dapat_mengubah_status_akun_melalui_update(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+        $user = $this->buatUser('user', 'pegawai@acehbaratkab.go.id');
+
+        $this->actingAs($admin)->put(route('admin.users.update', $user->id), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'no_hp' => $user->no_hp,
+            'role' => 'user',
+            'status_akun' => 'ditolak',
+        ])->assertSessionHas('sukses');
+
+        $this->assertSame('ditolak', $user->fresh()->status_akun);
+        $this->assertSame($admin->id, $user->fresh()->approved_by);
+    }
+
+    public function test_admin_tidak_dapat_mengunci_status_akun_sendiri_saat_update(): void
+    {
+        $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
+
+        $this->actingAs($admin)->put(route('admin.users.update', $admin->id), [
+            'name' => $admin->name,
+            'email' => $admin->email,
+            'no_hp' => $admin->no_hp,
+            'role' => 'admin',
+            'status_akun' => 'pending',
+        ])->assertSessionHas('sukses');
 
         $this->assertSame('aktif', $admin->fresh()->status_akun);
     }
