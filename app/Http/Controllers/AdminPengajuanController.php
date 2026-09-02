@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Concerns\ResolvesPengajuanEmail;
+use App\Concerns\StoresPengajuan;
 use App\Models\KategoriBantuan;
+use App\Models\Layanan;
 use App\Models\Pengajuan;
 use App\Models\PengajuanLog;
+use App\Models\PengajuanMessage;
 use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\TiketDitolakNotification;
@@ -22,6 +25,7 @@ use Illuminate\Validation\Rule;
 class AdminPengajuanController extends Controller
 {
     use ResolvesPengajuanEmail;
+    use StoresPengajuan;
 
     public function updateProgres(Request $request, $id)
     {
@@ -36,46 +40,16 @@ class AdminPengajuanController extends Controller
 
         $pengajuan = Pengajuan::findOrFail($id);
         $statusSebelumnya = $pengajuan->status;
-        $pengajuan->status = $request->status;
-
-        $dataPengajuan = is_array($pengajuan->data_pengajuan)
-            ? $pengajuan->data_pengajuan
-            : (json_decode((string) $pengajuan->getRawOriginal('data_pengajuan') ?? '{}', true) ?: []);
 
         if ($request->hasFile('file_hasil')) {
-            if (isset($dataPengajuan['file_hasil'])) {
-                $this->hapusBerkasAman($dataPengajuan['file_hasil']);
+            if ($pengajuan->file_hasil) {
+                $this->hapusBerkasAman($pengajuan->file_hasil);
             }
 
-            $file = $request->file('file_hasil');
-            $dataPengajuan['file_hasil'] = $file->store('dokumen_hasil', 'local');
-            $pengajuan->data_pengajuan = $dataPengajuan;
+            $pengajuan->file_hasil = $request->file('file_hasil')->store('dokumen_hasil', 'local');
         }
 
-        $logs = is_array($pengajuan->logs)
-            ? $pengajuan->logs
-            : (json_decode((string) $pengajuan->getRawOriginal('logs') ?? '[]', true) ?: []);
-        $logs[] = [
-            'status' => $request->status,
-            'catatan' => $request->catatan ?? 'Status diperbarui menjadi '.$request->status,
-            'created_at' => now()->toDateTimeString(),
-            'updated_by' => Auth::user()->name ?? 'Admin',
-        ];
-        $pengajuan->logs = $logs;
-
-        if ($request->filled('pesan')) {
-            $pesan = is_array($pengajuan->pesan)
-                ? $pengajuan->pesan
-                : (json_decode((string) $pengajuan->getRawOriginal('pesan') ?? '[]', true) ?: []);
-            $pesan[] = [
-                'pengirim' => Auth::user()->name ?? 'Admin Diskominsa',
-                'role' => 'admin',
-                'isi' => $request->pesan,
-                'waktu' => now()->format('d M Y, H:i'),
-            ];
-            $pengajuan->pesan = $pesan;
-        }
-
+        $pengajuan->status = $request->status;
         $pengajuan->save();
 
         PengajuanLog::create([
@@ -86,6 +60,14 @@ class AdminPengajuanController extends Controller
             'catatan_admin' => $request->catatan ?? null,
         ]);
 
+        if ($request->filled('pesan')) {
+            $pengajuan->messages()->create([
+                'sender_id' => Auth::id(),
+                'sender_role' => 'admin',
+                'isi' => $request->pesan,
+            ]);
+        }
+
         $this->kirimNotifikasiPerubahanStatus($pengajuan, $statusSebelumnya, $request->catatan);
 
         return back()->with('sukses', 'Update progres dan file hasil sukses disimpan!');
@@ -94,11 +76,8 @@ class AdminPengajuanController extends Controller
     public function destroy($id)
     {
         $pengajuan = Pengajuan::findOrFail($id);
-        $dataPengajuan = is_array($pengajuan->data_pengajuan)
-            ? $pengajuan->data_pengajuan
-            : (json_decode((string) $pengajuan->getRawOriginal('data_pengajuan') ?? '{}', true) ?: []);
 
-        foreach (array_filter([$pengajuan->file_pendukung, $dataPengajuan['file_hasil'] ?? null]) as $path) {
+        foreach (array_filter([$pengajuan->file_pendukung, $pengajuan->file_hasil]) as $path) {
             $this->hapusBerkasAman($path);
         }
 
@@ -133,11 +112,14 @@ class AdminPengajuanController extends Controller
 
     public function getChat($id)
     {
-        $pengajuan = Pengajuan::findOrFail($id);
+        $pengajuan = Pengajuan::with('messages.sender')->findOrFail($id);
 
-        $pesan = is_array($pengajuan->pesan)
-            ? $pengajuan->pesan
-            : (json_decode((string) $pengajuan->getRawOriginal('pesan') ?? '[]', true) ?: []);
+        $pesan = $pengajuan->messages->map(fn (PengajuanMessage $chat) => [
+            'role' => $chat->role,
+            'pengirim' => $chat->pengirim,
+            'isi' => $chat->isi,
+            'waktu' => $chat->waktu,
+        ])->values()->all();
 
         return response()->json([
             'status' => 'success',
@@ -153,7 +135,7 @@ class AdminPengajuanController extends Controller
             'status' => 'nullable|string',
         ]);
 
-        $query = Pengajuan::with('user');
+        $query = Pengajuan::with(['user', 'layanan', 'pemohon']);
 
         if ($request->filled('start_date')) {
             $query->where('created_at', '>=', $request->start_date);
@@ -184,16 +166,12 @@ class AdminPengajuanController extends Controller
             fputcsv($file, ['Nomor Tiket', 'Nama Pemohon', 'NIP', 'Instansi', 'Layanan', 'Status', 'Tanggal Pengajuan'], ';');
 
             foreach ($pengajuans as $item) {
-                $data = is_array($item->data_pengajuan)
-                    ? $item->data_pengajuan
-                    : (json_decode((string) $item->getRawOriginal('data_pengajuan') ?? '{}', true) ?: []);
-
                 fputcsv($file, [
                     $item->nomor_tiket,
-                    $data['nama'] ?? $item->user->name ?? '-',
-                    $data['nip'] ?? $item->user->nip ?? '-',
-                    $data['instansi'] ?? $item->user->unit_kerja ?? '-',
-                    $item->jenis_layanan,
+                    $item->pemohon?->nama ?? $item->user?->name ?? '-',
+                    $item->pemohon?->nip ?? $item->user?->nip ?? '-',
+                    $item->pemohon?->instansi ?? $item->user?->unit_kerja ?? '-',
+                    $item->layanan?->nama ?? '-',
                     $item->status,
                     $item->created_at->format('d M Y, H:i'),
                 ], ';');
@@ -207,7 +185,7 @@ class AdminPengajuanController extends Controller
 
     public function website(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->with('user');
+        $query = Pengajuan::where('layanan_id', Layanan::idKode('WEB'))->with(['user', 'layanan', 'pemohon', 'website']);
 
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
@@ -219,7 +197,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Website');
+        $baseQuery = Pengajuan::where('layanan_id', Layanan::idKode('WEB'));
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -245,7 +223,7 @@ class AdminPengajuanController extends Controller
     {
         $dataPengajuan = $request->data_pengajuan;
         $perketatNip = (($dataPengajuan['perketat_nip'] ?? null) === '1');
-        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:17';
+        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:18';
         if (isset($dataPengajuan['no_hp'])) {
             $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
             $request->merge(['data_pengajuan' => $dataPengajuan]);
@@ -263,8 +241,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.jabatan' => 'required|string|max:255',
             'data_pengajuan.nama_pimpinan' => 'required|string|max:255',
             'data_pengajuan.nama_website' => 'required|string|max:255',
-            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
-            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -281,36 +258,26 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp.regex' => 'Nomor HP/WhatsApp harus diawali dengan 08 (contoh: 081234567890).',
             'data_pengajuan.nama_pimpinan.required' => 'Kolom Nama Pimpinan wajib diisi.',
             'data_pengajuan.nama_website.required' => 'Kolom Nama Website Usulan wajib diisi.',
-            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
-            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
-            'file_pendukung.required_without' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
-        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
+        $uploadedFile = $request->file('file_pendukung');
         $filePath = null;
         if ($uploadedFile) {
             $fileName = Str::uuid().'.'.strtolower($uploadedFile->getClientOriginalExtension());
             $filePath = $uploadedFile->storeAs('dokumen_pengajuan/website', $fileName, 'local');
         }
 
-        Pengajuan::create([
-            'user_id' => $request->user_id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
-                'jabatan', 'nama_pimpinan', 'nama_website',
-            ])->all(),
-            'file_pendukung' => $filePath,
-        ]);
+        $this->simpanPengajuan('WEB', $dataPengajuan, $filePath, $request->user_id);
 
         return back()->with('sukses', 'Pengajuan Pembuatan Website berhasil ditambahkan manual.');
     }
 
     public function emailResmi(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->with('user');
+        $query = Pengajuan::where('layanan_id', Layanan::idKode('EML'))->with(['user', 'layanan', 'pemohon', 'email']);
 
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
@@ -322,7 +289,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi');
+        $baseQuery = Pengajuan::where('layanan_id', Layanan::idKode('EML'));
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -348,7 +315,7 @@ class AdminPengajuanController extends Controller
     {
         $dataPengajuan = $request->data_pengajuan;
         $perketatNip = (($dataPengajuan['perketat_nip'] ?? null) === '1');
-        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:17';
+        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:18';
         if (isset($dataPengajuan['no_hp'])) {
             $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
             $request->merge(['data_pengajuan' => $dataPengajuan]);
@@ -367,8 +334,7 @@ class AdminPengajuanController extends Controller
                 'max:50',
                 'regex:/^[a-zA-Z0-9._-]+$/',
             ],
-            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
-            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -379,14 +345,12 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.usulan_email.required' => 'Kolom Usulan Email wajib diisi.',
             'data_pengajuan.usulan_email.max' => 'Usulan alamat email maksimal 50 karakter.',
             'data_pengajuan.usulan_email.regex' => 'Usulan alamat email hanya boleh huruf, angka, titik, garis bawah, dan strip.',
-            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
-            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
-            'file_pendukung.required_without' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
-        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
+        $uploadedFile = $request->file('file_pendukung');
         $filePath = null;
         if ($uploadedFile) {
             $fileName = Str::uuid().'.'.strtolower($uploadedFile->getClientOriginalExtension());
@@ -400,21 +364,14 @@ class AdminPengajuanController extends Controller
                                            : $emailInput.'@acehbaratkab.go.id';
         }
 
-        Pengajuan::create([
-            'user_id' => $request->user_id,
-            'jenis_layanan' => 'Pembuatan Email Resmi',
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'instansi', 'no_hp', 'usulan_email',
-            ])->all(),
-            'file_pendukung' => $filePath,
-        ]);
+        $this->simpanPengajuan('EML', $dataPengajuan, $filePath, $request->user_id);
 
         return back()->with('sukses', 'Pengajuan Pembuatan Email Resmi berhasil ditambahkan manual.');
     }
 
     public function layananTte(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Layanan TTE')->with('user');
+        $query = Pengajuan::where('layanan_id', Layanan::idKode('TTE'))->with(['user', 'layanan', 'pemohon', 'tte']);
 
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
@@ -426,7 +383,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Layanan TTE');
+        $baseQuery = Pengajuan::where('layanan_id', Layanan::idKode('TTE'));
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -452,7 +409,7 @@ class AdminPengajuanController extends Controller
     {
         $dataPengajuan = $request->data_pengajuan;
         $perketatNip = (($dataPengajuan['perketat_nip'] ?? null) === '1');
-        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:17';
+        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:18';
         if (isset($dataPengajuan['no_hp'])) {
             $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
             $request->merge(['data_pengajuan' => $dataPengajuan]);
@@ -468,8 +425,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15'],
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.alamat' => 'required|string',
-            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
-            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -481,35 +437,26 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp.regex' => 'Nomor HP/WhatsApp harus diawali dengan 08 (contoh: 081234567890).',
             'data_pengajuan.email.required' => 'Kolom Email wajib diisi.',
             'data_pengajuan.alamat.required' => 'Kolom Alamat wajib diisi.',
-            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
-            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
-            'file_pendukung.required_without' => 'Dokumen Persyaratan (PDF) wajib diunggah.',
+            'file_pendukung.required' => 'Dokumen Persyaratan (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
-        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
+        $uploadedFile = $request->file('file_pendukung');
         $filePath = null;
         if ($uploadedFile) {
             $fileName = Str::uuid().'.'.strtolower($uploadedFile->getClientOriginalExtension());
             $filePath = $uploadedFile->storeAs('dokumen_pengajuan/tte', $fileName, 'local');
         }
 
-        Pengajuan::create([
-            'user_id' => $request->user_id,
-            'jenis_layanan' => 'Layanan TTE',
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'nik', 'instansi', 'no_hp', 'email', 'alamat',
-            ])->all(),
-            'file_pendukung' => $filePath,
-        ]);
+        $this->simpanPengajuan('TTE', $dataPengajuan, $filePath, $request->user_id);
 
         return back()->with('sukses', 'Pengajuan Layanan TTE berhasil ditambahkan manual.');
     }
 
     public function layananCloud(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Cloud Government')->with('user');
+        $query = Pengajuan::where('layanan_id', Layanan::idKode('CLD'))->with(['user', 'layanan', 'pemohon', 'cloud']);
 
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
@@ -521,7 +468,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Cloud Government');
+        $baseQuery = Pengajuan::where('layanan_id', Layanan::idKode('CLD'));
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -547,7 +494,7 @@ class AdminPengajuanController extends Controller
     {
         $dataPengajuan = $request->data_pengajuan;
         $perketatNip = (($dataPengajuan['perketat_nip'] ?? null) === '1');
-        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:17';
+        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:18';
         if (isset($dataPengajuan['no_hp'])) {
             $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
             $request->merge(['data_pengajuan' => $dataPengajuan]);
@@ -562,8 +509,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15'],
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.kapasitas' => 'required|string|max:20',
-            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
-            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Penanggung Jawab wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -574,35 +520,26 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.email.required' => 'Kolom Email Aktif wajib diisi.',
             'data_pengajuan.kapasitas.required' => 'Kolom Kapasitas Penyimpanan wajib diisi.',
             'data_pengajuan.kapasitas.max' => 'Kapasitas Penyimpanan maksimal 20 karakter.',
-            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
-            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
-            'file_pendukung.required_without' => 'Surat Permohonan Cloud (PDF) wajib diunggah.',
+            'file_pendukung.required' => 'Surat Permohonan Cloud (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
-        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
+        $uploadedFile = $request->file('file_pendukung');
         $filePath = null;
         if ($uploadedFile) {
             $fileName = Str::uuid().'.'.strtolower($uploadedFile->getClientOriginalExtension());
             $filePath = $uploadedFile->storeAs('dokumen_pengajuan/cloud', $fileName, 'local');
         }
 
-        Pengajuan::create([
-            'user_id' => $request->user_id,
-            'jenis_layanan' => 'Cloud Government',
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'instansi', 'no_hp', 'email', 'kapasitas',
-            ])->all(),
-            'file_pendukung' => $filePath,
-        ]);
+        $this->simpanPengajuan('CLD', $dataPengajuan, $filePath, $request->user_id);
 
         return back()->with('sukses', 'Pengajuan Cloud Government berhasil ditambahkan manual.');
     }
 
     public function subdomain(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain')->with('user');
+        $query = Pengajuan::where('layanan_id', Layanan::idKode('SUB'))->with(['user', 'layanan', 'pemohon', 'subdomain']);
 
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
@@ -614,7 +551,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain');
+        $baseQuery = Pengajuan::where('layanan_id', Layanan::idKode('SUB'));
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -638,7 +575,7 @@ class AdminPengajuanController extends Controller
 
     public function hosting(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting')->with('user');
+        $query = Pengajuan::where('layanan_id', Layanan::idKode('HST'))->with(['user', 'layanan', 'pemohon', 'hosting']);
 
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
@@ -650,7 +587,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting');
+        $baseQuery = Pengajuan::where('layanan_id', Layanan::idKode('HST'));
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -676,7 +613,7 @@ class AdminPengajuanController extends Controller
     {
         $dataPengajuan = $request->data_pengajuan;
         $perketatNip = (($dataPengajuan['perketat_nip'] ?? null) === '1');
-        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:17';
+        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:18';
         if (isset($dataPengajuan['no_hp'])) {
             $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
             $request->merge(['data_pengajuan' => $dataPengajuan]);
@@ -695,8 +632,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.domain' => 'required|string|max:255',
             'data_pengajuan.ip_address' => ['required', 'ip'],
             'data_pengajuan.nama_aplikasi' => 'required|string|max:255',
-            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
-            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -715,9 +651,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.ip_address.required' => 'Kolom IP Address Server Tujuan wajib diisi.',
             'data_pengajuan.ip_address.ip' => 'Format IP Address Server Tujuan tidak valid.',
             'data_pengajuan.nama_aplikasi.required' => 'Kolom Nama Sistem / Aplikasi wajib diisi.',
-            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
-            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
-            'file_pendukung.required_without' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
@@ -729,22 +663,14 @@ class AdminPengajuanController extends Controller
                                     : $domainInput.'.acehbaratkab.go.id';
         }
 
-        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
+        $uploadedFile = $request->file('file_pendukung');
         $filePath = null;
         if ($uploadedFile) {
             $fileName = Str::uuid().'.'.strtolower($uploadedFile->getClientOriginalExtension());
             $filePath = $uploadedFile->storeAs('dokumen_pengajuan/subdomain', $fileName, 'local');
         }
 
-        Pengajuan::create([
-            'user_id' => $request->user_id,
-            'jenis_layanan' => 'Pembuatan Subdomain',
-            'file_pendukung' => $filePath,
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
-                'jabatan', 'domain', 'ip_address', 'nama_aplikasi',
-            ])->all(),
-        ]);
+        $this->simpanPengajuan('SUB', $dataPengajuan, $filePath, $request->user_id);
 
         return back()->with('sukses', 'Pengajuan Pembuatan Subdomain berhasil ditambahkan manual.');
     }
@@ -753,7 +679,7 @@ class AdminPengajuanController extends Controller
     {
         $dataPengajuan = $request->data_pengajuan;
         $perketatNip = (($dataPengajuan['perketat_nip'] ?? null) === '1');
-        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:17';
+        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:18';
         if (isset($dataPengajuan['no_hp'])) {
             $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
             $request->merge(['data_pengajuan' => $dataPengajuan]);
@@ -774,8 +700,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.database_type' => 'required|string|max:255',
             'data_pengajuan.storage_quota' => 'required|string|max:255',
             'data_pengajuan.domain_terkait' => 'nullable|string|max:255',
-            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
-            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -794,36 +719,26 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.runtime.required' => 'Kolom Bahasa Pemrograman wajib diisi.',
             'data_pengajuan.database_type.required' => 'Kolom Database wajib diisi.',
             'data_pengajuan.storage_quota.required' => 'Kolom Kebutuhan Storage wajib diisi.',
-            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
-            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
-            'file_pendukung.required_without' => 'Surat Permohonan (PDF) wajib diunggah.',
+            'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
-        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
+        $uploadedFile = $request->file('file_pendukung');
         $filePath = null;
         if ($uploadedFile) {
             $fileName = Str::uuid().'.'.strtolower($uploadedFile->getClientOriginalExtension());
             $filePath = $uploadedFile->storeAs('dokumen_pengajuan/hosting', $fileName, 'local');
         }
 
-        Pengajuan::create([
-            'user_id' => $request->user_id,
-            'jenis_layanan' => 'Pembuatan Hosting',
-            'file_pendukung' => $filePath,
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
-                'jabatan', 'nama_aplikasi', 'runtime', 'database_type', 'storage_quota', 'domain_terkait',
-            ])->all(),
-        ]);
+        $this->simpanPengajuan('HST', $dataPengajuan, $filePath, $request->user_id);
 
         return back()->with('sukses', 'Pengajuan Pembuatan Hosting berhasil ditambahkan manual.');
     }
 
     public function layananBantuan(Request $request)
     {
-        $query = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->with('user');
+        $query = Pengajuan::where('layanan_id', Layanan::idKode('HLP'))->with(['user', 'layanan', 'pemohon', 'bantuan.kategori']);
 
         if ($request->filled('search')) {
             $search = addcslashes(trim($request->search), '%_');
@@ -835,7 +750,7 @@ class AdminPengajuanController extends Controller
         }
 
         $pengajuans = $query->latest()->paginate(10);
-        $baseQuery = Pengajuan::where('jenis_layanan', 'Pusat Bantuan');
+        $baseQuery = Pengajuan::where('layanan_id', Layanan::idKode('HLP'));
 
         $total = (clone $baseQuery)->count();
         $pending = (clone $baseQuery)->where('status', 'Pending')->count();
@@ -862,7 +777,7 @@ class AdminPengajuanController extends Controller
     {
         $dataPengajuan = $request->data_pengajuan;
         $perketatNip = (($dataPengajuan['perketat_nip'] ?? null) === '1');
-        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:17';
+        $nipRules = $perketatNip ? 'required|digits:18' : 'nullable|string|max:18';
         if (isset($dataPengajuan['no_hp'])) {
             $dataPengajuan['no_hp'] = PhoneNumber::normalize($dataPengajuan['no_hp']);
             $request->merge(['data_pengajuan' => $dataPengajuan]);
@@ -877,8 +792,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15'],
             'data_pengajuan.email_reset' => 'required|email',
             'data_pengajuan.deskripsi_kendala' => 'nullable|string|max:1000',
-            'file_persyaratan' => 'nullable|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
-            'file_pendukung' => 'required_without:file_persyaratan|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
         ], [
             'data_pengajuan.kategori_bantuan_id.required' => 'Kategori kendala wajib dipilih.',
             'data_pengajuan.kategori_bantuan_id.exists' => 'Pilihan kategori tidak valid.',
@@ -890,32 +804,21 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.email_reset.required' => 'Kolom Email yang Ingin Direset wajib diisi.',
             'data_pengajuan.email_reset.email' => 'Format Email yang Ingin Direset tidak valid.',
             'data_pengajuan.deskripsi_kendala.max' => 'Deskripsi kendala maksimal 1000 karakter.',
-            'file_persyaratan.mimes' => 'Format file surat harus PDF.',
-            'file_persyaratan.max' => 'Ukuran file PDF maksimal 5MB.',
-            'file_pendukung.required_without' => 'Surat Permohonan / Bukti (PDF) wajib diunggah.',
+            'file_pendukung.required' => 'Surat Permohonan / Bukti (PDF) wajib diunggah.',
             'file_pendukung.mimes' => 'Format file surat harus PDF.',
             'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
         ]);
 
         $dataPengajuan['email_reset'] = Str::lower(trim($dataPengajuan['email_reset'] ?? ''));
-        $kategori = KategoriBantuan::find($dataPengajuan['kategori_bantuan_id'] ?? null);
-        $dataPengajuan['kategori'] = $kategori?->nama_kategori;
 
-        $uploadedFile = $request->file('file_persyaratan') ?? $request->file('file_pendukung');
+        $uploadedFile = $request->file('file_pendukung');
         $filePath = null;
         if ($uploadedFile) {
             $fileName = Str::uuid().'.'.strtolower($uploadedFile->getClientOriginalExtension());
             $filePath = $uploadedFile->storeAs('dokumen_pengajuan/bantuan', $fileName, 'local');
         }
 
-        Pengajuan::create([
-            'user_id' => $request->user_id,
-            'jenis_layanan' => 'Pusat Bantuan',
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'kategori_bantuan_id', 'kategori', 'nama', 'nip', 'no_hp', 'email_reset', 'deskripsi_kendala',
-            ])->all(),
-            'file_pendukung' => $filePath,
-        ]);
+        $this->simpanPengajuan('HLP', $dataPengajuan, $filePath, $request->user_id);
 
         return back()->with('sukses', 'Pengajuan Pusat Bantuan berhasil ditambahkan manual.');
     }

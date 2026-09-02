@@ -19,10 +19,14 @@ return new class extends Migration
             $table->string('password');
 
             $table->enum('role', ['admin', 'user'])->default('user');
-            $table->string('nip')->nullable();
+            $table->string('nip')->nullable()->unique();
             $table->string('unit_kerja')->nullable();
             $table->string('jabatan')->nullable();
-            $table->string('no_hp')->nullable();
+            $table->string('no_hp')->nullable()->unique();
+
+            $table->enum('status_akun', ['pending', 'aktif', 'ditolak'])->default('pending')->index();
+            $table->timestamp('approved_at')->nullable();
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
             // --------------------------------------
 
             $table->rememberToken();

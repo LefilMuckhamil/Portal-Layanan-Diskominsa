@@ -8,14 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('pengajuan_logs', function (Blueprint $table) {
+        Schema::create('pengajuan_messages', function (Blueprint $table) {
             $table->id();
-            // Arahkan foreign key secara spesifik ke tabel 'pengajuan'
             $table->foreignId('pengajuan_id')->constrained('pengajuan')->cascadeOnDelete();
-            $table->foreignId('admin_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('status_lama')->nullable();
-            $table->string('status');
-            $table->text('catatan_admin')->nullable();
+            $table->foreignId('sender_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->enum('sender_role', ['user', 'admin']);
+            $table->text('isi');
             $table->timestamps();
             $table->index(['pengajuan_id', 'created_at']);
         });
@@ -23,6 +21,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('pengajuan_logs');
+        Schema::dropIfExists('pengajuan_messages');
     }
 };

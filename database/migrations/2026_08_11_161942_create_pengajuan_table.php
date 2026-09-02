@@ -11,15 +11,15 @@ return new class extends Migration
         // UBAH 'pengajuans' MENJADI 'pengajuan' (TANPA S)
         Schema::create('pengajuan', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_tiket')->unique();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('jenis_layanan');
-            $table->string('status')->default('Pending');
-            $table->json('data_pengajuan')->nullable();
+            $table->string('nomor_tiket', 30)->unique();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('layanan_id')->constrained('layanan')->restrictOnDelete();
+            $table->string('status', 20)->default('Pending')->index();
             $table->string('file_pendukung')->nullable();
-            $table->json('logs')->nullable();
-            $table->json('pesan')->nullable();
+            $table->string('file_hasil')->nullable();
             $table->timestamps();
+            $table->index('created_at');
+            $table->index(['status', 'created_at']);
         });
     }
 

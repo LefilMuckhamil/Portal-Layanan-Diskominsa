@@ -23,7 +23,7 @@ class TrackingController extends Controller
             // Normalisasi selalu ke format '#KODE-...' agar query langsung memanfaatkan index unik nomor_tiket.
             $queryKey = '#'.strtoupper($cleanKey);
 
-            $pengajuan = Pengajuan::where('nomor_tiket', $queryKey)->first();
+            $pengajuan = Pengajuan::with(['layanan', 'riwayatStatus'])->where('nomor_tiket', $queryKey)->first();
 
             if (! $pengajuan) {
                 return response()->json([
@@ -34,20 +34,16 @@ class TrackingController extends Controller
 
             $riwayatData = [];
 
-            $logs = is_string($pengajuan->logs) ? json_decode($pengajuan->logs, true) : $pengajuan->logs;
-            if (is_array($logs) && count($logs) > 0) {
-                $logs = array_reverse($logs);
+            $logs = $pengajuan->riwayatStatus->reverse()->values();
+            if ($logs->count() > 0) {
                 foreach ($logs as $log) {
-                    $waktuFormatted = '-';
-                    if (! empty($log['created_at'])) {
-                        $waktuFormatted = Carbon::parse($log['created_at'])->timezone('Asia/Jakarta')->translatedFormat('d M Y, H:i').' WIB';
-                    } elseif (! empty($log['waktu'])) {
-                        $waktuFormatted = $log['waktu'];
-                    }
+                    $waktuFormatted = $log->created_at
+                        ? $log->created_at->timezone('Asia/Jakarta')->translatedFormat('d M Y, H:i').' WIB'
+                        : '-';
 
                     $riwayatData[] = [
                         'waktu' => $waktuFormatted,
-                        'judul' => 'Status: '.ucfirst($log['status'] ?? 'Proses'),
+                        'judul' => 'Status: '.ucfirst($log->status ?? 'Proses'),
                         // Catatan internal admin TIDAK dikembalikan ke publik.
                         'pesan_admin' => null,
                     ];
@@ -75,7 +71,7 @@ class TrackingController extends Controller
                 'success' => true,
                 'data' => [
                     'nomor_tiket' => $pengajuan->nomor_tiket,
-                    'layanan' => $pengajuan->jenis_layanan,
+                    'layanan' => $pengajuan->layanan?->nama ?? '-',
                     'status' => $pengajuan->status,
                     'waktu_status' => $waktuStatus,
                     'riwayat' => $riwayatData,

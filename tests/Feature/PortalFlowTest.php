@@ -3,8 +3,19 @@
 namespace Tests\Feature;
 
 use App\Models\KategoriBantuan;
+use App\Models\Layanan;
 use App\Models\Pengajuan;
+use App\Models\PengajuanBantuan;
+use App\Models\PengajuanCloud;
+use App\Models\PengajuanEmail;
+use App\Models\PengajuanHosting;
+use App\Models\PengajuanLog;
+use App\Models\PengajuanPemohon;
+use App\Models\PengajuanSubdomain;
+use App\Models\PengajuanTte;
+use App\Models\PengajuanWebsite;
 use App\Models\User;
+use Database\Seeders\LayananSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +26,54 @@ use Tests\TestCase;
 class PortalFlowTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(LayananSeeder::class);
+    }
+
+    private function layanan(string $kode): int
+    {
+        return Layanan::idKode($kode);
+    }
+
+    private function buatPengajuan(User $user, string $kode, array $data = [], array $attrs = []): Pengajuan
+    {
+        $pemohonKeys = ['nama', 'nip', 'no_hp', 'email_dinas', 'instansi', 'jabatan'];
+        $pemohon = array_intersect_key($data, array_flip($pemohonKeys));
+        $detail = array_diff_key($data, array_flip($pemohonKeys));
+
+        $pengajuan = Pengajuan::create(array_merge([
+            'user_id' => $user->id,
+            'layanan_id' => $this->layanan($kode),
+            'status' => 'Pending',
+        ], $attrs));
+
+        if ($pemohon) {
+            PengajuanPemohon::create(array_merge([
+                'pengajuan_id' => $pengajuan->id,
+                'user_id' => $user->id,
+            ], $pemohon));
+        }
+
+        $detailModel = match ($kode) {
+            'WEB' => PengajuanWebsite::class,
+            'SUB' => PengajuanSubdomain::class,
+            'HST' => PengajuanHosting::class,
+            'EML' => PengajuanEmail::class,
+            'TTE' => PengajuanTte::class,
+            'CLD' => PengajuanCloud::class,
+            'HLP' => PengajuanBantuan::class,
+            default => null,
+        };
+
+        if ($detailModel && $detail) {
+            $detailModel::create(array_merge(['pengajuan_id' => $pengajuan->id], $detail));
+        }
+
+        return $pengajuan;
+    }
 
     private function buatUser(string $role = 'user', string $email = 'pegawai@acehbaratkab.go.id', array $attrs = []): User
     {
@@ -96,14 +155,14 @@ class PortalFlowTest extends TestCase
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Website',
+            'layanan_id' => $this->layanan('WEB'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::where('user_id', $user->id)->first();
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#WEB-', $pengajuan->nomor_tiket);
-        $this->assertSame('Website Resmi Dinas Kesehatan', $pengajuan->data_pengajuan['nama_website']);
+        $this->assertSame('Website Resmi Dinas Kesehatan', $pengajuan->website->nama_website);
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
 
@@ -140,14 +199,14 @@ class PortalFlowTest extends TestCase
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Subdomain',
+            'layanan_id' => $this->layanan('SUB'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::where('user_id', $user->id)->first();
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#SUB-', $pengajuan->nomor_tiket);
-        $this->assertSame('dinkes.acehbaratkab.go.id', $pengajuan->data_pengajuan['domain']);
+        $this->assertSame('dinkes.acehbaratkab.go.id', $pengajuan->subdomain->domain);
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
 
@@ -186,7 +245,7 @@ class PortalFlowTest extends TestCase
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Hosting',
+            'layanan_id' => $this->layanan('HST'),
             'status' => 'Pending',
         ]);
 
@@ -225,15 +284,15 @@ class PortalFlowTest extends TestCase
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $user->id,
-            'jenis_layanan' => 'Cloud Government',
+            'layanan_id' => $this->layanan('CLD'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::where('user_id', $user->id)->first();
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#CLD-', $pengajuan->nomor_tiket);
-        $this->assertSame('10GB', $pengajuan->data_pengajuan['kapasitas']);
-        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame('10GB', $pengajuan->cloud->kapasitas);
+        $this->assertSame('081234567890', $pengajuan->pemohon->no_hp);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
@@ -306,14 +365,14 @@ class PortalFlowTest extends TestCase
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Email Resmi',
+            'layanan_id' => $this->layanan('EML'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::where('user_id', $user->id)->first();
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#EML-', $pengajuan->nomor_tiket);
-        $this->assertSame('pegawai.diskom@acehbaratkab.go.id', $pengajuan->data_pengajuan['usulan_email']);
+        $this->assertSame('pegawai.diskom@acehbaratkab.go.id', $pengajuan->email->usulan_email);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
@@ -365,11 +424,7 @@ class PortalFlowTest extends TestCase
 
         Storage::disk('local')->put('dokumen_pengajuan/website/dokumen-rahasia.pdf', 'isi-pdf');
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => $pemilik->id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'status' => 'Pending',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
+        $pengajuan = $this->buatPengajuan($pemilik, 'WEB', ['nama' => 'Pegawai Diskominsa'], [
             'file_pendukung' => 'dokumen_pengajuan/website/dokumen-rahasia.pdf',
         ]);
 
@@ -416,14 +471,14 @@ class PortalFlowTest extends TestCase
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $user->id,
-            'jenis_layanan' => 'Layanan TTE',
+            'layanan_id' => $this->layanan('TTE'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::where('user_id', $user->id)->first();
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#TTE-', $pengajuan->nomor_tiket);
-        $this->assertSame('1108070101010001', $pengajuan->data_pengajuan['nik']);
+        $this->assertSame('1108070101010001', $pengajuan->tte->nik);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
@@ -453,16 +508,20 @@ class PortalFlowTest extends TestCase
     {
         $user = $this->buatUser();
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Layanan TTE',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
-            'logs' => [
-                ['status' => 'Pending', 'catatan' => 'Pengajuan diterima', 'created_at' => now()->subDay()->toDateTimeString()],
-                ['status' => 'Proses', 'catatan' => 'Sedang diverifikasi', 'created_at' => now()->toDateTimeString()],
-            ],
+        $pengajuan = $this->buatPengajuan($user, 'TTE', ['nama' => 'Pegawai Diskominsa'], ['status' => 'Proses']);
+
+        PengajuanLog::create([
+            'pengajuan_id' => $pengajuan->id,
+            'status' => 'Pending',
+            'catatan_admin' => 'Pengajuan diterima',
+            'created_at' => now()->subDay(),
         ]);
-        $pengajuan->forceFill(['status' => 'Proses'])->save();
+        PengajuanLog::create([
+            'pengajuan_id' => $pengajuan->id,
+            'status' => 'Proses',
+            'catatan_admin' => 'Sedang diverifikasi',
+            'created_at' => now(),
+        ]);
 
         $response = $this->get(route('track.tiket', ['nomor_tiket' => rawurlencode($pengajuan->nomor_tiket)]));
 
@@ -480,12 +539,7 @@ class PortalFlowTest extends TestCase
     {
         $user = $this->buatUser();
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'status' => 'Pending',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
-        ]);
+        $pengajuan = $this->buatPengajuan($user, 'WEB', ['nama' => 'Pegawai Diskominsa']);
 
         $nomorTanpaPagar = str_replace('#', '', $pengajuan->nomor_tiket);
 
@@ -591,12 +645,7 @@ class PortalFlowTest extends TestCase
         $pemilik = $this->buatUser('user', 'pemilik@acehbaratkab.go.id');
         $penyerang = $this->buatUser('user', 'penyerang@acehbaratkab.go.id');
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => $pemilik->id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'status' => 'Pending',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
-        ]);
+        $pengajuan = $this->buatPengajuan($pemilik, 'WEB', ['nama' => 'Pegawai Diskominsa']);
 
         $response = $this->actingAs($penyerang)->post(route('user.pengajuan.pesan', $pengajuan->id), [
             'pesan' => 'Pesan mencoba akses tiket orang lain',
@@ -605,7 +654,7 @@ class PortalFlowTest extends TestCase
         $response->assertNotFound();
 
         $pengajuan->refresh();
-        $this->assertEmpty($pengajuan->pesan);
+        $this->assertSame(0, $pengajuan->messages()->count());
     }
 
     public function test_user_login_berhasil_membuat_pengajuan_bantuan_berstatus_pending(): void
@@ -642,18 +691,18 @@ class PortalFlowTest extends TestCase
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $user->id,
-            'jenis_layanan' => 'Pusat Bantuan',
+            'layanan_id' => $this->layanan('HLP'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::where('user_id', $user->id)->first();
         $this->assertNotNull($pengajuan);
         $this->assertStringStartsWith('#HLP-', $pengajuan->nomor_tiket);
-        $this->assertSame($kategori->id, $pengajuan->data_pengajuan['kategori_bantuan_id']);
-        $this->assertSame('Reset Password Email', $pengajuan->data_pengajuan['kategori']);
-        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
-        $this->assertSame('pegawai@gmail.com', $pengajuan->data_pengajuan['email_reset']);
-        $this->assertSame('Tidak bisa masuk email resmi.', $pengajuan->data_pengajuan['deskripsi_kendala']);
+        $this->assertSame($kategori->id, $pengajuan->bantuan->kategori_bantuan_id);
+        $this->assertSame('Reset Password Email', $pengajuan->bantuan->kategori->nama_kategori);
+        $this->assertSame('081234567890', $pengajuan->pemohon->no_hp);
+        $this->assertSame('pegawai@gmail.com', $pengajuan->bantuan->email_reset);
+        $this->assertSame('Tidak bisa masuk email resmi.', $pengajuan->bantuan->deskripsi_kendala);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
@@ -808,43 +857,33 @@ class PortalFlowTest extends TestCase
         $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
         $user = $this->buatUser();
 
-        Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Subdomain',
-            'data_pengajuan' => [
-                'nama' => 'Pegawai Diskominsa',
-                'nip' => '198501012010011001',
-                'email_dinas' => 'pegawai@acehbaratkab.go.id',
-                'email_google' => 'pegawai@gmail.com',
-                'no_hp' => '081234567890',
-                'instansi' => 'Dinas Kesehatan',
-                'jabatan' => 'Pranata Komputer',
-                'domain' => 'dinkes.acehbaratkab.go.id',
-                'ip_address' => '103.10.10.1',
-                'nama_aplikasi' => 'Sistem Informasi Publik',
-            ],
-            'file_pendukung' => 'dokumen_pengajuan/subdomain/surat.pdf',
-        ]);
+        $this->buatPengajuan($user, 'SUB', [
+            'nama' => 'Pegawai Diskominsa',
+            'nip' => '198501012010011001',
+            'email_dinas' => 'pegawai@acehbaratkab.go.id',
+            'email_google' => 'pegawai@gmail.com',
+            'no_hp' => '081234567890',
+            'instansi' => 'Dinas Kesehatan',
+            'jabatan' => 'Pranata Komputer',
+            'domain' => 'dinkes.acehbaratkab.go.id',
+            'ip_address' => '103.10.10.1',
+            'nama_aplikasi' => 'Sistem Informasi Publik',
+        ], ['file_pendukung' => 'dokumen_pengajuan/subdomain/surat.pdf']);
 
-        Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Hosting',
-            'data_pengajuan' => [
-                'nama' => 'Pegawai Diskominsa',
-                'nip' => '198501012010011001',
-                'email_dinas' => 'pegawai@acehbaratkab.go.id',
-                'email_google' => 'pegawai@gmail.com',
-                'no_hp' => '081234567890',
-                'instansi' => 'Dinas Kesehatan',
-                'jabatan' => 'Pranata Komputer',
-                'nama_aplikasi' => 'Sistem Informasi Publik',
-                'runtime' => 'PHP',
-                'database_type' => 'MySQL',
-                'storage_quota' => '10GB',
-                'domain_terkait' => 'dinkes.acehbaratkab.go.id',
-            ],
-            'file_pendukung' => 'dokumen_pengajuan/hosting/surat.pdf',
-        ]);
+        $this->buatPengajuan($user, 'HST', [
+            'nama' => 'Pegawai Diskominsa',
+            'nip' => '198501012010011001',
+            'email_dinas' => 'pegawai@acehbaratkab.go.id',
+            'email_google' => 'pegawai@gmail.com',
+            'no_hp' => '081234567890',
+            'instansi' => 'Dinas Kesehatan',
+            'jabatan' => 'Pranata Komputer',
+            'nama_aplikasi' => 'Sistem Informasi Publik',
+            'runtime' => 'PHP',
+            'database_type' => 'MySQL',
+            'storage_quota' => '10GB',
+            'domain_terkait' => 'dinkes.acehbaratkab.go.id',
+        ], ['file_pendukung' => 'dokumen_pengajuan/hosting/surat.pdf']);
 
         $this->actingAs($admin)->get(route('admin.subdomain.index'))
             ->assertOk()
@@ -863,16 +902,8 @@ class PortalFlowTest extends TestCase
         $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
         $user = $this->buatUser();
 
-        Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Subdomain',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'domain' => 'sub.acehbaratkab.go.id'],
-        ]);
-        Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Hosting',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'nama_aplikasi' => 'SIAP'],
-        ]);
+        $this->buatPengajuan($user, 'SUB', ['nama' => 'Pegawai Diskominsa', 'domain' => 'sub.acehbaratkab.go.id', 'ip_address' => '103.10.10.1', 'nama_aplikasi' => 'SubAplikasi']);
+        $this->buatPengajuan($user, 'HST', ['nama' => 'Pegawai Diskominsa', 'email_google' => 'pegawai@gmail.com', 'nama_aplikasi' => 'SIAP', 'runtime' => 'PHP', 'database_type' => 'MySQL', 'storage_quota' => '10GB']);
 
         $this->actingAs($admin)->get(route('admin.dashboard'))
             ->assertOk()
@@ -887,16 +918,14 @@ class PortalFlowTest extends TestCase
         $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
         $user = $this->buatUser();
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Subdomain',
-            'data_pengajuan' => [
-                'nama' => 'Pegawai Diskominsa',
-                'nip' => '198501012010011001',
-                'no_hp' => '081234567890',
-                'instansi' => 'Dinas Kesehatan',
-                'domain' => 'dinkes.acehbaratkab.go.id',
-            ],
+        $pengajuan = $this->buatPengajuan($user, 'SUB', [
+            'nama' => 'Pegawai Diskominsa',
+            'nip' => '198501012010011001',
+            'no_hp' => '081234567890',
+            'instansi' => 'Dinas Kesehatan',
+            'domain' => 'dinkes.acehbaratkab.go.id',
+            'ip_address' => '103.10.10.5',
+            'nama_aplikasi' => 'SIAP',
         ]);
 
         $response = $this->actingAs($admin)->put(route('admin.pengajuan.update', $pengajuan->id), [
@@ -909,14 +938,13 @@ class PortalFlowTest extends TestCase
         $response->assertSessionHas('sukses');
 
         $this->assertSame('Selesai', $pengajuan->fresh()->status);
-        $this->assertStringStartsWith('dokumen_hasil/', $pengajuan->fresh()->data_pengajuan['file_hasil']);
-        Storage::disk('local')->assertExists($pengajuan->fresh()->data_pengajuan['file_hasil']);
+        $this->assertStringStartsWith('dokumen_hasil/', $pengajuan->fresh()->file_hasil);
+        Storage::disk('local')->assertExists($pengajuan->fresh()->file_hasil);
 
         $latest = $pengajuan->fresh();
-        $logs = $latest->logs;
-        $log = end($logs);
-        $this->assertSame('Selesai', $log['status']);
-        $this->assertSame('Subdomain telah diaktifkan.', $log['catatan']);
+        $log = $latest->riwayatStatus()->latest('id')->first();
+        $this->assertSame('Selesai', $log->status);
+        $this->assertSame('Subdomain telah diaktifkan.', $log->catatan_admin);
     }
 
     public function test_form_pengajuan_terisi_otomatis_data_profil_asn(): void
@@ -961,18 +989,14 @@ class PortalFlowTest extends TestCase
     {
         $user = $this->buatUser();
 
-        $selesai = Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'file_hasil' => 'dokumen_hasil/hasil.pdf'],
+        $selesai = $this->buatPengajuan($user, 'WEB', ['nama' => 'Pegawai Diskominsa'], [
+            'file_hasil' => 'dokumen_hasil/hasil.pdf',
         ]);
         $selesai->status = 'Selesai';
         $selesai->save();
 
-        $proses = Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'file_hasil' => 'dokumen_hasil/proses.pdf'],
+        $proses = $this->buatPengajuan($user, 'WEB', ['nama' => 'Pegawai Diskominsa'], [
+            'file_hasil' => 'dokumen_hasil/proses.pdf',
         ]);
         $proses->status = 'Proses';
         $proses->save();
@@ -994,19 +1018,13 @@ class PortalFlowTest extends TestCase
         $admin = $this->buatUser('admin', 'admin@acehbaratkab.go.id');
         $user = $this->buatUser();
 
-        $selesai = Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa', 'file_hasil' => 'dokumen_hasil/hasil.pdf'],
+        $selesai = $this->buatPengajuan($user, 'WEB', ['nama' => 'Pegawai Diskominsa'], [
+            'file_hasil' => 'dokumen_hasil/hasil.pdf',
         ]);
         $selesai->status = 'Selesai';
         $selesai->save();
 
-        $pending = Pengajuan::create([
-            'user_id' => $user->id,
-            'jenis_layanan' => 'Pembuatan Website',
-            'data_pengajuan' => ['nama' => 'Pegawai Diskominsa'],
-        ]);
+        $pending = $this->buatPengajuan($user, 'WEB', ['nama' => 'Pegawai Diskominsa']);
 
         $response = $this->actingAs($admin)->get(route('admin.website.index'))->assertOk();
 
@@ -1027,7 +1045,6 @@ class PortalFlowTest extends TestCase
 
         $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeSubdomain'), [
             'user_id' => $pemohon->id,
-            'jenis_layanan' => 'Pembuatan Subdomain',
             'data_pengajuan' => [
                 'perketat_nip' => '1',
                 'nama' => 'Pegawai Diskominsa',
@@ -1041,22 +1058,25 @@ class PortalFlowTest extends TestCase
                 'ip_address' => '103.10.10.5',
                 'nama_aplikasi' => 'SIAP - Sistem Informasi App',
             ],
-            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+            'file_pendukung' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
         ]);
 
         $response->assertSessionHas('sukses');
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $pemohon->id,
-            'jenis_layanan' => 'Pembuatan Subdomain',
+            'layanan_id' => $this->layanan('SUB'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::latest('id')->first();
         $this->assertStringStartsWith('#SUB-', $pengajuan->nomor_tiket);
-        $this->assertSame('dinkes.acehbaratkab.go.id', $pengajuan->data_pengajuan['domain']);
-        $this->assertSame('Dinas Kesehatan', $pengajuan->data_pengajuan['instansi']);
-        $this->assertArrayNotHasKey('perketat_nip', $pengajuan->data_pengajuan);
+        $this->assertSame('dinkes.acehbaratkab.go.id', $pengajuan->subdomain->domain);
+        $this->assertSame('Dinas Kesehatan', $pengajuan->pemohon->instansi);
+        $this->assertDatabaseHas('pengajuan_pemohon', [
+            'pengajuan_id' => $pengajuan->id,
+            'nip' => '198501012010011001',
+        ]);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
@@ -1070,7 +1090,6 @@ class PortalFlowTest extends TestCase
 
         $response = $this->actingAs($admin)->post(route('admin.pengajuan.storeHosting'), [
             'user_id' => $pemohon->id,
-            'jenis_layanan' => 'Pembuatan Hosting',
             'data_pengajuan' => [
                 'perketat_nip' => '1',
                 'nama' => 'Pegawai Diskominsa',
@@ -1086,22 +1105,22 @@ class PortalFlowTest extends TestCase
                 'storage_quota' => '10GB',
                 'domain_terkait' => 'dinkes.acehbaratkab.go.id',
             ],
-            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+            'file_pendukung' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
         ]);
 
         $response->assertSessionHas('sukses');
 
         $this->assertDatabaseHas('pengajuan', [
             'user_id' => $pemohon->id,
-            'jenis_layanan' => 'Pembuatan Hosting',
+            'layanan_id' => $this->layanan('HST'),
             'status' => 'Pending',
         ]);
 
         $pengajuan = Pengajuan::latest('id')->first();
         $this->assertStringStartsWith('#HST-', $pengajuan->nomor_tiket);
-        $this->assertSame('PHP/Laravel', $pengajuan->data_pengajuan['runtime']);
-        $this->assertSame('MySQL', $pengajuan->data_pengajuan['database_type']);
-        $this->assertSame('10GB', $pengajuan->data_pengajuan['storage_quota']);
+        $this->assertSame('PHP/Laravel', $pengajuan->hosting->runtime);
+        $this->assertSame('MySQL', $pengajuan->hosting->database_type);
+        $this->assertSame('10GB', $pengajuan->hosting->storage_quota);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
         Storage::disk('local')->assertExists($pengajuan->file_pendukung);
     }
@@ -1126,7 +1145,7 @@ class PortalFlowTest extends TestCase
                 'ip_address' => '103.10.10.5',
                 'nama_aplikasi' => 'SIAP',
             ],
-            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+            'file_pendukung' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
         ]);
 
         $response->assertSessionHasErrors(['data_pengajuan.nip', 'data_pengajuan.email_dinas']);
@@ -1154,18 +1173,18 @@ class PortalFlowTest extends TestCase
                 'nama_pimpinan' => 'dr. H. A. Rahman',
                 'nama_website' => 'Website Resmi Dinas Kesehatan',
             ],
-            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+            'file_pendukung' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
         ]);
 
         $response->assertSessionHas('sukses');
 
         $pengajuan = Pengajuan::latest('id')->first();
         $this->assertStringStartsWith('#WEB-', $pengajuan->nomor_tiket);
-        $this->assertSame('Website Resmi Dinas Kesehatan', $pengajuan->data_pengajuan['nama_website']);
-        $this->assertSame('pegawai@acehbaratkab.go.id', $pengajuan->data_pengajuan['email_dinas']);
-        $this->assertSame('Pranata Komputer', $pengajuan->data_pengajuan['jabatan']);
-        $this->assertSame('198501012010011', $pengajuan->data_pengajuan['nip']);
-        $this->assertArrayNotHasKey('domain', $pengajuan->data_pengajuan);
+        $this->assertSame('Website Resmi Dinas Kesehatan', $pengajuan->website->nama_website);
+        $this->assertSame('pegawai@acehbaratkab.go.id', $pengajuan->pemohon->email_dinas);
+        $this->assertSame('Pranata Komputer', $pengajuan->pemohon->jabatan);
+        $this->assertSame('198501012010011', $pengajuan->pemohon->nip);
+        $this->assertNull($pengajuan->subdomain);
         $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/', basename($pengajuan->file_pendukung));
     }
 
@@ -1188,14 +1207,14 @@ class PortalFlowTest extends TestCase
                 'email' => 'pegawai@acehbaratkab.go.id',
                 'alamat' => 'Jl. Teuku Umar No. 1, Meulaboh',
             ],
-            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+            'file_pendukung' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
         ]);
 
         $response->assertSessionHas('sukses');
 
         $pengajuan = Pengajuan::latest('id')->first();
         $this->assertStringStartsWith('#TTE-', $pengajuan->nomor_tiket);
-        $this->assertSame('1108070101010001', $pengajuan->data_pengajuan['nik']);
+        $this->assertSame('1108070101010001', $pengajuan->tte->nik);
     }
 
     public function test_admin_cloud_manual_menyimpan_no_hp(): void
@@ -1216,14 +1235,14 @@ class PortalFlowTest extends TestCase
                 'email' => 'pegawai@acehbaratkab.go.id',
                 'kapasitas' => '10GB',
             ],
-            'file_persyaratan' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
+            'file_pendukung' => UploadedFile::fake()->create('surat.pdf', 500, 'application/pdf'),
         ]);
 
         $response->assertSessionHas('sukses');
 
         $pengajuan = Pengajuan::latest('id')->first();
         $this->assertStringStartsWith('#CLD-', $pengajuan->nomor_tiket);
-        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame('081234567890', $pengajuan->pemohon->no_hp);
     }
 
     public function test_admin_bantuan_manual_menyimpan_kategori_dari_master(): void
@@ -1240,7 +1259,6 @@ class PortalFlowTest extends TestCase
 
         $response = $this->actingAs($admin)->post(route('admin.bantuan.store'), [
             'user_id' => $pemohon->id,
-            'jenis_layanan' => 'Pusat Bantuan',
             'data_pengajuan' => [
                 'perketat_nip' => '1',
                 'kategori_bantuan_id' => $kategori->id,
@@ -1250,17 +1268,17 @@ class PortalFlowTest extends TestCase
                 'email_reset' => 'Pegawai@gmail.com',
                 'deskripsi_kendala' => 'Tidak bisa masuk email resmi.',
             ],
-            'file_persyaratan' => UploadedFile::fake()->create('bukti.pdf', 500, 'application/pdf'),
+            'file_pendukung' => UploadedFile::fake()->create('bukti.pdf', 500, 'application/pdf'),
         ]);
 
         $response->assertSessionHas('sukses');
 
         $pengajuan = Pengajuan::latest('id')->first();
         $this->assertStringStartsWith('#HLP-', $pengajuan->nomor_tiket);
-        $this->assertSame($kategori->id, $pengajuan->data_pengajuan['kategori_bantuan_id']);
-        $this->assertSame('Reset OTP', $pengajuan->data_pengajuan['kategori']);
-        $this->assertSame('pegawai@gmail.com', $pengajuan->data_pengajuan['email_reset']);
-        $this->assertSame('081234567890', $pengajuan->data_pengajuan['no_hp']);
+        $this->assertSame($kategori->id, $pengajuan->bantuan->kategori_bantuan_id);
+        $this->assertSame('Reset OTP', $pengajuan->bantuan->kategori->nama_kategori);
+        $this->assertSame('pegawai@gmail.com', $pengajuan->bantuan->email_reset);
+        $this->assertSame('081234567890', $pengajuan->pemohon->no_hp);
     }
 
     public function test_registrasi_berhasil_berstatus_pending_dan_tidak_bisa_langsung_login(): void

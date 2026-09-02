@@ -32,15 +32,10 @@ class DocumentController extends Controller
 
         abort_if(! in_array($jenis, self::JENIS_SAH, true), 404);
 
-        $dataPengajuan = is_array($pengajuan->data_pengajuan)
-            ? $pengajuan->data_pengajuan
-            : (json_decode((string) $pengajuan->getRawOriginal('data_pengajuan') ?? '{}', true) ?: []);
-
         if ($jenis === 'hasil') {
-            $path = $dataPengajuan['file_hasil'] ?? null;
+            $path = $pengajuan->file_hasil ?? null;
         } else {
-            $path = $pengajuan->file_pendukung
-                ?? ($dataPengajuan['file_persyaratan'] ?? ($dataPengajuan['surat_permohonan'] ?? ($dataPengajuan['file'] ?? ($dataPengajuan['berkas'] ?? ($dataPengajuan['dokumen'] ?? null)))));
+            $path = $pengajuan->file_pendukung;
         }
 
         abort_if(! is_string($path) || trim($path) === '', 404, 'File tidak ditemukan.');
@@ -67,12 +62,12 @@ class DocumentController extends Controller
         );
 
         $namaFile = ($jenis === 'hasil' ? 'Hasil_' : 'Surat_Permohonan_')
-            . preg_replace('/[^A-Za-z0-9_-]/', '_', $pengajuan->nomor_tiket)
-            . '.pdf';
+            .preg_replace('/[^A-Za-z0-9_-]/', '_', $pengajuan->nomor_tiket)
+            .'.pdf';
 
         return Storage::disk('local')->response($path, $namaFile, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $namaFile . '"',
+            'Content-Disposition' => 'inline; filename="'.$namaFile.'"',
         ]);
     }
 }

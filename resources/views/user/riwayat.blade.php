@@ -74,7 +74,7 @@
                                 </td>
 
                                 <td class="py-3.5 px-4 border-y border-[#E4E7EC] group-hover:border-sky-400 font-extrabold text-[#101828] capitalize">
-                                    {{ str_replace('_', ' ', $item->jenis_layanan) }}
+                                    {{ $item->layanan?->nama ?? 'Layanan IT' }}
                                 </td>
 
                                 <td class="py-3.5 px-4 border-y border-[#E4E7EC] group-hover:border-sky-400 text-[#667085] font-bold">
@@ -147,14 +147,10 @@
                     
                     <div class="bg-sky-50/80 border border-sky-200 p-3.5 rounded-xl shrink-0">
                         <p class="text-[11px] font-black text-sky-800 uppercase tracking-wider">Pengajuan Aktif</p>
-                        <p class="text-[13.5px] font-black text-[#101828]">{{ $item->nomor_tiket }} ({{ str_replace('_', ' ', $item->jenis_layanan) }})</p>
+                        <p class="text-[13.5px] font-black text-[#101828]">{{ $item->nomor_tiket }} ({{ $item->layanan?->nama ?? 'Layanan IT' }})</p>
                     </div>
 
-                    @php
-                        $dataPengajuan = is_string($item->data_pengajuan) ? json_decode($item->data_pengajuan, true) : ($item->data_pengajuan ?? []);
-                    @endphp
-
-                    @if($item->status === 'Selesai' && !empty($dataPengajuan['file_hasil']))
+                    @if($item->status === 'Selesai' && $item->file_hasil)
                     <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-center justify-between shadow-sm shrink-0">
                         <div>
                             <p class="text-[11px] font-black text-emerald-700 uppercase tracking-wider mb-0.5">Dokumen Selesai</p>
@@ -175,13 +171,15 @@
                                 <p class="text-[12.5px] font-extrabold text-[#101828]">Pengajuan Dibuat</p>
                             </div>
                             
-                            @if(!empty($item->logs) && is_array($item->logs))
-                                @foreach($item->logs as $log)
+                            @if($item->riwayatStatus->isNotEmpty())
+                                @foreach($item->riwayatStatus->sortBy('id') as $log)
                                 <div class="relative pl-5">
                                     <div class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-[#16324F] ring-2 ring-white"></div>
-                                    <p class="text-[10px] font-bold text-[#667085]">{{ \Carbon\Carbon::parse($log['waktu'] ?? $log['created_at'] ?? now())->format('d M Y, H:i') }}</p>
-                                    <p class="text-[12.5px] font-extrabold text-[#101828]">Status: {{ $log['status'] }}</p>
-                                    <p class="text-[12px] text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg mt-1 border border-slate-200">"{{ $log['catatan'] }}"</p>
+                                    <p class="text-[10px] font-bold text-[#667085]">{{ optional($log->created_at)->format('d M Y, H:i') }}</p>
+                                    <p class="text-[12.5px] font-extrabold text-[#101828]">Status: {{ $log->status }}</p>
+                                    @if($log->catatan_admin)
+                                    <p class="text-[12px] text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg mt-1 border border-slate-200">"{{ $log->catatan_admin }}"</p>
+                                    @endif
                                 </div>
                                 @endforeach
                             @endif
@@ -192,14 +190,14 @@
                         <h5 class="text-[12px] font-black text-[#101828] uppercase tracking-wider">Pesan</h5>
                         
                         <div id="chat-box-{{ $item->id }}" class="space-y-3">
-                            @if(!empty($item->pesan) && is_array($item->pesan))
-                                @foreach($item->pesan as $chat)
-                                    <div class="flex flex-col {{ $chat['role'] === 'user' ? 'items-end' : 'items-start' }}">
-                                        <div class="max-w-[85%] p-3 rounded-2xl text-[12.5px] font-medium {{ $chat['role'] === 'user' ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-slate-100 text-slate-900 rounded-bl-none border border-slate-200' }}">
-                                            <p class="font-black text-[10px] opacity-80 mb-0.5">{{ $chat['pengirim'] }}</p>
-                                            <p class="leading-relaxed">{{ $chat['isi'] }}</p>
+                            @if($item->messages->isNotEmpty())
+                                @foreach($item->messages as $chat)
+                                    <div class="flex flex-col {{ $chat->role === 'user' ? 'items-end' : 'items-start' }}">
+                                        <div class="max-w-[85%] p-3 rounded-2xl text-[12.5px] font-medium {{ $chat->role === 'user' ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-slate-100 text-slate-900 rounded-bl-none border border-slate-200' }}">
+                                            <p class="font-black text-[10px] opacity-80 mb-0.5">{{ $chat->pengirim }}</p>
+                                            <p class="leading-relaxed">{{ $chat->isi }}</p>
                                         </div>
-                                        <span class="text-[9.5px] font-bold text-[#667085] mt-1">{{ $chat['waktu'] }}</span>
+                                        <span class="text-[9.5px] font-bold text-[#667085] mt-1">{{ $chat->waktu }}</span>
                                     </div>
                                 @endforeach
                             @else

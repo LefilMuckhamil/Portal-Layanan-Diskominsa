@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Concerns\ResolvesPengajuanEmail;
-use App\Models\KategoriBantuan;
+use App\Concerns\StoresPengajuan;
 use App\Models\Pengajuan;
 use App\Notifications\TiketDibuatNotification;
 use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +17,7 @@ use Illuminate\Support\Str;
 class UserPengajuanController extends Controller
 {
     use ResolvesPengajuanEmail;
+    use StoresPengajuan;
 
     public function storeWebsite(Request $request)
     {
@@ -66,15 +66,7 @@ class UserPengajuanController extends Controller
             $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/website', 'local');
         }
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => Auth::id(),
-            'jenis_layanan' => 'Pembuatan Website',
-            'file_pendukung' => $filePath,
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
-                'jabatan', 'nama_pimpinan', 'nama_website',
-            ])->all(),
-        ]);
+        $pengajuan = $this->simpanPengajuan('WEB', $dataPengajuan, $filePath, Auth::id());
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
 
@@ -139,15 +131,7 @@ class UserPengajuanController extends Controller
             $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/subdomain', 'local');
         }
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => Auth::id(),
-            'jenis_layanan' => 'Pembuatan Subdomain',
-            'file_pendukung' => $filePath,
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
-                'jabatan', 'domain', 'ip_address', 'nama_aplikasi',
-            ])->all(),
-        ]);
+        $pengajuan = $this->simpanPengajuan('SUB', $dataPengajuan, $filePath, Auth::id());
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
 
@@ -207,15 +191,7 @@ class UserPengajuanController extends Controller
             $filePath = $request->file('file_pendukung')->store('dokumen_pengajuan/hosting', 'local');
         }
 
-        $pengajuan = Pengajuan::create([
-            'user_id' => Auth::id(),
-            'jenis_layanan' => 'Pembuatan Hosting',
-            'file_pendukung' => $filePath,
-            'data_pengajuan' => collect($dataPengajuan)->only([
-                'nama', 'nip', 'email_dinas', 'email_google', 'no_hp', 'instansi',
-                'jabatan', 'nama_aplikasi', 'runtime', 'database_type', 'storage_quota', 'domain_terkait',
-            ])->all(),
-        ]);
+        $pengajuan = $this->simpanPengajuan('HST', $dataPengajuan, $filePath, Auth::id());
 
         $this->kirimNotifikasiTiketDibuat($pengajuan);
 
@@ -271,16 +247,7 @@ class UserPengajuanController extends Controller
         }
 
         try {
-            $pengajuan = DB::transaction(function () use ($dataPengajuan, $filePath) {
-                return Pengajuan::create([
-                    'user_id' => Auth::id(),
-                    'jenis_layanan' => 'Pembuatan Email Resmi',
-                    'file_pendukung' => $filePath,
-                    'data_pengajuan' => collect($dataPengajuan)->only([
-                        'nama', 'nip', 'instansi', 'no_hp', 'usulan_email',
-                    ])->all(),
-                ]);
-            });
+            $pengajuan = $this->simpanPengajuan('EML', $dataPengajuan, $filePath, Auth::id());
         } catch (\Throwable $e) {
             if ($filePath) {
                 Storage::disk('local')->delete($filePath);
@@ -340,16 +307,7 @@ class UserPengajuanController extends Controller
         }
 
         try {
-            $pengajuan = DB::transaction(function () use ($dataPengajuan, $filePath) {
-                return Pengajuan::create([
-                    'user_id' => Auth::id(),
-                    'jenis_layanan' => 'Layanan TTE',
-                    'file_pendukung' => $filePath,
-                    'data_pengajuan' => collect($dataPengajuan)->only([
-                        'nama', 'nip', 'nik', 'instansi', 'no_hp', 'email', 'alamat',
-                    ])->all(),
-                ]);
-            });
+            $pengajuan = $this->simpanPengajuan('TTE', $dataPengajuan, $filePath, Auth::id());
         } catch (\Throwable $e) {
             if ($filePath) {
                 Storage::disk('local')->delete($filePath);
@@ -407,16 +365,7 @@ class UserPengajuanController extends Controller
         }
 
         try {
-            $pengajuan = DB::transaction(function () use ($dataPengajuan, $filePath) {
-                return Pengajuan::create([
-                    'user_id' => Auth::id(),
-                    'jenis_layanan' => 'Cloud Government',
-                    'file_pendukung' => $filePath,
-                    'data_pengajuan' => collect($dataPengajuan)->only([
-                        'nama', 'nip', 'instansi', 'no_hp', 'email', 'kapasitas',
-                    ])->all(),
-                ]);
-            });
+            $pengajuan = $this->simpanPengajuan('CLD', $dataPengajuan, $filePath, Auth::id());
         } catch (\Throwable $e) {
             if ($filePath) {
                 Storage::disk('local')->delete($filePath);
@@ -470,9 +419,6 @@ class UserPengajuanController extends Controller
             $dataPengajuan['email_reset'] = Str::lower(trim($dataPengajuan['email_reset']));
         }
 
-        $kategori = KategoriBantuan::find($dataPengajuan['kategori_bantuan_id']);
-        $dataPengajuan['kategori'] = $kategori?->nama_kategori;
-
         $filePath = null;
         if ($request->hasFile('file_pendukung')) {
             $file = $request->file('file_pendukung');
@@ -481,16 +427,7 @@ class UserPengajuanController extends Controller
         }
 
         try {
-            $pengajuan = DB::transaction(function () use ($dataPengajuan, $filePath) {
-                return Pengajuan::create([
-                    'user_id' => Auth::id(),
-                    'jenis_layanan' => 'Pusat Bantuan',
-                    'file_pendukung' => $filePath,
-                    'data_pengajuan' => collect($dataPengajuan)->only([
-                        'kategori_bantuan_id', 'kategori', 'nama', 'nip', 'no_hp', 'email_reset', 'deskripsi_kendala',
-                    ])->all(),
-                ]);
-            });
+            $pengajuan = $this->simpanPengajuan('HLP', $dataPengajuan, $filePath, Auth::id());
         } catch (\Throwable $e) {
             if ($filePath) {
                 Storage::disk('local')->delete($filePath);

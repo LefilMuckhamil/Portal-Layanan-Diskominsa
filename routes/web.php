@@ -11,6 +11,7 @@ use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\UserPengajuanController;
 use App\Http\Middleware\IsAdmin;
 use App\Models\KategoriBantuan;
+use App\Models\Layanan;
 use App\Models\Pengajuan;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -138,13 +139,13 @@ Route::middleware(['auth', 'akun.aktif', IsAdmin::class])->prefix('admin')->grou
             }
         };
 
-        $countWeb = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countSubdomain = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countHosting = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countEmail = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countTTE = Pengajuan::where('jenis_layanan', 'Layanan TTE')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countCloud = Pengajuan::where('jenis_layanan', 'Cloud Government')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countBantuan = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countWeb = Pengajuan::where('layanan_id', Layanan::idKode('WEB'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countSubdomain = Pengajuan::where('layanan_id', Layanan::idKode('SUB'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countHosting = Pengajuan::where('layanan_id', Layanan::idKode('HST'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countEmail = Pengajuan::where('layanan_id', Layanan::idKode('EML'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countTTE = Pengajuan::where('layanan_id', Layanan::idKode('TTE'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countCloud = Pengajuan::where('layanan_id', Layanan::idKode('CLD'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countBantuan = Pengajuan::where('layanan_id', Layanan::idKode('HLP'))->when($dateMulai || $dateSelesai, $dateScope)->count();
 
         $statusCounts = Pengajuan::selectRaw('status, count(*) as total')
             ->when($dateMulai || $dateSelesai, $dateScope)
@@ -162,7 +163,7 @@ Route::middleware(['auth', 'akun.aktif', IsAdmin::class])->prefix('admin')->grou
             ],
         ];
 
-        $query = Pengajuan::with('user');
+        $query = Pengajuan::with(['user', 'layanan', 'pemohon']);
 
         if ($dateMulai || $dateSelesai) {
             $query->where(function ($q) use ($dateMulai, $dateSelesai) {
@@ -224,13 +225,13 @@ Route::middleware(['auth', 'akun.aktif', IsAdmin::class])->prefix('admin')->grou
             }
         };
 
-        $countWeb = Pengajuan::where('jenis_layanan', 'Pembuatan Website')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countSubdomain = Pengajuan::where('jenis_layanan', 'Pembuatan Subdomain')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countHosting = Pengajuan::where('jenis_layanan', 'Pembuatan Hosting')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countEmail = Pengajuan::where('jenis_layanan', 'Pembuatan Email Resmi')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countTTE = Pengajuan::where('jenis_layanan', 'Layanan TTE')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countCloud = Pengajuan::where('jenis_layanan', 'Cloud Government')->when($dateMulai || $dateSelesai, $dateScope)->count();
-        $countBantuan = Pengajuan::where('jenis_layanan', 'Pusat Bantuan')->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countWeb = Pengajuan::where('layanan_id', Layanan::idKode('WEB'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countSubdomain = Pengajuan::where('layanan_id', Layanan::idKode('SUB'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countHosting = Pengajuan::where('layanan_id', Layanan::idKode('HST'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countEmail = Pengajuan::where('layanan_id', Layanan::idKode('EML'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countTTE = Pengajuan::where('layanan_id', Layanan::idKode('TTE'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countCloud = Pengajuan::where('layanan_id', Layanan::idKode('CLD'))->when($dateMulai || $dateSelesai, $dateScope)->count();
+        $countBantuan = Pengajuan::where('layanan_id', Layanan::idKode('HLP'))->when($dateMulai || $dateSelesai, $dateScope)->count();
 
         $statusCounts = Pengajuan::selectRaw('status, count(*) as total')
             ->when($dateMulai || $dateSelesai, $dateScope)

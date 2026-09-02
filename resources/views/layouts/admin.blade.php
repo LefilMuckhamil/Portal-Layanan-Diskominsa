@@ -505,8 +505,8 @@
             if (!val || !nip) return;
             val.value = cb.checked ? '1' : '0';
             nip.required = cb.checked;
-            nip.maxLength = cb.checked ? 18 : 17;
-            nip.placeholder = cb.checked ? 'Masukkan NIP 18 digit...' : 'Masukkan NIP (opsional, maksimal 17 digit)...';
+            nip.maxLength = 18;
+            nip.placeholder = cb.checked ? 'Masukkan NIP 18 digit...' : 'Masukkan NIP (opsional, maksimal 18 digit)...';
         }
     </script>
 </body>

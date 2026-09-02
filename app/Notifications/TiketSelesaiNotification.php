@@ -24,8 +24,9 @@ class TiketSelesaiNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $nama = strip_tags($this->pengajuan->data_pengajuan['nama'] ?? 'Pemohon');
-        $layanan = strip_tags($this->pengajuan->jenis_layanan);
+        $this->pengajuan->loadMissing('pemohon', 'layanan');
+        $nama = strip_tags($this->pengajuan->pemohon?->nama ?? 'Pemohon');
+        $layanan = strip_tags($this->pengajuan->layanan?->nama ?? 'IT');
         $tiket = $this->pengajuan->nomor_tiket;
         $catatan = strip_tags($this->catatanAdmin ?? 'Permohonan telah selesai diproses sesuai SOP dan ketentuan yang berlaku.');
 

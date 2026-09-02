@@ -52,7 +52,7 @@
                 
                 @forelse ($pengajuans as $item)
                     @php
-                        $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
+                        $dataForm = $item->dataForm();
                     @endphp
                     <tr class="hover:bg-cyan-50/10 transition-colors duration-200">
                         
@@ -74,7 +74,7 @@
                         
                         <td class="py-4 px-6">
                             <span class="text-[12px] font-bold text-gray-700 capitalize">
-                                {{ str_replace('_', ' ', $item->jenis_layanan) }}
+                                {{ $item->layanan?->nama ?? 'Layanan IT' }}
                             </span>
                         </td>
                         

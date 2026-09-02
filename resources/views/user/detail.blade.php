@@ -48,7 +48,7 @@
                             </span>
                             <button onclick="copyTiket('{{ $pengajuan->nomor_tiket }}')" title="Salin Nomor Tiket" class="ml-2 text-gray-400 hover:text-cyan-500 transition-colors cursor-pointer"><i class="fa-regular fa-copy text-[13px]"></i></button>
                             <h2 class="text-2xl font-black text-[#101828] mt-3.5 capitalize">
-                                Pengajuan {{ str_replace('_', ' ', $pengajuan->jenis_layanan) }}
+                                Pengajuan {{ $pengajuan->layanan?->nama ?? 'Layanan IT' }}
                             </h2>
                             <p class="text-[13px] text-[#667085] font-bold mt-1">Diajukan pada {{ $pengajuan->created_at->translatedFormat('d F Y, H:i') }}</p>
                         </div>
@@ -70,23 +70,16 @@
                     <hr class="border-[#E4E7EC] mb-6">
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-6">
-                        @if($pengajuan->data_pengajuan)
-                            @php
-                                $dataPengajuan = is_string($pengajuan->data_pengajuan) ? json_decode($pengajuan->data_pengajuan, true) : $pengajuan->data_pengajuan;
-                            @endphp
-                            @if(is_array($dataPengajuan))
-                                @foreach($dataPengajuan as $kunci => $nilai)
-                                    @if($kunci !== 'file_hasil')
-                                        <div>
-                                            <p class="text-[11px] text-[#667085] font-black uppercase tracking-wider">{{ str_replace('_', ' ', $kunci) }}</p>
-                                            <p class="text-[14px] text-[#101828] font-bold mt-1">{{ is_array($nilai) ? implode(', ', $nilai) : $nilai }}</p>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            @endif
-                        @endif
+                        @forelse($pengajuan->detailFields() as $label => $nilai)
+                            <div>
+                                <p class="text-[11px] text-[#667085] font-black uppercase tracking-wider">{{ $label }}</p>
+                                <p class="text-[14px] text-[#101828] font-bold mt-1">{{ is_array($nilai) ? implode(', ', $nilai) : $nilai }}</p>
+                            </div>
+                        @empty
+                            <p class="text-[13px] text-[#667085] font-medium">Detail pengajuan tidak tersedia.</p>
+                        @endforelse
                     </div>
-                @if($pengajuan->status === 'Selesai' && !empty($pengajuan->data_pengajuan['file_hasil'] ?? null))
+                @if($pengajuan->status === 'Selesai' && $pengajuan->file_hasil)
                     <div class="mt-7 rounded-2xl border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div class="flex items-center gap-3.5 min-w-0">
                             <div class="w-11 h-11 shrink-0 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-600/25">
@@ -116,13 +109,15 @@
                             <p class="text-[12px] text-[#667085] font-bold mt-0.5">{{ $pengajuan->created_at->translatedFormat('d M Y, H:i') }}</p>
                         </div>
 
-                        @if(!empty($pengajuan->logs) && is_array($pengajuan->logs))
-                            @foreach($pengajuan->logs as $log)
+                        @if($pengajuan->riwayatStatus->isNotEmpty())
+                            @foreach($pengajuan->riwayatStatus->sortBy('id') as $log)
                                 <div class="relative pl-6">
                                     <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#16324F] ring-4 ring-white"></div>
-                                    <p class="font-black text-[14px] text-[#101828]">{{ $log['judul'] ?? 'Pembaruan Status: ' . ($log['status'] ?? '') }}</p>
-                                    <p class="text-[13px] text-slate-700 font-medium mt-1 bg-slate-50 p-3 rounded-xl border border-slate-200">"{{ $log['deskripsi'] ?? $log['catatan'] ?? '' }}"</p>
-                                    <p class="text-[11px] text-[#667085] font-bold mt-1.5">{{ $log['waktu'] ?? \Carbon\Carbon::parse($log['created_at'] ?? now())->format('d M Y, H:i') }}</p>
+                                    <p class="font-black text-[14px] text-[#101828]">Pembaruan Status: {{ $log->status }}</p>
+                                    @if($log->catatan_admin)
+                                    <p class="text-[13px] text-slate-700 font-medium mt-1 bg-slate-50 p-3 rounded-xl border border-slate-200">"{{ $log->catatan_admin }}"</p>
+                                    @endif
+                                    <p class="text-[11px] text-[#667085] font-bold mt-1.5">{{ optional($log->created_at)->format('d M Y, H:i') }}</p>
                                 </div>
                             @endforeach
                         @endif
@@ -152,22 +147,22 @@
                         </div>
                     </div>
 
-                    @if(!empty($pengajuan->pesan) && is_array($pengajuan->pesan))
-                        @foreach($pengajuan->pesan as $chat)
-                            @if(($chat['role'] ?? '') == 'user')
+                    @if($pengajuan->messages->isNotEmpty())
+                        @foreach($pengajuan->messages as $chat)
+                            @if($chat->role == 'user')
                                 <div class="flex flex-col items-end">
                                     <div class="bg-[#16324F] text-white p-3.5 rounded-2xl rounded-tr-none max-w-[85%] shadow-sm">
-                                        <p class="text-[12.5px] font-medium leading-relaxed">{{ $chat['isi'] }}</p>
+                                        <p class="text-[12.5px] font-medium leading-relaxed">{{ $chat->isi }}</p>
                                     </div>
-                                    <span class="text-[9.5px] text-[#667085] font-bold mt-1">{{ $chat['waktu'] }}</span>
+                                    <span class="text-[9.5px] text-[#667085] font-bold mt-1">{{ $chat->waktu }}</span>
                                 </div>
                             @else
                                 <div class="flex flex-col items-start">
                                     <div class="bg-slate-100 border border-slate-200 text-slate-900 p-3.5 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm">
-                                        <p class="text-[10px] font-black text-sky-700 mb-0.5">{{ $chat['pengirim'] ?? 'Admin Diskominsa' }}</p>
-                                        <p class="text-[12.5px] font-medium leading-relaxed">{{ $chat['isi'] }}</p>
+                                        <p class="text-[10px] font-black text-sky-700 mb-0.5">{{ $chat->pengirim }}</p>
+                                        <p class="text-[12.5px] font-medium leading-relaxed">{{ $chat->isi }}</p>
                                     </div>
-                                    <span class="text-[9.5px] text-[#667085] font-bold mt-1">{{ $chat['waktu'] }}</span>
+                                    <span class="text-[9.5px] text-[#667085] font-bold mt-1">{{ $chat->waktu }}</span>
                                 </div>
                             @endif
                         @endforeach
@@ -206,9 +201,9 @@ function copyTiket(tiket) {
 (function () {
     var chatUrl = '{{ route("user.pengajuan.chat", $pengajuan->id) }}';
     var chatContainer = document.querySelector('.custom-scrollbar');
-    var userPesanCount = @json(count(array_filter($pengajuan->pesan ?? [], fn($p) => ($p['role'] ?? '') === 'user')));
+    var userPesanCount = {{ $pengajuan->messages->where('role', 'user')->count() }};
 
-    var lastCount = {{ count($pengajuan->pesan ?? []) }};
+    var lastCount = {{ $pengajuan->messages->count() }};
     var _detailPollTimer = null;
 
     function pollChat() {

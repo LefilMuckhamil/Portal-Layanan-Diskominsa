@@ -45,7 +45,7 @@
             <tbody id="admin-tbody" class="divide-y divide-gray-50">
                 @forelse ($pengajuans as $item)
                     @php
-                        $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
+                        $dataForm = $item->dataForm();
                         $badgeColor = match($item->status) {
                             'Pending' => 'bg-amber-50 text-amber-600 border-amber-100',
                             'Proses'  => 'bg-blue-50 text-blue-600 border-blue-100',
@@ -134,7 +134,7 @@
     {{-- MODAL UPDATE & DETAIL --}}
     @foreach ($pengajuans as $item)
         @php
-            $dataForm = is_array($item->data_pengajuan) ? $item->data_pengajuan : json_decode($item->data_pengajuan ?? '[]', true);
+            $dataForm = $item->dataForm();
             $cleanWa = \App\Support\PhoneNumber::wa($dataForm['no_hp'] ?? '');
         @endphp
 
@@ -217,7 +217,7 @@
 
                             @php
                                 $filePemohon = $item->file_pendukung
-                                    ?? ($dataForm['surat_permohonan'] ?? ($dataForm['file'] ?? ($dataForm['berkas'] ?? ($dataForm['dokumen'] ?? ($dataForm['file_persyaratan'] ?? null)))));
+                                    ;
                             @endphp
                             @if(!empty($filePemohon))
                                 <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'pendukung']) }}" target="_blank" class="px-4 py-2.5 bg-white border border-slate-200 hover:border-teal-500 hover:bg-teal-50/30 rounded-xl text-xs font-semibold text-slate-700 flex items-center gap-2.5 shadow-sm transition-all shrink-0">
@@ -262,7 +262,7 @@
                                                 </div>
                                                 <div class="min-w-0">
                                                     <p id="admin-hasil-name-{{ $item->id }}" class="text-[12px] text-[#101828] font-bold group-hover:text-teal-900 truncate">
-                                                        @if(!empty($dataForm['file_hasil']))
+                                                        @if($item->file_hasil)
                                                             File Hasil Tersedia
                                                             <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'hasil']) }}" target="_blank" class="inline-flex items-center gap-1 ml-1.5 text-teal-700 bg-teal-100 hover:bg-teal-200 px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors">
                                                                 <i class="fa-solid fa-eye text-[9px]"></i> Lihat
@@ -290,14 +290,14 @@
                                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Ruang Diskusi Pemohon</p>
 
                                 <div id="chat-box-{{ $item->id }}" class="flex-1 min-h-[200px] max-h-[240px] overflow-y-auto p-4 bg-white border border-slate-200 rounded-2xl my-2 space-y-2 text-sm custom-scrollbar">
-                                    @if(!empty($item->pesan) && is_array($item->pesan))
-                                        @foreach($item->pesan as $chat)
-                                            <div class="flex flex-col {{ ($chat['role'] ?? '') === 'admin' ? 'items-end' : 'items-start' }}">
-                                                <div class="max-w-[85%] px-3 py-1.5 rounded-xl text-[11.5px] {{ ($chat['role'] ?? '') === 'admin' ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-slate-100 border border-slate-200 text-[#101828] rounded-bl-none' }}">
-                                                    <p class="font-bold text-[9.5px] opacity-80 mb-0.5">{{ $chat['pengirim'] ?? 'Pengguna' }}</p>
-                                                    <p class="leading-relaxed">{{ $chat['isi'] ?? '-' }}</p>
+                                    @if($item->messages->isNotEmpty())
+                                        @foreach($item->messages as $chat)
+                                            <div class="flex flex-col {{ $chat->role === 'admin' ? 'items-end' : 'items-start' }}">
+                                                <div class="max-w-[85%] px-3 py-1.5 rounded-xl text-[11.5px] {{ $chat->role === 'admin' ? 'bg-[#16324F] text-white rounded-br-none' : 'bg-slate-100 border border-slate-200 text-[#101828] rounded-bl-none' }}">
+                                                    <p class="font-bold text-[9.5px] opacity-80 mb-0.5">{{ $chat->pengirim }}</p>
+                                                    <p class="leading-relaxed">{{ $chat->isi }}</p>
                                                 </div>
-                                                <span class="text-[9px] text-[#667085] mt-0.5">{{ $chat['waktu'] ?? '' }}</span>
+                                                <span class="text-[9px] text-[#667085] mt-0.5">{{ $chat->waktu }}</span>
                                             </div>
                                         @endforeach
                                     @else
@@ -403,7 +403,7 @@
                             </div>
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">NIP Pemohon</label>
-                                <input type="text" inputmode="numeric" name="data_pengajuan[nip]" id="nip-field-hosting" value="{{ old('data_pengajuan.nip') }}" maxlength="17" placeholder="Masukkan NIP (opsional, maksimal 17 digit)..." class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-teal-500 shadow-sm transition-all">
+                                <input type="text" inputmode="numeric" name="data_pengajuan[nip]" id="nip-field-hosting" value="{{ old('data_pengajuan.nip') }}" maxlength="18" placeholder="Masukkan NIP (opsional, maksimal 18 digit)..." class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-teal-500 shadow-sm transition-all">
                                 <input type="hidden" name="data_pengajuan[perketat_nip]" id="nip-ketat-val-hosting" value="0">
                                 <label class="inline-flex items-center gap-1.5 mt-1.5 text-[10.5px] font-semibold text-[#475467] cursor-pointer select-none">
                                     <input type="checkbox" id="nip-ketat-hosting" class="accent-teal-600 w-3 h-3 rounded" onchange="toggleNipKetat(this, 'hosting')">
@@ -437,7 +437,6 @@
                     <div class="relative pl-10 mb-3">
                         <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-[#16324F] text-white text-[11.5px] font-black flex items-center justify-center ring-4 ring-slate-100 shadow-sm">2</div>
                         <h3 class="text-[14px] font-extrabold text-[#101828] mb-3">Spesifikasi Hosting & Dokumen Persyaratan</h3>
-                        <input type="hidden" name="jenis_layanan" value="Pembuatan Hosting">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Nama Aplikasi / Sistem <span class="text-rose-500">*</span></label>
@@ -472,7 +471,7 @@
                                         </div>
                                     </div>
                                     <div class="px-3 py-1.5 bg-slate-50 border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 group-hover:border-teal-300 shrink-0">Browse</div>
-                                    <input id="admin-hosting-upload" name="file_persyaratan" type="file" class="sr-only" accept=".pdf" required onchange="if(this.files && this.files[0]){document.getElementById('admin-hosting-file-name').innerText = this.files[0].name; document.getElementById('admin-hosting-file-name').classList.add('text-emerald-700', 'font-bold')}">
+                                    <input id="admin-hosting-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="if(this.files && this.files[0]){document.getElementById('admin-hosting-file-name').innerText = this.files[0].name; document.getElementById('admin-hosting-file-name').classList.add('text-emerald-700', 'font-bold')}">
                                 </label>
                             </div>
                         </div>
