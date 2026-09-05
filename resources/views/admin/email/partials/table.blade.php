@@ -367,7 +367,7 @@
                     @if ($errors->any())
                         <div class="mb-5 rounded-xl border-2 border-[#FDA29B] bg-[#FEF3F2] p-3.5 text-[#B42318]">
                             <div class="flex items-center text-[12.5px] font-bold mb-1">
-                                <i class="fa-solid fa-circle-exclamation mr-2"></i> Gagal menyimpan data:
+                                <i class="fa-solid fa-circle-exclamation mr-2"></i> Gagal menyimpan dataa:
                             </div>
                             <ul class="list-disc list-inside space-y-0.5 text-[11.5px] text-[#912018] font-medium pl-1">
                                 @foreach ($errors->all() as $error)
