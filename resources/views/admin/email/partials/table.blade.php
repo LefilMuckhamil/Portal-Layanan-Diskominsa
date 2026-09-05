@@ -348,7 +348,7 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold tracking-[0.16em] text-sky-700 uppercase mb-0.5">Admin Panel</p>
-                        <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Pengajuan Email Resmi</h2>
+                        <h2 class="text-[17px] font-extrabold text-[#101828] leading-tight">Pengajuan Email Resmii</h2>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
