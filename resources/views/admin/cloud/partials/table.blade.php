@@ -332,7 +332,7 @@
                 </div>
                 <h3 class="text-xl font-extrabold text-[#071E3D] mb-2">Hapus Pengajuan?</h3>
                 <p class="text-[13px] text-gray-500 mb-6 leading-relaxed">
-                    Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data pengajuan <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?
+                    Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data pengajuan? <b class="text-[#071E3D]">{{ $item->nomor_tiket }}</b> secara permanen?
                 </p>
                 <div class="flex gap-3">
                     <button type="button" onclick="tutupModalDelete('{{ $item->id }}')" class="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
