@@ -427,7 +427,7 @@
                             <div>
                                 <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Kapasitas Penyimpanan <span class="text-rose-500">*</span></label>
                                 <select name="data_pengajuan[kapasitas]" required class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-bold appearance-none cursor-pointer outline-none focus:border-cyan-500 shadow-sm transition-all">
-                                    <option value="" disabled selected>-- Pilih Kapasitas --</option>
+                                    <option value="" disabled selected>Pilih Kapasitas</option>
                                     <option value="10GB" @selected(old('data_pengajuan.kapasitas') == '10GB')>10 GB (Standar)</option>
                                     <option value="50GB" @selected(old('data_pengajuan.kapasitas') == '50GB')>50 GB (Menengah)</option>
                                     <option value="100GB" @selected(old('data_pengajuan.kapasitas') == '100GB')>100 GB (Instansi)</option>
