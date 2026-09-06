@@ -19,6 +19,12 @@
             -webkit-box-shadow: 0 0 0 30px #f9fafb inset !important;
         }
 
+        /* Sembunyikan ikon mata bawaan Microsoft Edge & WebKit browser */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none !important;
+        }
+
         /* Animasi Slide Down & Fade In Smooth */
         @keyframes fadeInDown {
             0% {
