@@ -309,6 +309,7 @@ Route::middleware(['auth', 'akun.aktif', IsAdmin::class])->prefix('admin')->grou
 
             Route::delete('/{id}/destroy', [AdminPengajuanController::class, 'destroy'])->name('admin.pengajuan.destroy');
             Route::put('/{id}/update', [AdminPengajuanController::class, 'updateProgres'])->name('admin.pengajuan.update');
+            Route::post('/{id}/pesan', [AdminPengajuanController::class, 'kirimPesan'])->name('admin.pengajuan.pesan');
         });
 
         Route::get('/{id}/chat', [AdminPengajuanController::class, 'getChat'])->name('admin.pengajuan.chat')->middleware('throttle:60,1');

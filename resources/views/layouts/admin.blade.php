@@ -318,9 +318,9 @@
                 document.querySelectorAll('[id^="modal-"]:not(#modal-logout):not(#modal-create)').forEach(function (modal) {
                     if (modal.classList.contains('hidden')) return;
                     var id = modal.id.replace('modal-', '');
-                    var chatBox = modal.querySelector('.bg-slate-50.border.border-slate-200\\/80');
+                    var chatBox = modal.querySelector('[id^="admin-chat-box-"]');
                     if (!chatBox) return;
-                    var currentCount = chatBox.querySelectorAll('.flex.flex-col').length;
+                    var currentCount = chatBox.querySelectorAll('.flex.flex-col:not(.chat-empty-state)').length;
 
                     fetch(getChatUrl(id), {
                         headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
@@ -332,6 +332,10 @@
                         if (pesan.length <= currentCount) return;
 
                         var newMessages = pesan.slice(currentCount);
+                        if (newMessages.length) {
+                            var emptyState = chatBox.querySelector('.chat-empty-state');
+                            if (emptyState) emptyState.remove();
+                        }
                         newMessages.forEach(function (msg) {
                             var isUser = msg.role === 'user';
                             var wrapper = document.createElement('div');

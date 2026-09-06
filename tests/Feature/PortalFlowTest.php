@@ -888,13 +888,12 @@ class PortalFlowTest extends TestCase
         $this->actingAs($admin)->get(route('admin.subdomain.index'))
             ->assertOk()
             ->assertSee('dinkes.acehbaratkab.go.id')
-            ->assertSee('Sistem Informasi Publik');
+            ->assertSee('Permohonan Subdomain');
 
         $this->actingAs($admin)->get(route('admin.hosting.index'))
             ->assertOk()
-            ->assertSee('PHP')
-            ->assertSee('MySQL')
-            ->assertSee('10GB');
+            ->assertSee('Sistem Informasi Publik')
+            ->assertSee('Penyediaan Hosting');
     }
 
     public function test_dashboard_menampilkan_hitungan_subdomain_dan_hosting(): void

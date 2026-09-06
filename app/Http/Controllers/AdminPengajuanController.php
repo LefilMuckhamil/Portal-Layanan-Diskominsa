@@ -127,6 +127,38 @@ class AdminPengajuanController extends Controller
         ]);
     }
 
+    public function kirimPesan(Request $request, $id)
+    {
+        if (Setting::get('chat_global_aktif', '1') !== '1') {
+            return response()->json([
+                'status' => 'error',
+                'pesan' => 'Fitur chat sedang dinonaktifkan oleh Admin.',
+            ], 403);
+        }
+
+        $request->validate([
+            'pesan' => 'required|string|max:1000',
+        ]);
+
+        $pengajuan = Pengajuan::findOrFail($id);
+
+        $pesanBaru = $pengajuan->messages()->create([
+            'sender_id' => Auth::id(),
+            'sender_role' => 'admin',
+            'isi' => $request->pesan,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'pesan' => [
+                'role' => $pesanBaru->role,
+                'pengirim' => $pesanBaru->pengirim,
+                'isi' => $pesanBaru->isi,
+                'waktu' => $pesanBaru->waktu,
+            ],
+        ]);
+    }
+
     public function export(Request $request)
     {
         $request->validate([
