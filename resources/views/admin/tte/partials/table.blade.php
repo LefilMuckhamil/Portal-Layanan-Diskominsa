@@ -249,7 +249,7 @@
                                 <input type="text" name="data_pengajuan[alamat]" value="{{ old('data_pengajuan.alamat') }}" required placeholder="Masukkan alamat domisili lengkap..." class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-[12.5px] text-[#101828] font-medium placeholder:text-[#98A2B3] outline-none focus:border-blue-500 shadow-sm transition-all">
                             </div>
                             <div class="col-span-1 md:col-span-2">
-                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Dokumen Persyaratan (PDF) <span class="text-rose-500">*</span></label>
+                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Dokumen Persyaratan (PDF/PNG/JPG/JPEG) <span class="text-rose-500">*</span></label>
                                 <label for="admin-tte-upload" class="group flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-[#DCE1E8] bg-white hover:border-blue-500 hover:bg-blue-50/40 transition-all px-4 py-2.5 cursor-pointer shadow-sm">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-100 group-hover:bg-blue-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
@@ -257,11 +257,11 @@
                                         </div>
                                         <div class="min-w-0">
                                             <p class="text-[12.5px] text-[#101828] font-bold group-hover:text-blue-900 truncate">Klik untuk memilih berkas</p>
-                                            <p id="admin-tte-name" class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Surat Rekomendasi/KTP (Maks 5MB)</p>
+                                            <p id="admin-tte-name" class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Surat Rekomendasi/KTP (PDF/PNG/JPG/JPEG, Maks 2MB)</p>
                                         </div>
                                     </div>
                                     <div class="px-3 py-1.5 bg-slate-50 border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 group-hover:border-blue-300 shrink-0">Browse</div>
-                                    <input id="admin-tte-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="if(this.files && this.files[0]){document.getElementById('admin-tte-name').innerText = this.files[0].name; document.getElementById('admin-tte-name').classList.add('text-emerald-700', 'font-bold')}">
+                                    <input id="admin-tte-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf,.png,.jpg,.jpeg" required onchange="if(this.files && this.files[0]){document.getElementById('admin-tte-name').innerText = this.files[0].name; document.getElementById('admin-tte-name').classList.add('text-emerald-700', 'font-bold')}">
                                 </label>
                             </div>
                         </div>

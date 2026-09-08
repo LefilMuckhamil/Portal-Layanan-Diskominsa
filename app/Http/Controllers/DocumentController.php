@@ -61,12 +61,16 @@ class DocumentController extends Controller
             'File tidak ditemukan di storage server.'
         );
 
+        $ekstensi = strtolower(pathinfo($path, PATHINFO_EXTENSION)) ?: 'pdf';
+
         $namaFile = ($jenis === 'hasil' ? 'Hasil_' : 'Surat_Permohonan_')
             .preg_replace('/[^A-Za-z0-9_-]/', '_', $pengajuan->nomor_tiket)
-            .'.pdf';
+            .'.'.$ekstensi;
+
+        $mimeTipe = Storage::disk('local')->mimeType($path) ?: 'application/octet-stream';
 
         return Storage::disk('local')->response($path, $namaFile, [
-            'Content-Type' => 'application/pdf',
+            'Content-Type' => $mimeTipe,
             'Content-Disposition' => 'inline; filename="'.$namaFile.'"',
         ]);
     }

@@ -87,7 +87,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="text-[14px] text-[#101828] font-extrabold">Berkas Hasil Resmi Tersedia</p>
-                                <p class="text-[12px] text-[#667085] font-medium mt-0.5">Surat balasan/dokumen resmi dari Diskominsa dalam format PDF.</p>
+                                <p class="text-[12px] text-[#667085] font-medium mt-0.5">Dokumen hasil resmi dari Diskominsa tersedia untuk diunduh.</p>
                             </div>
                         </div>
                         <a href="{{ route('dokumen.unduh', ['pengajuan' => $pengajuan->id, 'jenis' => 'hasil']) }}" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-[12.5px] font-bold shadow-md shadow-emerald-600/20 transition-all shrink-0">

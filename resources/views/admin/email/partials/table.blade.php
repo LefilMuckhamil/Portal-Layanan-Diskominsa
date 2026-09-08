@@ -242,7 +242,7 @@
                                 </div>
                             </div>
                             <div class="col-span-1 md:col-span-2">
-                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Surat / Berkas Permohonan (PDF) <span class="text-rose-500">*</span></label>
+                                <label class="block text-[11.5px] font-bold text-[#344054] mb-1">Upload Surat / Berkas Permohonan (PDF/PNG/JPG/JPEG) <span class="text-rose-500">*</span></label>
                                 <label for="admin-email-upload" class="group flex items-center justify-between gap-3 rounded-xl border-2 border-dashed border-[#DCE1E8] bg-white hover:border-sky-500 hover:bg-sky-50/40 transition-all px-4 py-2.5 cursor-pointer shadow-sm">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <div class="w-8 h-8 shrink-0 rounded-lg bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
@@ -250,11 +250,11 @@
                                         </div>
                                         <div class="min-w-0">
                                             <p id="admin-email-file-name" class="text-[12.5px] text-[#101828] font-bold group-hover:text-sky-900 truncate">Klik untuk memilih berkas</p>
-                                            <p class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Format PDF &middot; Maksimal 5MB</p>
+                                            <p class="text-[10.5px] text-[#667085] font-medium mt-0.5 truncate">Format PDF/PNG/JPG/JPEG &middot; Maksimal 2MB</p>
                                         </div>
                                     </div>
                                     <div class="px-3 py-1.5 bg-slate-50 border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 group-hover:border-sky-300 shrink-0">Browse</div>
-                                    <input id="admin-email-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="if(this.files && this.files[0]){document.getElementById('admin-email-file-name').innerText = this.files[0].name; document.getElementById('admin-email-file-name').classList.add('text-emerald-700', 'font-bold')}">
+                                    <input id="admin-email-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf,.png,.jpg,.jpeg" required onchange="if(this.files && this.files[0]){document.getElementById('admin-email-file-name').innerText = this.files[0].name; document.getElementById('admin-email-file-name').classList.add('text-emerald-700', 'font-bold')}">
                                 </label>
                             </div>
                         </div>

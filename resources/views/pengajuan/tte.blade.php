@@ -145,7 +145,7 @@
                                 </div>
                                 <div class="min-w-0">
                                     <p class="text-[13.5px] text-[#101828] font-extrabold">Unduh Template Surat Permohonan <span class="text-blue-700">(.docx)</span></p>
-                                    <p class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format surat resmi siap pakai &middot; lengkapi lalu unggah dalam bentuk PDF</p>
+                                    <p class="text-[11.5px] text-[#667085] font-medium mt-0.5">Format surat resmi siap pakai &middot; lengkapi lalu unggah dalam bentuk PDF/PNG/JPG/JPEG</p>
                                 </div>
                             </div>
                             <span class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-blue-200 text-blue-700 rounded-xl text-[12.5px] font-bold group-hover:border-blue-400 transition-colors shadow-sm">
@@ -155,21 +155,21 @@
                     </div>
 
                     <div class="mb-2">
-                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Dokumen Persyaratan TTE (PDF)</label>
+                        <label class="block text-[12.5px] font-bold text-[#344054] mb-1.5">Upload Dokumen Persyaratan TTE (PDF/PNG/JPG/JPEG)</label>
                         <label for="file-upload" class="group flex items-center gap-4 rounded-xl border-2 border-dashed border-[#DCE1E8] hover:border-sky-500 hover:bg-sky-50/40 transition-all px-5 py-4 cursor-pointer shadow-sm">
                             <div class="w-10 h-10 shrink-0 rounded-xl bg-slate-100 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center text-[#667085] transition-colors shadow-sm">
                                 <i class="fa-solid fa-cloud-arrow-up text-[16px]"></i>
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-[13.5px] text-[#101828] font-bold group-hover:text-sky-900">Klik untuk memilih berkas <span class="font-medium text-[#667085]">atau tarik file ke sini</span></p>
-                                <p id="file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Surat Rekomendasi/KTP &middot; PDF, maks. 5MB</p>
+                                <p id="file-name" class="text-[11.5px] text-[#667085] font-medium mt-0.5">Surat Rekomendasi/KTP &middot; PDF/PNG/JPG/JPEG, maks. 2MB</p>
                             </div>
-                            <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf" required onchange="if (this.files && this.files[0]) { document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold'); }">
+                            <input id="file-upload" name="file_pendukung" type="file" class="sr-only" accept=".pdf,.png,.jpg,.jpeg" required onchange="if (this.files && this.files[0]) { document.getElementById('file-name').innerText = 'File Terpilih: ' + this.files[0].name; document.getElementById('file-name').classList.add('text-emerald-700', 'font-bold'); }">
                         </label>
                         @error('file_pendukung')
                             <p class="text-[12px] font-semibold text-red-600 mt-2"><i class="fa-solid fa-circle-exclamation mr-1"></i>{{ $message }}</p>
                         @enderror
-                        <p class="text-[11.5px] text-amber-700 font-medium mt-1">Catatan: Jika terjadi kesalahan validasi pada formulir, silakan pilih kembali berkas PDF Anda.</p>
+                        <p class="text-[11.5px] text-amber-700 font-medium mt-1">Catatan: Jika terjadi kesalahan validasi pada formulir, silakan pilih kembali berkas Anda.</p>
                     </div>
                 </div>
 

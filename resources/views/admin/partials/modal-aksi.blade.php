@@ -209,7 +209,7 @@
                             <a href="{{ route('dokumen.unduh', ['pengajuan' => $item->id, 'jenis' => 'pendukung']) }}" target="_blank" class="w-full h-full min-h-[76px] flex flex-col items-center justify-center gap-1.5 px-4 py-3 bg-white border border-slate-200 {{ $aksen['download'] }} rounded-xl shadow-sm transition-all text-center">
                                 <i class="fa-solid fa-file-pdf text-lg {{ $aksen['file'] }}"></i>
                                 <span class="text-xs font-bold text-slate-700">Surat Permohonan</span>
-                                <span class="text-[10px] text-slate-400 inline-flex items-center gap-1"><i class="fa-solid fa-download"></i> Unduh PDF</span>
+                                <span class="text-[10px] text-slate-400 inline-flex items-center gap-1"><i class="fa-solid fa-download"></i> Unduh Berkas</span>
                             </a>
                         @else
                             <div class="w-full min-h-[76px] flex flex-col items-center justify-center gap-1 px-4 bg-white border border-dashed border-slate-200 rounded-xl text-slate-400 italic">
@@ -258,14 +258,14 @@
                                                         <i class="fa-solid fa-eye text-[9px]"></i> Lihat File Hasil
                                                     </a>
                                                 @else
-                                                    Pilih Berkas PDF Hasil
+                                                    Pilih Berkas PDF/PNG/JPG/JPEG Hasil
                                                 @endif
                                             </p>
                                             <p class="text-[10px] text-slate-500">Dokumen hasil pembuatan</p>
                                         </div>
                                     </div>
                                     <div class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[10.5px] font-bold text-gray-600 {{ $aksen['browse'] }} shrink-0">Browse</div>
-                                    <input id="admin-hasil-upload-{{ $item->id }}" name="file_hasil" type="file" class="sr-only" accept=".pdf" onchange="if(this.files && this.files[0]){document.getElementById('admin-hasil-name-{{ $item->id }}').innerText = this.files[0].name; document.getElementById('admin-hasil-name-{{ $item->id }}').classList.add('text-emerald-700')}">
+                                    <input id="admin-hasil-upload-{{ $item->id }}" name="file_hasil" type="file" class="sr-only" accept=".pdf,.png,.jpg,.jpeg" onchange="if(this.files && this.files[0]){document.getElementById('admin-hasil-name-{{ $item->id }}').innerText = this.files[0].name; document.getElementById('admin-hasil-name-{{ $item->id }}').classList.add('text-emerald-700')}">
                                 </label>
                             </div>
                         </div>

@@ -35,7 +35,7 @@ class AdminPengajuanController extends Controller
             ])],
             'catatan' => ['nullable', 'string', 'max:500'],
             'pesan' => ['nullable', 'string', 'max:1000'],
-            'file_hasil' => ['nullable', 'file', 'mimes:pdf', 'mimetypes:application/pdf', 'min:10', 'max:5120'],
+            'file_hasil' => ['nullable', 'file', 'mimes:pdf,png,jpg,jpeg', 'mimetypes:application/pdf,image/png,image/jpeg', 'min:10', 'max:2048'],
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
@@ -273,7 +273,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.jabatan' => 'required|string|max:255',
             'data_pengajuan.nama_pimpinan' => 'required|string|max:255',
             'data_pengajuan.nama_website' => 'required|string|max:255',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf,png,jpg,jpeg|mimetypes:application/pdf,image/png,image/jpeg|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -291,8 +291,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.nama_pimpinan.required' => 'Kolom Nama Pimpinan wajib diisi.',
             'data_pengajuan.nama_website.required' => 'Kolom Nama Website Usulan wajib diisi.',
             'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file surat harus PDF.',
-            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.mimes' => 'Format file harus PDF/PNG/JPG/JPEG.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         $uploadedFile = $request->file('file_pendukung');
@@ -366,7 +366,7 @@ class AdminPengajuanController extends Controller
                 'max:50',
                 'regex:/^[a-zA-Z0-9._-]+$/',
             ],
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf,png,jpg,jpeg|mimetypes:application/pdf,image/png,image/jpeg|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -378,8 +378,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.usulan_email.max' => 'Usulan alamat email maksimal 50 karakter.',
             'data_pengajuan.usulan_email.regex' => 'Usulan alamat email hanya boleh huruf, angka, titik, garis bawah, dan strip.',
             'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file surat harus PDF.',
-            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.mimes' => 'Format file harus PDF/PNG/JPG/JPEG.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         $uploadedFile = $request->file('file_pendukung');
@@ -457,7 +457,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15'],
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.alamat' => 'required|string',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf,png,jpg,jpeg|mimetypes:application/pdf,image/png,image/jpeg|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -470,8 +470,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.email.required' => 'Kolom Email wajib diisi.',
             'data_pengajuan.alamat.required' => 'Kolom Alamat wajib diisi.',
             'file_pendukung.required' => 'Dokumen Persyaratan (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file surat harus PDF.',
-            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.mimes' => 'Format file harus PDF/PNG/JPG/JPEG.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         $uploadedFile = $request->file('file_pendukung');
@@ -541,7 +541,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15'],
             'data_pengajuan.email' => 'required|email',
             'data_pengajuan.kapasitas' => 'required|string|max:20',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf,png,jpg,jpeg|mimetypes:application/pdf,image/png,image/jpeg|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Penanggung Jawab wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -553,8 +553,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.kapasitas.required' => 'Kolom Kapasitas Penyimpanan wajib diisi.',
             'data_pengajuan.kapasitas.max' => 'Kapasitas Penyimpanan maksimal 20 karakter.',
             'file_pendukung.required' => 'Surat Permohonan Cloud (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file surat harus PDF.',
-            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.mimes' => 'Format file harus PDF/PNG/JPG/JPEG.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         $uploadedFile = $request->file('file_pendukung');
@@ -664,7 +664,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.domain' => 'required|string|max:255',
             'data_pengajuan.ip_address' => ['required', 'ip'],
             'data_pengajuan.nama_aplikasi' => 'required|string|max:255',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf,png,jpg,jpeg|mimetypes:application/pdf,image/png,image/jpeg|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -684,8 +684,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.ip_address.ip' => 'Format IP Address Server Tujuan tidak valid.',
             'data_pengajuan.nama_aplikasi.required' => 'Kolom Nama Sistem / Aplikasi wajib diisi.',
             'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file surat harus PDF.',
-            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.mimes' => 'Format file harus PDF/PNG/JPG/JPEG.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         if (isset($dataPengajuan['domain'])) {
@@ -732,7 +732,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.database_type' => 'required|string|max:255',
             'data_pengajuan.storage_quota' => 'required|string|max:255',
             'data_pengajuan.domain_terkait' => 'nullable|string|max:255',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf,png,jpg,jpeg|mimetypes:application/pdf,image/png,image/jpeg|min:10|max:2048',
         ], [
             'data_pengajuan.nama.required' => 'Kolom Nama Pemohon wajib diisi.',
             'data_pengajuan.nip.required' => 'Kolom NIP wajib diisi.',
@@ -752,8 +752,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.database_type.required' => 'Kolom Database wajib diisi.',
             'data_pengajuan.storage_quota.required' => 'Kolom Kebutuhan Storage wajib diisi.',
             'file_pendukung.required' => 'Surat Permohonan (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file surat harus PDF.',
-            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.mimes' => 'Format file harus PDF/PNG/JPG/JPEG.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         $uploadedFile = $request->file('file_pendukung');
@@ -824,7 +824,7 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,13}$/', 'min:10', 'max:15'],
             'data_pengajuan.email_reset' => 'required|email',
             'data_pengajuan.deskripsi_kendala' => 'nullable|string|max:1000',
-            'file_pendukung' => 'required|file|mimes:pdf|mimetypes:application/pdf|min:10|max:5120',
+            'file_pendukung' => 'required|file|mimes:pdf,png,jpg,jpeg|mimetypes:application/pdf,image/png,image/jpeg|min:10|max:2048',
         ], [
             'data_pengajuan.kategori_bantuan_id.required' => 'Kategori kendala wajib dipilih.',
             'data_pengajuan.kategori_bantuan_id.exists' => 'Pilihan kategori tidak valid.',
@@ -837,8 +837,8 @@ class AdminPengajuanController extends Controller
             'data_pengajuan.email_reset.email' => 'Format Email yang Ingin Direset tidak valid.',
             'data_pengajuan.deskripsi_kendala.max' => 'Deskripsi kendala maksimal 1000 karakter.',
             'file_pendukung.required' => 'Surat Permohonan / Bukti (PDF) wajib diunggah.',
-            'file_pendukung.mimes' => 'Format file surat harus PDF.',
-            'file_pendukung.max' => 'Ukuran file PDF maksimal 5MB.',
+            'file_pendukung.mimes' => 'Format file harus PDF/PNG/JPG/JPEG.',
+            'file_pendukung.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         $dataPengajuan['email_reset'] = Str::lower(trim($dataPengajuan['email_reset'] ?? ''));
